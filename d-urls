@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+
+# wtype "$(rg -v '^$' ~/sync/org/bookmarks.org | rofi -dmenu -i -config ~/.config/rofi/list.rasi | rg -o '(http|https)://[a-zA-Z0-9./?=_%:-]*')"
+
+#wtype "$(rg -v '^$' ~/sync/org/bookmarks.org | rofi -dmenu -i -l 20 -config ~/.config/rofi/list.rasi | grep -Eo '(http|https)://[a-zA-Z0-9./?=_%:-]*')"
+
+wtype "$(rg -v '^$' ~/sync/org/bookmarks.org | bemenu -W 0.8  | rg -o '(http|https)://[a-zA-Z0-9./?=_%:-]*')"

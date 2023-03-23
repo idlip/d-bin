@@ -1,0 +1,74 @@
+#!/usr/bin/env sh
+# Feed this script a link and it will give rofi
+# some choice programs to use to open it.
+#feed="${1:-$(printf "%s" | rofi -dmenu -theme-str '@import "menu.rasi" window {height:20%;width: 70%;}' -p 'Paste URL or file path')}"
+
+rofm="rofi -dmenu -i"
+dmem="dmenu -i"
+wofm="wofi -dib -I -W 60% -H 45% -w 2"
+bmem="bemenu -W 0.75"
+menu=$bmem
+# FOR DMENU
+feed="${1:-$(printf "%s" | $menu -i -p 'Paste URL or file path')}"
+echo "$feed" | wl-copy -n
+
+viewdpic() {
+    curl "${feed}" --output /tmp/image && imv /tmp/image
+    }
+
+listentothis() {
+    yt-dlp -P ~/music/yt/ -icx --embed-metadata "$feed" &&
+    mpc update 
+    # d-mpdm
+}
+
+lessontothis() {
+    yt-dlp -P ~/music/pod/ -icx --embed-metadata "$feed" &&
+	mpc update 
+	# d-mpdm
+    }
+
+
+a1="🥌  Copy Url"
+a2="📖  Article Reader"
+a3="🖨️  Browser Firefox"
+a4="🗃️  Aria File"
+a5="📹  Youtube video"
+a6="🎵  Music Audio Listen"
+a7="🎙️  Podcast Lesson"
+a8="🎤  Podcast Later"
+a9="🖼️  Image Pic"
+a10="▶️   Stream Play Watch"
+a11="🌇  Wallpaper"
+a12="🚄  Tor Add"
+a13="   W3m"
+a14="more.."
+a15="📑  Bookmark"
+a16="🦁  Brave Air"
+a18="🐺  Libre Ever Wolf"
+a19="   Chromium Boost"
+shortfeed="$(echo ${feed} | cut -d '/' -f3,4,5 | head -c 25)"
+
+case "$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10\n$a11\n$a12\n$a13\n$a14\n$a15\n$a16\n$a18\n$a19" | sort | $menu -p "$shortfeed")" in
+
+
+
+	"$a1") echo "$feed" | wl-copy -p ;;
+	"$a2") setsid  rdrview -B w3m "$feed" ;;
+	"$a3") setsid -f "firefox" "$feed" >/dev/null 2>&1 ;;
+	"$a4") setsid aria2c -j 6 -x 16 -c -d ~/dloads "$feed" >/dev/null 2>&1 ;;
+	"$a5") TS_SOCKET=/tmp/yt-dlp ts yt-dlp --embed-metadata --embed-subs -f "bestvideo[height<=1080]+bestaudio" -P ~/vids/yt "$feed" >/dev/null 2>&1 ;;
+	"$a6") listentothis ;;
+	"$a7") ts mpv --geometry=15%-30-30 --vid=1 --external-file=/home/i/pics/dpics/nature/pod.jpg "$feed" >/dev/null 2>&1 ;;
+	"$a8") lessontothis ;;
+	"$a9") viewdpic ;;
+	"$a10") ts mpv -quiet "$feed" >/dev/null 2>&1 ;;
+	"$a11") curl -L "$feed" > $HOME/pics/dpics/dlwal ;;
+	"$a12") deluge-console add "$feed" >/dev/null 2>&1 ;;
+	"$a13") setsid  w3m "$feed" ;;
+	"$a14") aria2c -j 6 -x 10 -c -d ~/vids/Documentary/.cache/clean.db/ "$feed" ;;
+	"$a15") d-bookmark  ;;
+	"$a16") setsid brave "$feed" ;;
+	"$a18") setsid librewolf "$feed" ;;
+	"$a19") setsid chromium "$feed" ;;	
+esac

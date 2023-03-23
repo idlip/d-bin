@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+rmem="rofi -dmenu -i -config ~/.config/rofi/app.rasi"
+dmem="dmenu -i"
+wofm="wofi -dib -W 45% -H 50%"
+bmem="bemenu"
+menu=$bmem
+bookmark="$(wl-paste -p || echo | $menu -p  'site to bookmark ')"
+#file="$HOME/.local/share/dict/bookmarks"
+file="$HOME/sync/org/bookmarks.org"
+site="$(echo "$bookmark" | sed 's/ //g')"
+name="$(printf "reddit\ntwitter\ngit-linux\ngit-emacs\ngit-droid\nTODO" | $menu -p ${site})"
+section="$(printf "social\naniman\ngit\nexam\nreading\nlinux\npiracy\nwriting\nmedia\nfoss\ngoogle\nemacs\nnixos\nandroid" | $menu -p 'Where to add  '| sed 's/ //g')"
+
+mark-print ()
+{
+    sed -i "/$section$/a *** [[$site][$name]]" "$file" && notify-send "Bookmark added!" "$site is now saved under $section"
+    
+}
+
+if grep -qF "$site" "$file"; then
+    notify-send "Oops.. $site" "Already in bookmark!"
+
+elif [[ "$section" != '' ]]; then
+    mark-print
+else
+    notify-send "Select a section add mark"
+
+fi

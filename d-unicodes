@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+rofm="rofi -dmenu -config ~/.config/rofi/grid.rasi"
+dmem="dmenu"
+font="ComicCodeLigatures Bold 20"
+bem="bemenu -c --fn $font" 
+wofm="wofi -dib -W 90% -H 85% -w 3"
+bmem="bemenu -W 0.9"
+menu=$bmem
+# The famous "get a menu of emojis to copy" script.
+
+# Get user selection via rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' from emoji file.
+chosen=$(bat ~/.local/share/dict/unicode/emoji ~/.local/share/dict/unicode/all-icons | $menu -i -p ' choose emoji  ' | awk '{print $1}' )
+
+# Exit if none chosen.
+[ -z "$chosen" ] && exit
+
+# If you run this command with an argument, it will automatically insert the
+# character. Otherwise, show a message that the emoji has been copied.
+if [ -n "$1" ]; then
+	wtype "$chosen"
+else
+        printf "$chosen" | wl-copy
+	wtype "$chosen"    
+	notify-send "'$chosen' copied to clipboard." &
+fi

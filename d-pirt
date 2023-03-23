@@ -1,0 +1,156 @@
+#!/usr/bin/env sh
+# Dependencies - Deluge, mpv
+
+rmem="rofi -dmenu -i -config ~/.config/rofi/list.rasi"
+dmem="dmenu -i"
+wofm="wofi -d -ib -W 80% -H 80%"
+bmem="bemenu -W 0.9"
+mymem=$bmem
+mkdir -p $HOME/.cache/notflix
+
+DOWNLOAD_DIR="$HOME/Documents/Torrent"
+
+baseurl="https://www.1337xx.to"
+
+cachedir="$HOME/.cache/notflix"
+
+LOG_FILE="$HOME/.cache/notflix/notflix_history"
+
+[[ -f "$LOG_FILE" ]] && LS="$(cat $LOG_FILE)" 
+[[ -z "$LS" ]] && LS=""
+
+PAGE=1
+
+scrape()
+{
+
+S_QRY="$(echo "$QUER_Y" | sed 's/[[:space:]]/_/g')"
+
+#menu="fzf --no-preview --cycle --layout=reverse --header-first --header=Torrent-Results:($S_QRY/Page-$PAGE)"
+menu="$mymem -i -l 20 -p $PAGE*"
+
+[[ -z "$QUER_Y" ]] && exit
+
+query="$(echo "$QUER_Y" | sed 's/ /+/g')"
+
+b1="general page"
+b2="movie page"
+b3="latest page"
+b4="top 100"
+b5="trending"
+b6="documentary"
+b7="music"
+b8="free"
+chose=$(printf "$b1\n$b2\n$b3\n$b4\n$b5\n$b6\n$b7\n$b8" | $mymem -l 18 -p 'search on?')
+case $chose in
+  "$b1") curl -s $baseurl/search/$query/$PAGE/ --compressed > $cachedir/tmp.html ;;
+  "$b2") curl -s $baseurl/category-search/$query/Movies/1/ --compressed > $cachedir/tmp.html ;;
+  "$b3") curl -s $baseurl/sort-search/$query/time/desc/$PAGE/ --compressed > $cachedir/tmp.html ;;
+  "$b5") curl -s $baseurl/trending --compressed > $cachedir/tmp.html ;;
+  "$b4") curl -s $baseurl/top-100 --compressed > $cachedir/tmp.html ;;
+  "$b6") curl -s $baseurl/cat/Documentaries/$PAGE/  --compressed > $cachedir/tmp.html ;;
+  "$b7") curl -s $baseurl/popular-music-week  --compressed > $cachedir/tmp.html ;;
+  "$b8") curl -s $baseurl/popular-xxx-week --compressed > $cachedir/tmp.html ;;
+
+esac
+
+# Get Titles
+grep -o '<a href="/torrent/.*</a>' $cachedir/tmp.html | sed 's/<[^>]*>//g' > $cachedir/titles.bw
+
+result_count=$(wc -l $cachedir/titles.bw | awk '{print $1}')
+if [ "$result_count" -lt 1 ]; then
+ echo "No Result found!" 
+ exit 0
+fi
+
+# Seeders and Leechers
+grep -o '<td class="coll-2 seeds.*</td>\|<td class="coll-3 leeches.*</td>' $cachedir/tmp.html |
+  sed 's/<[^>]*>//g' | sed 'N;s/\n/ /' > $cachedir/seedleech.bw
+
+# Size
+grep -o '<td class="coll-4 size.*</td>' $cachedir/tmp.html |
+  sed 's/<span class="seeds">.*<\/span>//g' |
+  sed -e 's/<[^>]*>//g' > $cachedir/size.bw
+
+# Links
+grep -E '/torrent/' $cachedir/tmp.html |
+  sed -E 's#.*(/torrent/.*)/">.*/#\1#' |
+  sed 's/td>//g' > $cachedir/links.bw
+
+# Clearning up some data to display
+sed 's/\./ /g; s/\-/ /g' $cachedir/titles.bw |
+  sed 's/[^A-Za-z0-9 ]//g' | tr -s " " > $cachedir/tmp && mv $cachedir/tmp $cachedir/titles.bw
+
+awk '{print NR " - ["$0"]"}' $cachedir/size.bw > $cachedir/tmp && mv $cachedir/tmp $cachedir/size.bw
+awk '{print "[S:"$1 ", L:"$2"]" }' $cachedir/seedleech.bw > $cachedir/tmp && mv $cachedir/tmp $cachedir/seedleech.bw
+
+[[ "$PAGE" > 1 ]] && echo "Previous Page" >> $cachedir/titles.bw 
+
+echo "Next Page" >> $cachedir/titles.bw
+
+# Getting the line number
+LINEO=$(paste -d\   $cachedir/size.bw $cachedir/seedleech.bw $cachedir/titles.bw | sed 's/^ //g' | $mymem -l 20 -p '')
+
+LINE=$( echo "$LINEO" | cut -d\- -f1 | awk '{$1=$1; print}')
+
+if [ -z "$LINE" ]; then
+exit 0 
+fi 
+
+# Next Page
+[[ "$LINE" = "Next Page" ]] && PAGE=$(($PAGE+1)) && scrape
+
+#Previous Page
+[[ "$LINE" = "Previous Page" ]] && PAGE="$(($PAGE-1))" && scrape
+
+
+url=$(head -n $LINE $cachedir/links.bw | tail -n +$LINE)
+fullURL="${baseurl}${url}/"
+
+# Requesting page for magnet link
+curl -s $fullURL > $cachedir/tmp.html
+magnet=$(grep -Po "magnet:\?xt=urn:btih:[a-zA-Z0-9]*" $cachedir/tmp.html | head -n 1) 
+
+[[ -z "$magnet" ]] && echo "Can't Get the Link!" && exit
+
+PROMPTO="$(echo -e "Deluge\nAria\nCopyUrl" | sort | bemenu -p 'magnet to')"
+
+LOG()
+{
+  echo "$LINEO" > $LOG_FILE
+}
+
+case $PROMPTO in
+  Deluge)
+    deluge-console add "$magnet"
+    notify-send " 🛫 Downloading Torrent"
+    exit
+    ;;
+  Aria) 
+    wtype "$magnet"
+    exit
+    ;;
+  CopyUrl)
+    echo "$magnet" | wl-copy 
+    notify-send " 🧲 Copied Magnet"
+    exit
+    ;;
+  *)
+    ;;
+
+  esac
+
+exit
+
+}
+
+
+
+seqr="$(echo -e "complete\nhashminer\nmusafir\nPSA\nBONE" | $mymem -l 10 -p ' Pirate for >')"
+[[ -z "$@" ]] && 
+QUER_Y="$seqr" && scrape 
+
+
+
+#[[ -z "$@" ]] && read -r -p "Last Torrent: $LS
+#Search Torrent: " $seqr && scrape || QUER_Y="$seqr" && scrape

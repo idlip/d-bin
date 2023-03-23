@@ -1,0 +1,35 @@
+#!/usr/bin/env sh
+
+rofm="rofi -dmenu -i -config ~/.config/rofi/menu.rasi"
+dmem="dmenu -i"
+wofm="wofi -dib -W 60% -H 55% -w 2"
+bmem="bemenu"
+menu=$bmem
+# For ROFI
+#chosen=$(printf "🏯  Anime Watch\n✏️  Manga Read\n🎼  Cmus Lyrics\n👓  YouTube\n📚  Dictionary\n🎶  Sing Lyrics\n🔢  Calculator\n😁  Emoji\n🌈  Colour Picker\n🔤  Font Preview\n📆  Time Date\n🗽  Sys Stats\n🔔  Set Reminder" | rofi -$menu -p ' ⛩️ Productivity' -theme-str '@import "menu-rasi" window {width: 30%;}')
+
+# For DMENU
+chosen=$(printf "   Add ToDo\n   Anime Watch\n   Calculator\n   Cmus Lyrics\n   Colour Picker\n   Dictionary\n   Emoji\n   File Manager\n   Font Preview\n   Manga Read\n   Music\n   Sys Stats\n   Sing Lyrics\n   Set Reminder\n   Time Date\n   YouTube\n   Window Format\n   Music Menu\n   Pirate World" | sort | $menu -p '   Productivity ' )
+
+case "$chosen" in
+	      "   Calculator") d-calc ;;
+        "   Emoji") d-unicodes ;;
+        "   Font Preview") st -f "CmicMono:size=18" -e d-fp ;;
+        "   Anime Watch") d-ani --dmenu ;;
+        "   Manga Read") d-mang --dmenu ;;
+        "   Sing Lyrics") d-lyrics --rofi ;;
+        "   Cmus Lyrics") uxterm -T Lyrics -g 61x21-72+191 -e 'd-lyrics $(cmus-remote -C status | grep -w title | cut -c 10- | cut -d "(" -f 1)' ;;
+        "   Dictionary") d-dict ;;
+        "   Set Reminder") d-remind ;;
+        "   Colour Picker") d-colour ;;
+        "   Time Date") d-time ;;
+        "   Sys Stats") d-stats ;;
+        "   YouTube") ytfzf -D ;;
+        "   Add ToDo") d-todo ;;
+        "   Music") d-mpd ;;
+        "   File Manager") dmenufm ;;
+        "   Window Format") d-dk ;;
+        "   Music Menu") d-mpdplay ;;
+        "   Pirate World") d-pirt ;;
+	*) exit 1 ;;
+esac

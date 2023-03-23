@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+rm /tmp/BrowseInput.md >/dev/null &
+emacsclient -c /tmp/BrowseInput.md &&
+wtype "$(bat -r 0:100 /tmp/BrowseInput.md)" >/dev/null 
+# rm /tmp/BrowseInput >/dev/null 

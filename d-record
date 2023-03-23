@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+rofm="rofi -dmenu -i -config ~/.config/rofi/app.rasi"
+bmem="bemenu"
+menu=$bmem
+
+a1="Record Video + Audio"
+a2="Only Video"
+a3="Record Small Area in Mouse"
+a4="Kill Recording"
+taping=$(printf "$a1\n$a2\n$a3\n$a4" | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' -l 10 -p ' Record on = ')
+
+case "$taping" in
+  "$a1") wf-recorder -a -f ~/screen-$(date '+%a-%d-%b@%H:%M:%S').mp4 ;;
+  "$a2") wf-recorder -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 ;;
+  "$a3") wf-recorder -g "$(slurp)" -f ~/capture-$(date '+%a-%d-%b@%H:%M:%S').mp4 ;;
+  "$a4") pkill -INT wf-recorder ;;
+  *) exit 1 ;;
+esac

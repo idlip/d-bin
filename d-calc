@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+# https://github.com/onespaceman/menu-calc
+# Calculator for use with rofi/$menu(2)
+# Copying to the clipboard requires xclip
+
+rofm="rofi -dmenu -i"
+dmem="dmenu -i"
+menu=$dmem
+usage() {
+    echo "    $(tput bold)menu calc$(tput sgr0)
+    A calculator for use with Rofi or $menu(2)
+    Basic usage:
+    = 4+2
+    = (4+2)/(4+3)
+    = 4^2
+    = sqrt(4)
+    = c(2)
+    The answer can be used for further calculations
+    The expression may need quotation marks if
+    launched outside of Rofi/$menu"
+    exit
+}
+
+case $1 in
+    -h|--help) usage ;;
+esac
+
+# Path to menu application
+
+    menu="$(command -v $menu) -l 5"
+answer=$(echo "$@" | bc -l | sed '/\./ s/\.\{0,1\}0\{1,\}$//')
+
+action=$(echo -e "Copy to clipboard\nClear\nClose" |
+$menu -p "= $answer")
+
+case $action in
+    "Clear") $0 ;;
+    "Copy to clipboard") echo -n "$answer" | xclip ;;
+    "Close") ;;
+    "") ;;
+    *) $0 "$answer $action" ;;
+esac

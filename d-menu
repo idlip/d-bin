@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+rmem="rofi -dmenu -i -config ~/.config/rofi/menu.rasi"
+dmem="dmenu -i"
+bmem="bemenu"
+mymem=$bmem
+#chosen=$(printf "🪙 Mini Apps\n⚜️ Handle Stuffs\n📂 File Browser\n🖼️ Change Wallpaper\n⚙️ Config Files\n🈯 Anime\n🥋 Manga\n🎥 Documentary\n📔 Courses\n🎮 YouTube\n📹 Movies\n⛓️ Series\n🥢 Drama\n🪴 Botany Notes\n🐕 Zoology Notes\n🧠  Psychology Notes\n♟️ Essentials\n📜 Scripts\n⚓ Powermenu" | rofi -dmenu -i -p ' 🔰  Universal Menu  ' -theme-str '@import "menu.rasi" window {width: 40%;}' )
+getkeys() {
+         bat ~/.config/dk/sxhkdrc | awk '/^[a-z]/ && last {print $0,"\t",last} {last=""} /^#/{last=$0}' | column -t -s $'\t' | dmenu -i -l 20 -p "Key Bindings:" 
+     }
+
+
+# FOR DMENU
+chosen=$(printf "  Change Wallpaper\n  System Keybindings\n  File Browser\n  Handle Stuffs\n  Mini Apps\n  Powermenu\n  Music Menu\n  Window Format" | sort | rofi -show drun -theme-str 'window {height:50%; width:65%;} listview {columns:2;}' -l 8 -p '   Universal Menu ' )
+
+case "$chosen" in
+        "  Powermenu") d-power ;;
+        "  Change Wallpaper") d-walls ;;
+        "  Handle Stuffs") d-stuff ;;
+        "  Mini Apps") d-apps ;;
+        "  File Browser") dmenufm ;;
+        "  System Keybindings") getkeys ;;
+        "  Music Menu") d-mpdplay ;;
+        "  Window Format") d-dk ;;
+	*) exit 1 ;;
+esac
