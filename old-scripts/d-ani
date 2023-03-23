@@ -1,0 +1,158 @@
+#!/usr/bin/env bash
+
+PAGE=1
+[[ $PAGE < 0 ]] && PAGE=1
+FZF="fzf --cycle --no-info --layout=reverse --no-preview "
+ROFI="rofi -dmenu -theme gruvbox-dark -i -matching fuzzy "
+DOWNLAOD_DIR="$HOME/Documents/Anime"
+LOGFILE="$HOME/.cache/anime_watch_history"
+[[ -z "$LOGFILE" ]] && LW="No Watch History!" || LW="$(cat $LOGFILE)"
+
+EP=1
+NP=""
+PP=""
+
+scrape (){
+
+  S_QUERY="$(echo "$query" | sed 's/[[:space:]]/+/g')"
+
+  URL="https://aniswim-api.herokuapp.com/search?q=$S_QUERY&page=$PAGE" 
+  [[ $S_QUERY = "-l"* ]] && URL="https://aniswim-api.herokuapp.com/latest&page=$PAGE"  
+  [[ $S_QUERY = "-r"* ]] &&  URL="https://aniswim-api.herokuapp.com/recent&page=$PAGE"  
+
+  S_QUERY="$(echo "$S_QUERY" | sed 's/-l//g' | sed 's/-r//g'  | sed 's/[[:space:]]/+/g')"
+
+  [[ $PAGE = 1 ]] && SPG="\n0 Next Page" || SPG="\n0 Next_Page\n-1 Previous Page"
+
+
+  [[ "$(echo "$MENU" | awk '{print $1}')" = "rofi" ]] && MENU="$ROFI -p Anime(Page:$PAGE/$(echo "Search:$S_QUERY" | sed 's/+/-/g'))"
+
+  [[ "$(echo "$MENU" | awk '{print $1}')" = "fzf" ]] && MENU="$FZF --header=Anime(Page:$PAGE/$(echo "Search:$S_QUERY" | sed 's/+/-/g')) --header-first --no-preview"
+
+
+  [[ $NP = "yes" ]] || [[ $PP = "yes" ]] && select_anime=$select_anime || \
+select_anime=$(echo -ne "$(curl -s $URL | jq .'[] | .title' | sed 's/"//g' | cat -n | sed 's/^[ \t]*//g' | sed 's/[[:space:]]/ /g' )$SPG " | $MENU |  awk '{print $1}')
+
+
+  [[ -z $select_anime ]] && echo "No Anime Selected!" && exit 
+  [[ $select_anime == 0 ]] && PAGE=$(($PAGE+1)) && scrape
+  [[ $select_anime == -1 ]] && PAGE=$(($PAGE-1)) && scrape
+  
+  select_animeId=$(curl -s $URL | jq .'[] | .animeID' |  sed 's/"//g' | head -n$select_anime | tail -n1  )
+
+
+  [[ $NP = "yes" ]] && EP=$(($EP+1))
+  [[ $PP = "yes" ]] && EP=$(($EP-1))
+
+  get_anime_data_raw=$(curl -s "https://aniswim-api.herokuapp.com/anime?id=$select_animeId&ep=$EP")
+
+  total_ep=$(echo $get_anime_data_raw | jq .'total_ep' | sed 's/"//g')
+  title=$(echo $get_anime_data_raw | jq .'title' | sed 's/"//g' | sed 's/[[:space:]]/-/g')
+  anime_type=$(echo $get_anime_data_raw | jq .'anime_type' | sed 's/"//g' | sed 's/[[:space:]]/-/g')
+
+  ep_list=""
+
+  
+  for i in $(seq 1 $total_ep)
+  do
+    ep_list+=$(echo -ne "$title-Episode-$i "  )
+  done
+
+  [[ "$(echo "$MENU" | awk '{print $1}')" = "rofi" ]] && MENU="$ROFI -p Anime(Title:$title/Total_Episode:$total_ep/$anime_type)"
+  [[ "$(echo "$MENU" | awk '{print $1}')" = "fzf" ]] && MENU="$FZF --header=Anime(Title:$title/Total_Episode:$total_ep/$anime_type) --header-first --no-preview"
+  
+  if [[ $NP != "yes" ]] && [[ $PP != "yes" ]]; then
+  select_episode=$( echo $ep_list | sed 's/[[:space:]]/\n/g' | cat -n | sed 's/^[ \t]*//g' | sed 's/[[:space:]]/ /g' | $MENU | awk '{print $1}')
+  fi
+  
+  [[ -z $select_episode ]] && echo "No Episode Selected!" && exit
+   
+ [[ ! -z $select_episode ]] && [[ $select_episode > 1 ]] && EP=$select_episode && get_anime_data_raw=$(curl -s "https://aniswim-api.herokuapp.com/anime?id=$select_animeId&ep=$EP")
+
+    video_link_default=$(echo $get_anime_data_raw | jq .'video_links | .main_link' )
+
+    [[ -z $video_link_default ]] && echo "Video Link Unavilable. Try Again!" && exit
+  
+    video_link_=$(echo $get_anime_data_raw | jq '.video_links | .available_links | .[] | .url + " " + .quality ' | sed 's/[[:space:]]/"LABEL="/g' | sed 's/LABEL.*//g' ) 
+    video_labels=$(echo $get_anime_data_raw | jq '.video_links | .available_links | .[] | .url + " " + .quality ' | sed 's/[[:space:]]/"LABEL="/g' |sed 's/.*LABEL=//g' | cat -n  | sed 's/^[ \t]*//g' | sed 's/[[:space:]]/ /g' | sed 's/"//g' ) 
+
+ask_quality=$(echo -ne "$video_labels\n0 Default" | $MENU )
+select_quality=$(echo $ask_quality | awk '{print $1}')  
+selected_quality=$(echo $ask_quality | awk '{print $2}')  
+
+[[ "$(echo "$MENU" | awk '{print $1}')" = "rofi" ]] && MENU="$ROFI -p Anime(Title:$title/Episode:$EP/Selected_Quality:$selected_quality)"
+[[ "$(echo "$MENU" | awk '{print $1}')" = "fzf" ]] && MENU="$FZF --header=Anime(Title:$title/Episode:$EP/Selected_Quality:$selected_quality) --header-first --no-preview"
+
+
+[[ -z $select_quality ]] && exit
+
+LINK=$(echo $video_link_ | sed 's/[[:space:]]/\n/g' | head -n$select_quality | tail -n1)
+
+case $select_quality in 
+  0)
+    LINK=$(echo $video_link_default)
+    ;;
+esac
+
+action=$(echo -ne "Play\nDownload" | $MENU | awk '{print $1}')
+ 
+[[ -z $action ]] && exit
+
+referer=$(echo $get_anime_data_raw | jq '.iframeLink' | sed 's/"//g')
+
+dir_check(){
+[[ ! -d "$DOWNLAOD_DIR/$title" ]] && mkdir -p $DOWNLAOD_DIR/$(echo $title | sed 's/[[:space:]]/-/g')
+echo "Downloading $title, Episode $EP in $DOWNLAOD_DIR/$(echo $title | sed 's/[[:space:]]/-/g')"
+}
+
+stream_this (){
+  mpv $(echo $1 | sed 's/"//g') --referrer="$2"  --really-quiet --force-media-title="$title Episode-$EP" & disown
+}
+
+download_this(){
+    ffmpeg -loglevel error -stats -referer "$2" -i "$(echo $1 | sed 's/"//g')" -c copy "$DOWNLAOD_DIR/$(echo $title | sed 's/[[:space:]]/-/g')/$(echo $title | sed 's/[[:space:]]/-/g')-episode-$EP.mp4" 
+}
+
+log_this (){
+  echo "$select_animeId-episode-$EP" > $LOGFILE
+}
+
+	if [[ $action = "Play" ]];
+	then
+	  stream_this "$LINK" "$referer"
+	  log_this
+	else
+	dir_check
+	download_this "$LINK" "$referer"
+	fi
+
+    opt_text="Next Episode $(($EP+1))\nPrevious Episode $(($EP-1))\nSearch Anime\nExit"
+
+
+    [[ $EP = $total_ep ]] && opt_text="Previous Episode $(($EP-1))\nSearch Anime\nExit" 
+    [[ $select_episode = 1 ]] && opt_text="Next Episode $(($EP+1))\nSearch Anime\nExit"
+
+
+    opts="$(echo -ne "$opt_text" | $MENU | awk '{print $1}')"
+	[[ -z "$opts" ]] && exit
+	[[ "$opts" = "Exit" ]] && exit
+	[[ "$opts" = "Next" ]] && NP="yes" && PP="" && scrape
+	[[ "$opts" = "Previous" ]] && PP="yes" && NP="" && scrape
+	[[ "$opts" = "Search" ]] && [[ "$(echo "$MENU" | awk '{print $1}')" = "rofi" ]] && \
+	  query="$(rofi -show -drun -theme dmenu -p "Search ")" && scrape
+	[[ "$opts" = "Search" ]] && [[ "$(echo "$MENU" | awk '{print $1}')" = "fzf" ]] && \
+	  read -r -p "Search " query && scrape
+
+}
+
+[[ -z "$@" ]] && read -r -p "Last Seen: $LW
+Search >  " query && \
+  MENU="$FZF" scrape && exit || \
+  [[ "$1" = "--rofi" ]] && \
+  query="$(rofi -dmenu -theme dmenu -p "Last Seen : $LW | Search ")" && \
+  MENU="$ROFI" && \
+  scrape && exit || \
+  query="$@" && \
+  MENU="$FZF" && \
+  scrape && exit
+

@@ -1,4 +1,7 @@
 #!/usr/bin/env sh
+
+# Script to Insert and copy the unicode char
+
 rofm="rofi -dmenu -config ~/.config/rofi/grid.rasi"
 dmem="dmenu"
 font="ComicCodeLigatures Bold 20"
@@ -6,10 +9,13 @@ bem="bemenu -c --fn $font"
 wofm="wofi -dib -W 90% -H 85% -w 3"
 bmem="bemenu -W 0.9"
 menu=$bmem
+
+
 # The famous "get a menu of emojis to copy" script.
 
-# Get user selection via rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' from emoji file.
-chosen=$(bat ~/.local/share/dict/unicode/emoji ~/.local/share/dict/unicode/all-icons | $menu -i -p ' choose emoji  ' | awk '{print $1}' )
+# You can the icons for this script in icons/ directory here
+
+chosen=$(bat ~/.DLIP/BIN/icons/emoji ~/.DLIP/BIN/icons/all-icons | $menu -i -p ' choose emoji  ' | awk '{print $1}' )
 
 # Exit if none chosen.
 [ -z "$chosen" ] && exit
@@ -19,7 +25,13 @@ chosen=$(bat ~/.local/share/dict/unicode/emoji ~/.local/share/dict/unicode/all-i
 if [ -n "$1" ]; then
 	wtype "$chosen"
 else
+
+# replace with xclip or xsel or x11
         printf "$chosen" | wl-copy
+
+# Replace with xdotool for X11 
 	wtype "$chosen"    
-	notify-send "'$chosen' copied to clipboard." &
+
+# Tbh not required
+	# notify-send "'$chosen' copied to clipboard." &
 fi

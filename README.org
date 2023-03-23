@@ -1,2 +1,38 @@
 
-Cool scripts on the way...
+*** Shell Scripts
+
+These are some cool scripts which basically is a menu of options, which are handy for window manager users.
+
+Its is fast and also snappy.
+
+*Most of the scripts are based on Wayland (as it is the Future of Linux)*
+Although you can adjust it for x11 too.
+
+Old-scripts directory is x11 based.
+
+*** Gist of scripts
+
+|------------+-----------------------------------------------------------------------------------------------------|
+| Alias      | Function                                                                                            |
+|------------+-----------------------------------------------------------------------------------------------------|
+| [[file:d-stuff][d-stuff]]    | Very handy to handle any given links in any way. I use it everywhere.                               |
+| [[file:d-ext][d-ext]]      | Extract any given compressed file                                                                   |
+| [[file:d-unicodes][d-unicodes]] | Shows (1849 emoji + 2865 icons) to choose and paste                                                 |
+| [[file:d-bookmark][d-bookmark]] | Adds selected link into org mode file as bookmarks. (You can simplify it to use for plain txt file) |
+| [[file:d-sshot][d-sshot]]    | Screenshot for wayland (there is better one by hyprland community)                                  |
+| [[file:d-power][d-power]]    | Powermenu                                                                                           |
+| [[file:d-dict][d-dict]]     | Notifies the dictionary from sdcv                                                                   |
+| [[file:d-ppt][d-ppt]]      | Convert ppt files to pdf using libreoffice (dependency)                                             |
+| [[file:d-pirt][d-pirt]]     | Time to pirate (hopefully you understand by looking)                                                |
+| [[file:d-walls][d-walls]]    | Sets random wallpaper (wayland)                                                                     |
+| [[file:d-emwhere][d-emwhere]]  | Throws emacs frame to write text and prints in on text input region                                 |
+| [[file:d-calc][d-calc]]     | Simple calculator in menu                                                                           |
+| [[file:d-record][d-record]]   | Screen recorder                                                                                     |
+| [[file:d-wifi][d-wifi]]     | wifi menu using nmcli                                                                               |
+| [[file:d-quote][d-quote]]    | Random quotes from internet                                                                         |
+| [[file:d-urls][d-urls]]     | Menu to select bookmarked links, easy and available everywhere                                      |
+| [[file:d-remind][d-remind]]   | Reminder via ~at~ command                                                                             |
+| [[file:d-apps][d-apps]]     | App system for these scripts                                                                        |
+| [[file:d-menu][d-menu]]     | Universal menu of scripts                                                                           |
+|------------+-----------------------------------------------------------------------------------------------------|
+

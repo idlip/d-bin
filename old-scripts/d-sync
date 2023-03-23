@@ -1,0 +1,20 @@
+#!/usr/bin/env sh
+# paths of database file locations in android and desktop
+anpath="storage/shared/sync/"
+deskpath="/home/i/sync/" 
+
+# getting last modified date
+#desktop=$(stat -c%Z $deskpath)
+#android=$(ssh -p 8022 u0_a231@192.168.0.101 -t stat -c%Z $anpath | sed 's/\r//')
+#android=$(ssh realme -t stat -c%Z $anpath | sed 's/\r//')
+# syncing the database between both devices by calculating
+# in which device the password database was last modified.
+# not syncing anything if there was no change.
+#if [ $android -lt $desktop ]; then
+#  notify-send "transferring from desktop to android"
+  rsync -vrutP $deskpath realme:$anpath &&   rsync -vrutP realme:$anpath $deskpath && notify-send "Synced files" 
+#elif [ $desktop -lt $android ]; then
+#  notify-send "transferring from android to desktop"
+#elif [ $desktop -eq $android ]; then
+#  notify-send "nothing was modified, not syncing"
+#fi
