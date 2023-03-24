@@ -10,6 +10,12 @@ Although you can adjust it for x11 too.
 
 Old-scripts directory is x11 based.
 
+#+begin_quote
+ *Why are all the scripts prefixed 'd-'*
+  ==>  It is easier to identify and call them, also An OnePiece fan will know a reason.
+#+end_quote
+
+
 *** Gist of scripts
 
 |------------+-----------------------------------------------------------------------------------------------------|
