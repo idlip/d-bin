@@ -1,57 +1,64 @@
 #!/usr/bin/env sh
-#from emacs
-  rofm="rofi -dmenu -i -config ~/.config/rofi/app.rasi"
-  dmem="dmenu -i"
-  wofm="wofi -dib -l center -H 40% -W 45%"
-  bmem="bemenu"
-  menu=$bmem
-  # For ROFI
-  #chosen=$(printf  "🥅 Wifimenu\n⭕ PowerMenu\n🥡 Log Out\n🔓 Lock\n👀 Brightness\n🔉 Volume\n💡 Screenshot" | rofi -sort | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' -p '⁉️ Control Panel ' -theme-str '@import "menu.rasi" window {width: 30%;height: 50%;}')
 
-  # For sort | dmenu
-  chosen=$(printf  "  Wifimenu\n  PowerMenu\n  Log Out\n  Lock\n  Brightness\n  Volume\n  Screenshot" | sort | $menu -p '  Control Panel' )
+# Powermenu 
 
-  case "$chosen" in
-	  "  PowerMenu")
-		      power="$(printf "  ShutDown\n  Restart\n  Suspend" | sort | $menu -p '   System Bed Time zzz..' )"
-			  case "$power" in
-			      "  ShutDown") poweroff ;;
-			      "  Restart") reboot ;;
-			      "  Suspend") xset dpms force off ;;
-			  esac
-			  ;;  
+rofm="rofi -dmenu -i -config ~/.config/rofi/app.rasi"
+dmem="dmenu -i"
+wofm="wofi -dib -l center -H 40% -W 45%"
+bmem="bemenu"
+menu=$bmem
 
-	  "  Wifimenu") d-wifi ;;
-	  "  Lock") xset dpms force off ;;
-	  "  Log Out") 
-			#lockit="$(printf "  Log Out i3\n  Log Out BSP\n  Log Out Sway" | rofi -sort | dmenu -theme-str 'window {width: 30%;height: 50%;}' -p '   Locker' )"  
-			lockit="$(printf "  Log Out i3\n  Log Out BSP\n  Log Out Sway" | sort | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' -l 4 -p '   Locker' )"  
-			      case "$lockit" in
-				  "  Log Out i3") i3-msg exit ;;
-				  "  Log Out BSP") bspc quit ;;
-				  "  Log Out Sway") swaymsg exit ;;
-			      esac
-			      ;;
+a1="   Wifi Menu"
+a2="  Power Menu"
+a3="  Screen Shot"
+a4="  Lock/Suspend"
+a5="  Brightness"
+a6="   Change Volume"
 
-	  "  Brightness") 
-			  #bright="$(printf "🔆 Brightness Up\n🌉 Brightness Down" | rofi -sort | dmenu -theme-str 'window {width: 30%;height: 50%;}' -p '🕯️ Alter Brightness' )"
-			  bright="$(printf "  Brightness Up\n  Brightness Down" | sort | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' -l 3 -p '   Alter Brightness' )"
+b1="  Power Off"
+b2="  Reboot"
+b3="  Screen Off"
 
-			      case "$bright" in
-				  "  Brightness Up") brightnessctl set +2% ;;
-				  "  Brightness Down") brightnessctl set 2%- ;;
-			      esac
-			      ;;
+c1="  Increase Brightness"
+c2="  Decrease Brightness"
 
-	  "  Screenshot") d-sshot ;;
-	  "  Volume")
-		  #vol="$(printf "📢 Volume Up\n🔈 Volume Down\n🔇 Mute" | rofi -sort | dmenu -theme-str 'window {width: 30%;height: 50%;}' -p '🔊 Change Audio Volume' )" 
-		  vol="$(printf "  Volume Up\n  Volume Down\n  Mute" | sort | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' -l 4 -p '  Change Audio Volume' )" 
-		  case "$vol" in
-		      "  Volume Up") pactl set-sink-volume @DEFAULT_SINK@ +10% ;;
-		      "  Volume Down") pactl set-sink-volume @DEFAULT_SINK@ -10% ;;
-		      "  Mute")  pactl set-sink-mute @DEFAULT_SINK@ toggle  ;;
-		  esac
-		  ;;      
-	  *) exit 1 ;;
-  esac
+d1="  Increase Volume"
+d2="  Decrease Volume"
+d3="  Mute"
+
+chosen=$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6" | sort | $menu -p '  Control Panel' )
+
+case "$chosen" in
+    "$a2")
+	power="$(printf "$b1\n$b2\n$b3" | sort | $menu -p '   System Bed Time zzz..' )"
+	case "$power" in
+	    "$b1") poweroff ;;
+	    "$b2") reboot ;;
+	    "$b3") hyprctl dispatch dpms  off ;;
+	esac
+	;;  
+
+    "$a1") d-wifi ;;
+    "$a4") xset dpms force off ;;
+    "$a5") 
+
+	bright="$(printf "$c1\n$c2" | sort | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' -l 3 -p '   Alter Brightness' )"
+
+	case "$bright" in
+	    "$c1") brightnessctl set +2% ;;
+	    "$c2") brightnessctl set 2%- ;;
+	esac
+	;;
+
+    "$a3") d-sshot ;;
+    "$a6")
+
+	vol="$(printf "$d1\n$d2\n$d3" | sort | $menu -p 'adjust volume')"
+	case "$vol" in
+	    "$d1") pactl set-sink-volume @DEFAULT_SINK@ +10% ;;
+	    "$d2") pactl set-sink-volume @DEFAULT_SINK@ -10% ;;
+	    "$d3")  pactl set-sink-mute @DEFAULT_SINK@ toggle  ;;
+	esac
+	;;      
+    *) exit 1 ;;
+esac
