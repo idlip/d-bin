@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 
-# https://github.com/onespaceman/menu-calc
-# Calculator for use with rofi/$menu(2)
-# Copying to the clipboard requires xclip
+# NOTE : Need package 'bc' to be installed
 
 rofm="rofi -dmenu -i"
 dmem="dmenu -i"
-menu=$dmem
+bmem="bemenu"
+menu=$bmem
 usage() {
     echo "    $(tput bold)menu calc$(tput sgr0)
     A calculator for use with Rofi or $menu(2)
