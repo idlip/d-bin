@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
-rm /tmp/BrowseInput.md >/dev/null &
+rm /tmp/BrowseInput.md >/dev/null &&
+touch /tmp/BrowseInput.md &&
 emacsclient -c /tmp/BrowseInput.md &&
-wtype "$(bat -r 0:100 /tmp/BrowseInput.md)" >/dev/null 
-# rm /tmp/BrowseInput >/dev/null 
+wtype -s 1 "$(bat -r 0:100 /tmp/BrowseInput.md)" >/dev/null 
+
