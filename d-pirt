@@ -4,7 +4,7 @@
 rmem="rofi -dmenu -i -config ~/.config/rofi/list.rasi"
 dmem="dmenu -i"
 wofm="wofi -d -ib -W 80% -H 80%"
-bmem="bemenu -W 0.9"
+bmem="bemenu -W 0.9 -l 22"
 mymem=$bmem
 mkdir -p $HOME/.cache/notflix
 
@@ -27,7 +27,7 @@ scrape()
 S_QRY="$(echo "$QUER_Y" | sed 's/[[:space:]]/_/g')"
 
 #menu="fzf --no-preview --cycle --layout=reverse --header-first --header=Torrent-Results:($S_QRY/Page-$PAGE)"
-menu="$mymem -i -l 20 -p $PAGE*"
+menu="$mymem -i -p $PAGE*"
 
 [[ -z "$QUER_Y" ]] && exit
 
@@ -89,7 +89,7 @@ awk '{print "[S:"$1 ", L:"$2"]" }' $cachedir/seedleech.bw > $cachedir/tmp && mv 
 echo "Next Page" >> $cachedir/titles.bw
 
 # Getting the line number
-LINEO=$(paste -d\   $cachedir/size.bw $cachedir/seedleech.bw $cachedir/titles.bw | sed 's/^ //g' | $mymem -l 20 -p '')
+LINEO=$(paste -d\   $cachedir/size.bw $cachedir/seedleech.bw $cachedir/titles.bw | sed 's/^ //g' | $mymem  -p '')
 
 LINE=$( echo "$LINEO" | cut -d\- -f1 | awk '{$1=$1; print}')
 
