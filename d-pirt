@@ -109,7 +109,7 @@ fullURL="${baseurl}${url}/"
 
 # Requesting page for magnet link
 curl -s $fullURL > $cachedir/tmp.html
-magnet=$(grep -Po "magnet:\?xt=urn:btih:[a-zA-Z0-9]*" $cachedir/tmp.html | head -n 1) 
+magnet="$(grep -Po "magnet:\?xt=urn:btih:[a-zA-Z0-9]*" $cachedir/tmp.html | head -n 1)"
 
 [[ -z "$magnet" ]] && echo "Can't Get the Link!" && exit
 
@@ -127,8 +127,8 @@ case $PROMPTO in
     exit
     ;;
   Aria) 
-    wtype "$magnet"
-    exit
+    curl http://localhost:6800/jsonrpc -d '{"jsonrcp":"2.0","id":"someID","method":"aria2.addUri","params":["token:ariatest",["'${magnet}'"]]}'
+    notify-send "Added download"
     ;;
   CopyUrl)
     echo "$magnet" | wl-copy 
