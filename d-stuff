@@ -44,16 +44,17 @@ a8="🎤  Podcast Later"
 a9="🖼️  Image Pic"
 a10="▶️   Stream Play Watch"
 a11="🌇  Wallpaper"
-a12="🚄  Tor Add"
+a12="🚄  Deluge"
 a13="   W3m"
 a14="more.."
 a15="📑  Bookmark"
 a16="🦁  Brave Air"
 a18="🐺  Libre Ever Wolf"
 a19="   Chromium Boost"
+a20="🚅  Aria Tor"
 shortfeed="$(echo ${feed} | cut -d '/' -f3,4,5 | head -c 25)"
 
-case "$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10\n$a11\n$a12\n$a13\n$a14\n$a15\n$a16\n$a18\n$a19" | sort | $menu -p "$shortfeed")" in
+case "$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10\n$a11\n$a12\n$a13\n$a14\n$a15\n$a16\n$a18\n$a19\n$a20" | sort | $menu -p "$shortfeed")" in
 
 
 
@@ -74,5 +75,6 @@ case "$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10\n$a11\n$a12\n$
 	"$a15") d-bookmark  ;;
 	"$a16") setsid brave "$feed" ;;
 	"$a18") setsid librewolf "$feed" ;;
-	"$a19") setsid chromium "$feed" ;;	
+	"$a19") setsid chromium "$feed" ;;
+	"$a20") curl http://localhost:6800/jsonrpc -d '{"jsonrcp":"2.0","id":"someID","method":"aria2.addUri","params":["token:ariatest",["'${feed}'"]]}' ;;
 esac
