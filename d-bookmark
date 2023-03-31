@@ -4,15 +4,27 @@ dmem="dmenu -i"
 wofm="wofi -dib -W 45% -H 50%"
 bmem="bemenu"
 menu=$bmem
+
 bookmark="$(wl-paste -p || echo | $menu -p  'site to bookmark ')"
+
 #file="$HOME/.local/share/dict/bookmarks"
 file="$HOME/sync/org/bookmarks.org"
+
+# Just a variable to show as prompt while adding name (confirmation)
 site="$(echo "$bookmark" | sed 's/ //g')"
+
+# Eg names so you can quickly name
 name="$(printf "reddit\ntwitter\ngit-linux\ngit-emacs\ngit-droid\nTODO" | $menu -p ${site})"
-section="$(printf "social\naniman\ngit\nexam\nreading\nlinux\npiracy\nwriting\nmedia\nfoss\ngoogle\nemacs\nnixos\nandroid" | $menu -p 'Where to add  '| sed 's/ //g')"
+
+# Add your org mode file path here (headings are in level 2 in my file)
+getheadings="$(cat sync/org/bookmarks.org | rg "^\*\* "  | awk '{print $2 }')"
+
+# Prints out the heading text, so `sed` can append it to that heading level
+section="$(printf "$getheadings" | $menu -p 'Where to add  '| sed 's/ //g')"
 
 mark-print ()
 {
+# Sed appends the link in a clean way
     sed -i "/$section$/a *** [[$site][$name]]" "$file" && notify-send "Bookmark added!" "$site is now saved under $section"
     
 }
@@ -20,9 +32,9 @@ mark-print ()
 if grep -qF "$site" "$file"; then
     notify-send "Oops.. $site" "Already in bookmark!"
 
-elif [[ "$section" != '' ]]; then
+elif [[ -n "${section}" ]]; then
     mark-print
-else
-    notify-send "Select a section add mark"
 
+else
+    notify-send "Select a section to add mark"
 fi
