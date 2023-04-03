@@ -4,4 +4,9 @@
 
 # We can select and it insert the link
 
-wtype "$(rg -v '^$' ~/sync/org/bookmarks.org | bemenu -W 0.8  | rg -o '(http|https)://[a-zA-Z0-9./?=_%:-]*')"
+rofm="rofi -dmenu"
+mymem=$rofm
+
+
+
+wtype "$(rg -v '^$' ~/sync/org/bookmarks.org | ${mymem}  | rg -o '(http|https)://[a-zA-Z0-9./?=_%:-]*')"

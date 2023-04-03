@@ -2,13 +2,13 @@
 
 # Script to Insert and copy the unicode char
 
-rofm="rofi -dmenu -config ~/.config/rofi/grid.rasi"
+rofm="rofi -dmenu -config ~/.config/rofi/dmoji.rasi"
 dmem="dmenu"
 font="ComicCodeLigatures Bold 20"
 bem="bemenu -c --fn $font" 
 wofm="wofi -dib -W 90% -H 85% -w 3"
 bmem="bemenu -W 0.9"
-menu=$bmem
+menu=$rofm
 
 
 # The famous "get a menu of emojis to copy" script.
