@@ -2,11 +2,11 @@
 
 # Powermenu 
 
-rofm="rofi -dmenu -i -config ~/.config/rofi/app.rasi"
+rofm="rofi -dmenu -i -config ~/.config/rofi/smenu.rasi "
 dmem="dmenu -i"
 wofm="wofi -dib -l center -H 40% -W 45%"
 bmem="bemenu"
-menu=$bmem
+menu=$rofm
 
 a1="   Wifi Menu"
 a2="  Power Menu"
