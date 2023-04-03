@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
-rofm="rofi -dmenu -config ~/.config/rofi/app.rasi"
+rofm="rofi -dmenu -config ~/.config/rofi/smenu.rasi"
 dmem="dmenu"
 wofm="wofi -d -bi"
 bmem="bemenu"
-menu=$bmem
+menu=$rofm
 
 a1=" Select Area in Mouse"
 a2=" Copy Area of Screen"
