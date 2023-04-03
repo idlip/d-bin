@@ -2,10 +2,10 @@
 
 # One script to index them all. 
 
-rmem="rofi -dmenu -i -config ~/.config/rofi/menu.rasi"
+rofm="rofi -dmenu -i -config ~/.config/rofi/smenu.rasi "
 dmem="dmenu -i"
 bmem="bemenu -l 20"
-menu=$bmem
+menu=$rofm
 
 
 
