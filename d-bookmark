@@ -14,7 +14,7 @@ file="$HOME/sync/org/bookmarks.org"
 site="$(echo "$bookmark" | sed 's/ //g')"
 
 # Eg names so you can quickly name
-name="$(printf "reddit\ntwitter\ngit-linux\ngit-emacs\ngit-droid\nTODO" | $menu -p ${site})"
+name="$(printf "reddit\ntwitter\ngit-linux\ngit-emacs\ngit-droid\nTODO" | $menu -p 'Give name/alias' -mesg "${site}")"
 
 # Add your org mode file path here (headings are in level 2 in my file)
 getheadings="$(cat sync/org/bookmarks.org | rg "^\*\* "  | awk '{print $2 }')"
