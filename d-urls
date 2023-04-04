@@ -4,9 +4,5 @@
 
 # We can select and it insert the link
 
-rofm="rofi -dmenu"
-mymem=$rofm
 
-
-
-wtype "$(rg -v '^$' ~/sync/org/bookmarks.org | ${mymem}  | rg -o '(http|https)://[a-zA-Z0-9./?=_%:-]*')"
+wtype "$(rg -v '^$' ~/sync/org/bookmarks.org | rofi -dmenu -config ~/.config/rofi/list.rasi  | rg -o '(http|https)://[a-zA-Z0-9./?=_%:-]*')"
