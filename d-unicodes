@@ -15,7 +15,7 @@ menu=$rofm
 
 # You can the icons for this script in icons/ directory here
 
-chosen=$(bat ~/.DLIP/BIN/icons/emoji ~/.DLIP/BIN/icons/all-icons | $menu -i -p ' choose emoji  ' | awk '{print $1}' )
+chosen=$(bat ~/.DLIP/BIN/icons/* | $menu -i -p ' choose emoji  ' | awk '{print $1}' )
 
 # Exit if none chosen.
 [ -z "$chosen" ] && exit
