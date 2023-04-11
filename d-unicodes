@@ -8,14 +8,15 @@ font="ComicCodeLigatures Bold 20"
 bem="bemenu -c --fn $font" 
 wofm="wofi -dib -W 90% -H 85% -w 3"
 bmem="bemenu -W 0.9"
-menu=$rofm
+
+source d-var.conf 
 
 
 # The famous "get a menu of emojis to copy" script.
 
 # You can the icons for this script in icons/ directory here
 
-chosen=$(bat ~/.DLIP/BIN/treasure/unicodes/* | $menu -i -p ' choose emoji  ' | awk '{print $1}' )
+chosen=$(bat ~/.DLIP/BIN/treasure/unicodes/* | $UNI_MENU -i -p ' choose emoji  ' | awk '{print $1}' )
 
 # Exit if none chosen.
 [ -z "$chosen" ] && exit
