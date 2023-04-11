@@ -3,7 +3,8 @@ rofm="rofi -dmenu -config ~/.config/rofi/smenu.rasi"
 dmem="dmenu"
 wofm="wofi -d -bi"
 bmem="bemenu"
-menu=$rofm
+
+source d-var.conf
 
 a1=" Select Area in Mouse"
 a2=" Copy Area of Screen"
@@ -13,13 +14,13 @@ a4=" Copy Whole Display"
 
 gimme() {
 output=$(date +'%d-%a  %H:%M:%S')
-picname=$(printf "printout\ndocs\n" | ${menu} -l 3 -i -p ' Tag-Name ' || echo $output )
+picname=$(printf "printout\ndocs\n" | ${D_MENU} -l 3 -i -p ' Tag-Name ' || echo $output )
 
 cp /tmp/thescr.png ~/pics/sshots/"$picname.png"
 }
 
 
-sshot=$(printf "$a1\n$a2\n$a3\n$a4" | sort | $menu -p 'Snap ScreenShot of ')
+sshot=$(printf "$a1\n$a2\n$a3\n$a4" | sort | $D_MENU -p 'Snap ScreenShot of ')
 
 case "$sshot" in
     "$a1") sleep 0.5 && grim -g "$(slurp)" "/tmp/thescr.png" && gimme ;;
