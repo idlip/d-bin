@@ -4,5 +4,6 @@
 
 # We can select and it insert the link
 
+source d-var.conf 
 
-wtype "$(rg -v '^$' ~/sync/org/bookmarks.org | rofi -dmenu -config ~/.config/rofi/list.rasi  | rg -o '(http|https)://[a-zA-Z0-9./?=_%:-]*')"
+wtype "$(rg -v '^$' ~/sync/org/bookmarks.org | rofi -dmenu -i -config ~/.config/rofi/list.rasi | rg -o '(http|https)://[a-zA-Z0-9./?=_%:-]*')"
