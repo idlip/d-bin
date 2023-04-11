@@ -5,14 +5,9 @@
 rofm="rofi -dmenu -i -config ~/.config/rofi/smenu.rasi "
 dmem="dmenu -i"
 bmem="bemenu -l 20"
-menu=$rofm
 
+source d-var.conf
 
-
-# edit it your cheatsheet and add below
-getkeys() {
-         bat ~/.config/dk/sxhkdrc | awk '/^[a-z]/ && last {print $0,"\t",last} {last=""} /^#/{last=$0}' | column -t -s $'\t' | dmenu -i -l 20 -p "Key Bindings:" 
-     }
 
 a1=" Powermenu"
 a2=" Change Wallpaper"
@@ -29,7 +24,7 @@ a12="🗒 TODO"
 a13=" Music"
 
 
-chosen=$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10\n$a11\n$a12\n$a13" | $menu)
+chosen=$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10\n$a11\n$a12\n$a13" | $D_MENU)
 
 case "$chosen" in
         "$a1") d-power ;;
