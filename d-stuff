@@ -8,10 +8,10 @@ rofm="rofi -dmenu -i"
 dmem="dmenu -i"
 wofm="wofi -dib -I -W 60% -H 45% -w 2"
 bmem="bemenu -W 0.75"
-menu=$rofm
 
+source d-var.conf 
 
-feed="${1:-$(printf "%s" | $menu -i -p 'Paste URL or file path')}"
+feed="${1:-$(printf "%s" | $D_MENU -i -p 'Paste URL or file path')}"
 
 
 echo "$feed" | wl-copy -n
@@ -54,7 +54,7 @@ a19="   Chromium Boost"
 a20="🚅  Aria Tor"
 shortfeed="$(echo ${feed} | cut -d '/' -f3,4,5,6 )"
 
-case "$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10\n$a11\n$a12\n$a13\n$a14\n$a15\n$a16\n$a18\n$a19\n$a20" | sort | $menu -mesg "$shortfeed")" in
+case "$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10\n$a11\n$a12\n$a13\n$a14\n$a15\n$a16\n$a18\n$a19\n$a20" | sort | $D_MENU -mesg "$shortfeed")" in
 
 
 
