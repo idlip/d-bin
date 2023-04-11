@@ -3,9 +3,10 @@ rofm="rofi -dmenu -i -config ~/.config/rofi/smenu.rasi"
 dmem="dmenu -i"
 wofm="wofi -dib -W 45% -H 50%"
 bmem="bemenu"
-menu=$rofm
 
-bookmark="$(wl-paste -p || echo | $menu -p  'site to bookmark ')"
+source d-var.conf
+
+bookmark="$(wl-paste -p || echo | $D_MENU -p  'site to bookmark ')"
 
 #file="$HOME/.local/share/dict/bookmarks"
 file="$HOME/sync/org/bookmarks.org"
@@ -14,13 +15,13 @@ file="$HOME/sync/org/bookmarks.org"
 site="$(echo "$bookmark" | sed 's/ //g')"
 
 # Eg names so you can quickly name
-name="$(printf "reddit\ntwitter\ngit-linux\ngit-emacs\ngit-droid\nTODO" | $menu -p 'Give name/alias' -mesg "${site}")"
+name="$(printf "reddit\ntwitter\ngit-linux\ngit-emacs\ngit-droid\nTODO" | $D_MENU -p 'Give name/alias' -mesg "${site}")"
 
 # Add your org mode file path here (headings are in level 2 in my file)
 getheadings="$(cat sync/org/bookmarks.org | rg "^\*\* "  | awk '{print $2 }')"
 
 # Prints out the heading text, so `sed` can append it to that heading level
-section="$(printf "$getheadings" | $menu -p 'Where to add  '| sed 's/ //g')"
+section="$(printf "$getheadings" | $D_MENU -p 'Where to add  '| sed 's/ //g')"
 
 mark-print ()
 {
