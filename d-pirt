@@ -29,7 +29,7 @@ scrape()
 S_QRY="$(echo "$QUER_Y" | sed 's/[[:space:]]/_/g')"
 
 #menu="fzf --no-preview --cycle --layout=reverse --header-first --header=Torrent-Results:($S_QRY/Page-$PAGE)"
-menu="$D_MENU -i -p $PAGE*"
+menu="$L_MENU -i -p $PAGE*"
 
 [[ -z "$QUER_Y" ]] && exit
 
@@ -43,7 +43,7 @@ b5="trending"
 b6="documentary"
 b7="music"
 b8="free"
-chose=$(printf "$b1\n$b2\n$b3\n$b4\n$b5\n$b6\n$b7\n$b8" | $D_MENU -l 18 -p 'search on?')
+chose=$(printf "$b1\n$b2\n$b3\n$b4\n$b5\n$b6\n$b7\n$b8" | $L_MENU -l 18 -p 'search on?')
 case $chose in
   "$b1") curl -s $baseurl/search/$query/$PAGE/ --compressed > $cachedir/tmp.html ;;
   "$b2") curl -s $baseurl/category-search/$query/Movies/1/ --compressed > $cachedir/tmp.html ;;
@@ -91,7 +91,7 @@ awk '{print "[S:"$1 ", L:"$2"]" }' $cachedir/seedleech.bw > $cachedir/tmp && mv 
 echo "Next Page" >> $cachedir/titles.bw
 
 # Getting the line number
-LINEO=$(paste -d\   $cachedir/size.bw $cachedir/seedleech.bw $cachedir/titles.bw | sed 's/^ //g' | $D_MENU  -p '')
+LINEO=$(paste -d\   $cachedir/size.bw $cachedir/seedleech.bw $cachedir/titles.bw | sed 's/^ //g' | $L_MENU  -p '')
 
 LINE=$( echo "$LINEO" | cut -d\- -f1 | awk '{$1=$1; print}')
 
@@ -148,7 +148,7 @@ exit
 
 
 
-seqr="$(echo -e "complete\nhashminer\nmusafir\nPSA\nBONE" | $D_MENU -l 10 -p ' Pirate for >')"
+seqr="$(echo -e "complete\nhashminer\nmusafir\nPSA\nBONE" | $L_MENU -l 10 -p ' Pirate for >')"
 [[ -z "$@" ]] && 
 QUER_Y="$seqr" && scrape 
 
