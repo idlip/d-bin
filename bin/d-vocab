@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+
+wofm="wofi -d -W 80% -H 10%"
+menu="$wofm"
+wordis="$($menu -p 'And the word is...')"
+nameit="$($menu -p 'the meaning is...')"
+file="$HOME/.local/share/dict/myglossary"
+checksum="grep -o $(awk '{ print $3 }' $file) $file "
+
+[ -z "$wordis" ] && echo "$wordis -- $nameit" >> "$file"
