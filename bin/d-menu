@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+# One script to index them all. 
+
+rofm="rofi -dmenu -i -config ~/.config/rofi/smenu.rasi "
+dmem="dmenu -i"
+bmem="bemenu -l 20"
+
+source d-var.conf
+
+
+a1=" Powermenu"
+a2=" Change Wallpaper"
+a3=" Handle Stuffs"
+a4=" Music Menu"
+a5=" Pirate Mode"
+a6=" Insert Emoji/Icons"
+a7=" Dictionary"
+a8=" Set Reminder"
+a9="⏲ Time & Date Now"
+a10=" System Stats"
+a11=" YouTube"
+a12="🗒 TODO"
+a13=" Music"
+
+
+chosen=$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10\n$a11\n$a12\n$a13" | $D_MENU)
+
+case "$chosen" in
+        "$a1") d-power ;;
+        "$a2") d-walls ;;
+        "$a3") d-stuff ;;
+        "$a4") d-mpdplay ;;
+        "$a5") d-pirt ;;	
+        "$a6") d-unicodes ;;
+        "$a7") d-dict ;;
+        "$a8") d-remind ;;
+        "$a9") d-time ;;
+        "$a10") d-stats ;;
+        "$a11") ytfzf -D ;;
+        "$a12") d-todo ;;
+        "$a13") d-mpd ;;
+
+	*) exit 1 ;;
+esac
