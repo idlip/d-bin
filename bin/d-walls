@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+wall_dir=/home/i/pics/dpics/walls
+
+if [ -z "$1" ]; then
+  wall="$(fd . "$wall_dir" -e jpg -e png | shuf -n1)"
+else
+  wall="$1"
+fi
+
+
+rsync "$wall" ~/.local/share/bg.jpg
+#wal -c
+#wal -n -i ~/.local/share/bg.jpg
+#wal -R
+pkill swaybg
+swaybg -i ~/.local/share/bg.jpg &
