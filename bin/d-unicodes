@@ -1,0 +1,38 @@
+#!/usr/bin/env sh
+
+# Script to Insert and copy the unicode char
+
+rofm="rofi -dmenu -config ~/.config/rofi/dmoji.rasi"
+dmem="dmenu"
+font="ComicCodeLigatures Bold 20"
+bem="bemenu -c --fn $font" 
+wofm="wofi -dib -W 90% -H 85% -w 3"
+bmem="bemenu -W 0.9"
+
+source d-var.conf 
+
+
+# The famous "get a menu of emojis to copy" script.
+
+# You can the icons for this script in icons/ directory here
+
+chosen=$(bat ~/d-git/d-bin/treasure/unicodes/* | $UNI_MENU -i -p ' choose emoji  ' | awk '{print $1}' )
+
+# Exit if none chosen.
+[ -z "$chosen" ] && exit
+
+# If you run this command with an argument, it will automatically insert the
+# character. Otherwise, show a message that the emoji has been copied.
+if [ -n "$1" ]; then
+	wtype "$chosen"
+else
+
+# replace with xclip or xsel or x11
+        printf "$chosen" | wl-copy
+
+# Replace with xdotool for X11 
+	wtype "$chosen"    
+
+# Tbh not required
+	# notify-send "'$chosen' copied to clipboard." &
+fi
