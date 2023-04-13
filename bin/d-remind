@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+rofm="rofi -dmenu"
+dmem="dmenu"
+bmem="bemenu -W 90%"
+
+source d-var.conf
+
+a1="now + 10 minutes"
+a2="now + 15 minutes"
+a3="now + 25 minutes"
+a4="now + 2 hour"
+a5="19:45 today"
+a6="16:30 tomorrow"
+a6="4pm + 1 days"
+a7="10am Jul 31"
+a8=""
+
+time=$(printf "$1\n$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7" | $L_MENU -p '   Time - Date ? 
+Like Eg -- hh:mm Jul 10')
+
+text=$(echo $2 | $L_MENU -p '   Remind of ?')
+
+echo "notify-send -c reminder ' 🔔  Reminder 💡' '$text'" | at "$time"
