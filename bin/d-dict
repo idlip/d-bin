@@ -1,0 +1,87 @@
+#!/usr/bin/env sh
+#word=$(echo "$(cat ~/.local/share/dict/vocab)\n$@"| rofi -rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' -i -theme-str 'window {width: 50%;height: 60%;}' -p '📑 Meaning for ')
+
+# some cool dep : 
+# enchant --- spell check
+# espeak-ng -- text-to-speech
+
+rofm="rofi -dmenu -config ~/.config/rofi/grid.rasi"
+dmem="dmenu"
+wofm="wofi -dib -W 80% -H 80% -w 3"
+menu=$wofm
+hist="/home/i/.local/share/dict/hist"
+
+
+word=$(echo "$(bat ~/.local/share/dict/hist ~/.local/share/dict/vocab | uniq)"| $menu -p '  Meaning for')
+# echo "$word" >> /home/i/.local/share/dict/hist
+# printf '\n%s\n' "$word" >> /home/i/.local/share/dict/hist
+
+online () {
+res=$(curl -s "https://api.dictionaryapi.dev/api/v2/entries/en_US/$word")
+regex=$'"definition":"\K(.*?)(?=")'
+definitions=$(echo $res | grep -Po "$regex")
+separatedDefinition=$(sed ':a;N;$!ba;s/\n/\n\n/g' <<< "$definitions")
+notify-send -t 15000 "$word" "$separatedDefinition"
+}
+
+offlinewn () {
+output=$( sdcv -n0u wn $word )
+notify-send -t 15000 "$word" "$output"
+sdcv -n0u wn $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' 
+}
+offlineco () {
+output=$( sdcv -n0u collins $word )
+notify-send -t 15000 "$word" "$output"
+sdcv -n0u collins $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' 
+}
+offlinedd () {
+output=$( sdcv -n0u dictd $word )
+notify-send -t 15000 "$word" "$output"
+sdcv -n0u dictd $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' 
+}
+
+offlinejp () {
+output=$( sdcv -n0u enjp $word )
+notify-send -t 15000 "$word" "$output"
+sdcv -n0u enjp $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' 
+}
+
+offlinesl () {
+output=$( sdcv -n0u Collin $word )
+notify-send -t 15000 "$word" "$output"
+sdcv -n0u Collin $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' 
+}
+offlinefr () {
+output=$( sdcv -n0u enfr $word )
+notify-send -t 15000 "$word" "$output"
+sdcv -n0u enfr $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' 
+}
+offlinesp () {
+output=$( sdcv -n0u ensp $word )
+notify-send -t 15000 "$word" "$output"
+sdcv -n0u ensp $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' 
+}
+
+a1="  WordNet Dictionary"
+a2="📖 Collins Dictionary"
+a3="📘 General Dict"
+a4="🈚 Japanese Word Translate"
+a5="📔 Simple Dictionary"
+a6="🍟 French Word Translate"
+a7="🎯 Spanish Word Translate"
+b1="  Search Online"
+
+#chose=$(printf  "📖 Offline dictionary\n📗 Oxford\n📘 Dict gcide\n📙 japanese dict\n📑 Online dictionary" | rofi -rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' -i -p '📑 Choose your Thesaurus ' -theme-str 'window {width: 30%;height: 40%;}')
+
+chose=$(printf  "$a5\n$a1\n$a2\n$a3\n$a4\n$a6\n$a7\n$b1" | $menu -i -l 10 -p '   Choose Thesaurus ')
+
+case $chose in
+    "$a1") offlinewn ;;
+    "$a2") offlineco ;;
+    "$a3") offlinedd ;;
+    "$b1") online ;;
+    "$a4") offlinejp ;;
+    "$a5") offlinesl ;;
+    "$a6") offlinefr ;;
+    "$a7") offlinesp ;;
+esac
