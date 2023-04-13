@@ -1,0 +1,9 @@
+#!/usr/bin/env zsh
+
+# Simple script which show the bookmarks from org-file which are inserted via d-bookmark
+
+# We can select and it insert the link
+
+source d-var.conf 
+
+wtype "$(rg -v '^$' ~/sync/org/bookmarks.org | rofi -dmenu -i -config ~/.config/rofi/list.rasi | rg -o '(http|https)://[a-zA-Z0-9./?=_%:-]*')"
