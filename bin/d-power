@@ -1,0 +1,65 @@
+#!/usr/bin/env sh
+
+# Powermenu 
+
+rofm="rofi -dmenu -i -config ~/.config/rofi/smenu.rasi "
+dmem="dmenu -i"
+wofm="wofi -dib -l center -H 40% -W 45%"
+bmem="bemenu"
+
+source d-var.conf
+
+a1="   Wifi Menu"
+a2="  Power Menu"
+a3="  Screen Shot"
+a4="  Lock/Suspend"
+a5="  Brightness"
+a6="   Change Volume"
+
+b1="  Power Off"
+b2="  Reboot"
+b3="  Screen Off"
+
+c1="  Increase Brightness"
+c2="  Decrease Brightness"
+
+d1="  Increase Volume"
+d2="  Decrease Volume"
+d3="  Mute"
+
+chosen=$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6" | sort | $D_MENU -p '  Control Panel' )
+
+case "$chosen" in
+    "$a2")
+	power="$(printf "$b1\n$b2\n$b3" | sort | $D_MENU -p '   System Bed Time zzz..' )"
+	case "$power" in
+	    "$b1") poweroff ;;
+	    "$b2") reboot ;;
+	    "$b3") hyprctl dispatch dpms  off ;;
+	esac
+	;;  
+
+    "$a1") d-wifi ;;
+    "$a4") xset dpms force off ;;
+    "$a5") 
+
+	bright="$(printf "$c1\n$c2" | sort | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' -l 3 -p '   Alter Brightness' )"
+
+	case "$bright" in
+	    "$c1") brightnessctl set +2% ;;
+	    "$c2") brightnessctl set 2%- ;;
+	esac
+	;;
+
+    "$a3") d-sshot ;;
+    "$a6")
+
+	vol="$(printf "$d1\n$d2\n$d3" | sort | $D_MENU -p 'adjust volume')"
+	case "$vol" in
+	    "$d1") pactl set-sink-volume @DEFAULT_SINK@ +10% ;;
+	    "$d2") pactl set-sink-volume @DEFAULT_SINK@ -10% ;;
+	    "$d3")  pactl set-sink-mute @DEFAULT_SINK@ toggle  ;;
+	esac
+	;;      
+    *) exit 1 ;;
+esac
