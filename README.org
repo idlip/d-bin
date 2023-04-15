@@ -18,27 +18,26 @@ Old-scripts directory is x11 based.
 
 *** Gist of scripts
 
-|------------+-----------------------------------------------------------------------------------------------------|
-| Alias      | Function                                                                                            |
-|------------+-----------------------------------------------------------------------------------------------------|
-| [[file:bin/d-stuff][d-stuff]]    | Very handy to handle any given links in any way. I use it everywhere.                               |
-| [[file:bin/d-ext][d-ext]]      | Extract any given compressed file                                                                   |
-| [[file:bin/d-unicodes][d-unicodes]] | Shows (1849 emoji + 2865 icons) to choose and paste                                                 |
+|-------------+--------------------------------------------------------------------------------------|
+| Alias        | Function                                                                              |
+|-------------+--------------------------------------------------------------------------------------|
+| [[file:bin/d-stuff][d-stuff]]      | Very handy to handle any given links in any way. I use it everywhere.                         |
+| [[file:bin/d-ext][d-ext]]        | Extract any given compressed file                                                       |
+| [[file:bin/d-unicodes][d-unicodes]]   | Shows (1849 emoji + 2865 icons) to choose and paste                                     |
 | [[file:bin/d-bookmark][d-bookmark]] | Adds selected link into org mode file as bookmarks. (You can simplify it to use for plain txt file) |
-| [[file:bin/d-sshot][d-sshot]]    | Screenshot for wayland (there is better one by hyprland community)                                  |
-| [[file:bin/d-power][d-power]]    | Powermenu                                                                                           |
-| [[file:bin/d-dict][d-dict]]     | Notifies the dictionary from sdcv                                                                   |
-| [[file:bin/d-ppt][d-ppt]]      | Convert ppt files to pdf using libreoffice (dependency)                                             |
-| [[file:bin/d-pirt][d-pirt]]     | Time to pirate (hopefully you understand by looking)                                                |
-| [[file:bin/d-walls][d-walls]]    | Sets random wallpaper (wayland)                                                                     |
-| [[file:bin/d-emwhere][d-emwhere]]  | Throws emacs frame to write text and prints in on text input region                                 |
-| [[file:bin/d-calc][d-calc]]     | Simple calculator in menu                                                                           |
-| [[file:bin/d-record][d-record]]   | Screen recorder                                                                                     |
-| [[file:bin/d-wifi][d-wifi]]     | wifi menu using nmcli                                                                               |
-| [[file:bin/d-quote][d-quote]]    | Random quotes from internet                                                                         |
-| [[file:bin/d-urls][d-urls]]     | Menu to select bookmarked links, easy and available everywhere                                      |
-| [[file:bin/d-remind][d-remind]]   | Reminder via ~at~ command                                                                             |
-| [[file:bin/d-apps][d-apps]]     | App system for these scripts                                                                        |
-| [[file:bin/d-menu][d-menu]]     | Universal menu of scripts                                                                           |
-|------------+-----------------------------------------------------------------------------------------------------|
+| [[file:bin/d-sshot][d-sshot]]      | Screenshot for wayland (there is better one by hyprland community)                        |
+| [[file:bin/d-power][d-power]]     | Powermenu                                                                           |
+| [[file:bin/d-dict][d-dict]]       | Notifies the dictionary from sdcv                                                        |
+| [[file:bin/d-ppt][d-ppt]]        | Convert ppt files to pdf using libreoffice (dependency)                                     |
+| [[file:bin/d-pirt][d-pirt]]       | Time to pirate (hopefully you understand by looking)                                      |
+| [[file:bin/d-walls][d-walls]]      | Sets random wallpaper (Wallpapers repo [[https://github.com/idlip/d-wallpapers][here]])                                            |
+| [[file:bin/d-emwhere][d-emwhere]]  | Throws emacs frame to write text and prints in on text input region                         |
+| [[file:bin/d-calc][d-calc]]       | Simple calculator in menu                                                               |
+| [[file:bin/d-record][d-record]]     | Screen recorder                                                                       |
+| [[file:bin/d-wifi][d-wifi]]       | wifi menu using nmcli                                                                  |
+| [[file:bin/d-quote][d-quote]]     | Random quotes from internet                                                           |
+| [[file:bin/d-urls][d-urls]]       | Menu to select bookmarked links, easy and available everywhere                            |
+| [[file:bin/d-remind][d-remind]]    | Reminder via ~at~ command                                                              |
+| [[file:bin/d-menu][d-menu]]     | Universal menu for scripts                                                            |
+|-------------+--------------------------------------------------------------------------------------|
 
