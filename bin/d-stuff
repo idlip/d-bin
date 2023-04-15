@@ -72,7 +72,7 @@ case "$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10\n$a11\n$a12\n$
 	"$a12") deluge-console add "$feed" >/dev/null 2>&1 ;;
 	"$a13") setsid  w3m "$feed" ;;
 	"$a14") aria2c -j 6 -x 10 -c -d ~/vids/Documentary/.cache/clean.db/ "$feed" ;;
-	"$a15") d-bookmark  ;;
+	"$a15") d-bookmark "$feed"  ;;
 	"$a16") setsid brave "$feed" ;;
 	"$a18") setsid librewolf "$feed" ;;
 	"$a19") setsid chromium "$feed" ;;
