@@ -23,15 +23,8 @@ Old-scripts directory is x11 based.
 #+begin_html
   <details>
 #+end_html
-
 #+begin_html
-  <summary>
-#+end_html
-
-Unicodes
-
-#+begin_html
-  </summary>
+  <summary> Unicodes </summary>
 #+end_html
 
 *** Unicode Picker
@@ -39,7 +32,6 @@ Unicodes
 :CUSTOM_ID: unicode-picker
 :END:
 [[file:assets/unicodes.png]]
-
 #+begin_html
   </details>
 #+end_html
