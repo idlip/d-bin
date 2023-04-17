@@ -38,15 +38,15 @@ Old-scripts directory is x11 based.
 
 
 *** Check
-#+begin_html
+#+begin_export html
 <details>
 <summary>PowerMenu</summary>
-#+end_html
+#+end_export 
 
 [[file:assets/power.png]]
-#+begin_html
+#+begin_export html
 </details>
-#+end_html
+#+end_export 
 
 ** Gist of scripts
 
