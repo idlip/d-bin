@@ -20,19 +20,29 @@ Old-scripts directory is x11 based.
   ==>  It is easier to identify and call them, also An OnePiece fan will know a reason.
 #+end_quote
 
+#+begin_html
+  <details>
+#+end_html
 
-#+begin_src markdown
-<details>
+#+begin_html
+  <summary>
+#+end_html
 
-<summary>Unicodes</summary>
+Unicodes
 
-### Unicode Picker
+#+begin_html
+  </summary>
+#+end_html
 
+*** Unicode Picker
+:PROPERTIES:
+:CUSTOM_ID: unicode-picker
+:END:
 [[file:assets/unicodes.png]]
 
-</details>
-
-#+end_src
+#+begin_html
+  </details>
+#+end_html
 
 
 * Gist of scripts
