@@ -5,6 +5,8 @@ These are some cool scripts which basically is a menu of options, which are hand
 
 Its is fast and also snappy.
 
+All menu commands can be defined in [[file:bin/d-var.conf][d-var.conf]]
+
 *Most of the scripts are based on Wayland (as it is the Future of Linux)*
 Although you can adjust it for x11 too.
 
@@ -14,6 +16,12 @@ Old-scripts directory is x11 based.
  *Why are all the scripts prefixed 'd-'*
   ==>  It is easier to identify and call them, also An OnePiece fan will know a reason.
 #+end_quote
+
+
+<details>
+
+<summary>Tips for collapsed sections</summary>
+
 
 
 *** Gist of scripts
@@ -41,3 +49,5 @@ Old-scripts directory is x11 based.
 | [[file:bin/d-menu][d-menu]]     | Universal menu for scripts                                                                          |
 |------------+-----------------------------------------------------------------------------------------------------|
 
+
+</details>
