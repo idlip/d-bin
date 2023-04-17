@@ -20,8 +20,9 @@ Old-scripts directory is x11 based.
 <details>
 <summary>d-unicodes</summary>
 ## Emoji/Icon picker using rofi (any launcher)
-  *  Easy to use, works offline, use it anywhere.
-  *  Keywords have similar words, searching is right at your finger tip.
+- Easy to use, works offline, use it anywhere.
+- Keywords have similar words, searching is right at your finger tip.
+
 ![here](uni.png "check")
 
 </details>
