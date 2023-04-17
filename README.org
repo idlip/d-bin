@@ -2,7 +2,7 @@
 #+author: Dilip
 
 
-* 📩 Echo
+** 📩 Echo
 
 These are some cool scripts which basically is a menu of options, which are handy for window manager users.
 
@@ -37,7 +37,18 @@ Old-scripts directory is x11 based.
 #+end_html
 
 
-* Gist of scripts
+*** Check
+#+begin_html
+<details>
+<summary>PowerMenu</summary>
+#+end_html
+
+[[file:assets/power.png]]
+#+begin_html
+</details>
+#+end_html
+
+** Gist of scripts
 
 |------------+-----------------------------------------------------------------------------------------------------|
 | Alias      | Function                                                                                            |
