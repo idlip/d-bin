@@ -56,9 +56,9 @@ case "$chosen" in
 
 	vol="$(printf "$d1\n$d2\n$d3" | sort | $D_MENU -p 'adjust volume')"
 	case "$vol" in
-	    "$d1") pactl set-sink-volume @DEFAULT_SINK@ +10% ;;
-	    "$d2") pactl set-sink-volume @DEFAULT_SINK@ -10% ;;
-	    "$d3")  pactl set-sink-mute @DEFAULT_SINK@ toggle  ;;
+	    "$d1") pamixer -ui 5 ;;
+	    "$d2") pamixer -ud 5 ;;
+	    "$d3") pamixer -t ;;
 	esac
 	;;      
     *) exit 1 ;;
