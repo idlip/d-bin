@@ -121,8 +121,10 @@ Old-scripts directory is x11 based.
 *** ~d-remind~
 #+begin_html
 <details>
-<summary> Reminder using ~at~ </summary>
+<summary> Reminder using  </summary>
 #+end_html
++ Uses ~at~ command
+  
 [[file:assets/remind.png]]
 
 #+begin_html
