@@ -1,14 +1,14 @@
-#+title:   Cool Shell Scripts
+#+title:   Shell Scripts to ease life in window managers
 #+author: Dilip
 
 
-** 📩 Echo
+* 📩 Echo
 
 These are some cool scripts which basically is a menu of options, which are handy for window manager users.
 
 Its is fast and also snappy.
 
-All menu commands can be defined in [[file:bin/d-var.conf][d-var.conf]]
+All menu commands or common variables can be defined in [[file:bin/d-var.conf][d-var.conf]]
 
 *Most of the scripts are based on Wayland (as it is the Future of Linux)*
 Although you can adjust it for x11 too.
@@ -20,35 +20,9 @@ Old-scripts directory is x11 based.
   ==>  It is easier to identify and call them, also An OnePiece fan will know a reason.
 #+end_quote
 
-#+begin_html
-  <details>
-#+end_html
-#+begin_html
-  <summary> Unicodes </summary>
-#+end_html
-
-*** Unicode Picker
-:PROPERTIES:
-:CUSTOM_ID: unicode-picker
-:END:
-[[file:assets/unicodes.png]]
-#+begin_html
-  </details>
-#+end_html
 
 
-*** Check
-#+begin_export html
-<details>
-<summary>PowerMenu</summary>
-#+end_export 
-
-[[file:assets/power.png]]
-#+begin_export html
-</details>
-#+end_export 
-
-** Gist of scripts
+* Gist of scripts
 
 |------------+-----------------------------------------------------------------------------------------------------|
 | Alias      | Function                                                                                            |
@@ -72,4 +46,88 @@ Old-scripts directory is x11 based.
 | [[file:bin/d-remind][d-remind]]   | Reminder via ~at~ command                                                                             |
 | [[file:bin/d-menu][d-menu]]     | Universal menu for scripts                                                                          |
 |------------+-----------------------------------------------------------------------------------------------------|
+
+* Script-o-graphic
+*** ~d-unicodes~
+#+begin_html
+<details>
+<summary> Unicode/Icons picker Anywhere </summary>
+#+end_html
+[[file:assets/unicodes.png]]
+
+#+begin_html
+</details>
+#+end_html
+
+*** ~d-menu~
+#+begin_html
+<details>
+<summary> Universal Menu for all scripts </summary>
+#+end_html
++ Shows ~d-power~ ~d-walls ~d-unicodes~ ~d-time~ ~d-stats~
+
+[[file:assets/menu.png]]
+
+#+begin_html
+</details>
+#+end_html
+
+*** ~d-power~
+#+begin_html
+<details>
+<summary> PowerMenu </summary>
+#+end_html
++ Shows ~d-sshot~ ~d-wifi~ 
+
+[[file:assets/power.png]]
+
+#+begin_html
+</details>
+#+end_html
+
+*** ~d-stuff~
+#+begin_html
+<details>
+<summary> Universal Link Handler </summary>
+#+end_html
+[[file:assets/stuff.png]]
+
+#+begin_html
+</details>
+#+end_html
+
+*** ~d-urls~
+#+begin_html
+<details>
+<summary> Insert urls from Bookmark  </summary>
+#+end_html
+[[file:assets/urls.png]]
+
+#+begin_html
+</details>
+#+end_html
+
+*** ~d-bookmark~
+#+begin_html
+<details>
+<summary> Put the given link to org file (store as bookmarks) </summary>
+#+end_html
+[[file:assets/bookmark.png]]
+
+#+begin_html
+</details>
+#+end_html
+
+*** ~d-remind~
+#+begin_html
+<details>
+<summary> Reminder using ~at~ </summary>
+#+end_html
+[[file:assets/remind.png]]
+
+#+begin_html
+</details>
+#+end_html
+
+
 
