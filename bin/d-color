@@ -1,0 +1,42 @@
+#!/usr/bin/env sh
+
+# Script to Insert and copy the color
+
+source d-var.conf 
+
+a1="󰢷 Pick a color on Screen"
+a2="🍎 Choose a Colorname"
+pick_or_treat=$(printf "$a1\n$a2" | $D_MENU -i -p "🎃 Pick or Treat ")
+
+case $pick_or_treat in
+    $a1 )
+	hyprpicker
+	;;
+    $a2 )
+	chosen=$(bat ~/d-git/d-bin/treasure/colors | $UNI_MENU -i -p '🎨 Choose Colour  ' | grep -o "#.*" )
+	;;
+    * )
+	exit 0
+	;;
+esac
+
+# Exit if none chosen.
+[ -z "$chosen" ] && exit
+
+# If you run this command with an argument, it will automatically insert the
+# character. Otherwise, show a message that the emoji has been copied.
+
+if [ -n "$1" ]; then
+    # Replace with xdotool or ydotool
+    wtype "$chosen"
+else
+
+    # replace with xclip or xsel or x11
+    printf "$chosen" | wl-copy
+
+    # Replace with xdotool for X11 
+    wtype "$chosen"    
+
+    # Tbh not required
+    # notify-send "'$chosen' copied to clipboard." &
+fi
