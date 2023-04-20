@@ -16,10 +16,12 @@ feed="${1:-$(printf "%s" | $D_MENU -i -p 'Paste URL or file path')}"
 
 echo "$feed" | wl-copy -n
 
+# To view web images
 viewdpic() {
-    curl "${feed}" --output /tmp/image && imv /tmp/image
+    curl "${feed}" --output /tmp/image  && imv /tmp/image || imv "${feed}"
     }
 
+# To download music from r/listentothis
 listentothis() {
     yt-dlp -P ~/music/yt/ -icx --embed-metadata "$feed" &&
     mpc update 
