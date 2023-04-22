@@ -8,7 +8,7 @@ a1="Record Video + Audio"
 a2="Only Video"
 a3="Record Small Area in Mouse"
 a4="Kill Recording"
-taping=$(printf "$a1\n$a2\n$a3\n$a4" | $D_MENU-p ' Record on = ')
+taping=$(printf "$a1\n$a2\n$a3\n$a4" | $D_MENU -p ' Record on = ')
 
 case "$taping" in
   "$a1") wf-recorder -a -f ~/screen-$(date '+%a-%d-%b@%H:%M:%S').mp4 ;;
