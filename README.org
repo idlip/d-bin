@@ -49,77 +49,46 @@ Old-scripts directory is x11 based.
 
 * Script-o-graphic
 *** ~d-unicodes~
-#+begin_html
-<details>
-<summary> Unicode/Icons picker Anywhere </summary>
-#+end_html
+#+HTML: <details> <summary> Unicode/Icons picker Anywhere </summary>
+
 [[file:assets/unicodes.png]]
 
-#+begin_html
-</details>
-#+end_html
+#+HTML: </details>
 
 *** ~d-menu~
-#+begin_html
-<details>
-<summary> Universal Menu for all scripts </summary>
-#+end_html
+#+HTML: <details> <summary> Universal Menu for all scripts </summary>
+
 + Shows ~d-power~ ~d-walls ~d-unicodes~ ~d-time~ ~d-stats~
 
 [[file:assets/menu.png]]
 
-#+begin_html
-</details>
-#+end_html
-
+#+HTML: </details>
 *** ~d-power~
-#+begin_html
-<details>
-<summary> PowerMenu </summary>
-#+end_html
+#+HTML: <details> <summary> PowerMenu </summary>
 + Shows ~d-sshot~ ~d-wifi~ 
 
 [[file:assets/power.png]]
 
-#+begin_html
-</details>
-#+end_html
-
+#+HTML: </details>
 *** ~d-stuff~
-#+begin_html
-<details>
-<summary> Universal Link Handler </summary>
-#+end_html
+#+HTML: <details> <summary> Universal Link Handler </summary>
 [[file:assets/stuff.png]]
 
-#+begin_html
-</details>
-#+end_html
-
+#+HTML: </details>
 *** ~d-urls~
-#+begin_html
-<details>
-<summary> Insert urls from Bookmark  </summary>
-#+end_html
+#+HTML: <details> <summary> Insert urls from Bookmark  </summary>
 [[file:assets/urls.png]]
 
-#+begin_html
-</details>
-#+end_html
+#+HTML: </details>
 
 *** ~d-bookmark~
-#+begin_html
-<details>
-<summary> Put the given link to org file (store as bookmarks) </summary>
-#+end_html
+#+HTML: <details> <summary> Put the given link to org file (store as bookmarks) </summary>
 [[file:assets/bookmark.png]]
 
-#+begin_html
-</details>
-#+end_html
+#+HTML: </details>
 
 *** ~d-remind~
-#+HTML: <details> <summary> Reminder using  </summary>
+#+HTML: <details> <summary> Reminder Script  </summary>
 
 + Uses ~at~ command
   
