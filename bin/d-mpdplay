@@ -1,0 +1,111 @@
+#!/usr/bin/env sh
+MPC="mpc --quiet -p ${1:-6600}"
+
+source d-var.conf 
+
+DMENU() {
+    # Vertical menu if $3 is given
+    echo -e "$1" | $L_MENU -p "$2" ${3:+"-l" "$3"}
+}
+
+get_playlist() {
+    $MPC -f "%position% - %artist% - %album% - %title%" playlist
+}
+
+select_from() {
+    DMENU "$1" "Select $2" $height
+}
+
+add() {
+    all="[ALL]"
+
+    local artist=$(select_from "$($MPC list Artist)\n$all" "artist")
+
+    if [ "$artist" = "$all" ]; then
+        $MPC listall | $MPC add;
+    elif [ -n "$artist" ]; then
+        local albums=$($MPC list Album Artist "$artist")
+        local album=$(select_from "$albums\n$all" "album")
+
+        if [ "$album" = "$all" ]; then
+            $MPC findadd Artist "$artist"
+        elif [ -n "$album" ]; then
+            local songs=$($MPC list Title Album "$album")
+            local song=$(select_from "$songs\n$all" "song")
+
+            if [ "$song" = "$all" ]; then
+                $MPC findadd Album "$album"
+            elif [ -n "$song" ]; then
+                $MPC findadd Title "$song"
+            fi
+        fi
+    fi
+}
+
+remove() {
+    local playlist=$(get_playlist)
+    local song=$(select_from "$playlist" "song")
+
+    [ -n "$song" ] && $MPC del "${song%%\ *}"
+}
+
+jump() {
+    local playlist=$(get_playlist)
+    local song=$(select_from "$playlist" "song")
+
+    [ -n "$song" ] && $MPC play "${song%%\ *}"
+}
+
+toggle(){
+    $MPC toggle
+}
+
+play(){
+    $MPC play
+}
+
+pause(){
+    $MPC pause
+}
+
+stop(){
+    $MPC stop
+}
+
+next(){
+    $MPC next
+}
+
+prev(){
+    $MPC prev
+}
+
+a1=" Clear"
+a2=" Add"
+a3=" Remove"
+a4=" Jump" 
+a5=" Toggle"
+a6=" Play" 
+a7=" Pause" 
+a8=" Stop"
+a9="怜 Next"
+a10="玲 Prev"
+
+
+while true; do
+    action=$(DMENU "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10" " Do you want to")
+    case $action in
+        "$a1") $MPC clear;;
+        "$a2") add;;
+        "$a3") remove;;
+        "$a4") jump;;
+        "$a5") pause;;
+        "$a6") toggle;;
+        "$a7") play;;
+        "$a8") stop;;
+        "$a9") next;;
+        "$a10") prev;;
+        "") exit 0;;
+    esac
+done
+
