@@ -115,7 +115,7 @@ magnet="$(grep -Po "magnet:\?xt=urn:btih:[a-zA-Z0-9]*" $cachedir/tmp.html | head
 
 [[ -z "$magnet" ]] && echo "Can't Get the Link!" && exit
 
-PROMPTO="$(echo -e "Deluge\nAria\nCopyUrl" | sort | $D_MENU -p 'magnet to')"
+PROMPTO="$(echo -e "Deluge\nAria Daemon\nCopyUrl" | sort | $D_MENU -p 'magnet to')"
 
 LOG()
 {
@@ -128,7 +128,7 @@ case $PROMPTO in
     notify-send " 🛫 Downloading Torrent"
     exit
     ;;
-  Aria) 
+  "Aria Daemon") 
     curl http://localhost:6800/jsonrpc -d '{"jsonrcp":"2.0","id":"someID","method":"aria2.addUri","params":["token:ariatest",["'${magnet}'"]]}'
     notify-send "Added download"
     ;;
