@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 MPC="mpc --quiet -p ${1:-6600}"
+pidof -x mpd || mpd
 
 source d-var.conf 
 
@@ -49,6 +50,12 @@ remove() {
     [ -n "$song" ] && $MPC del "${song%%\ *}"
 }
 
+queue() {
+    nowp=$(mpc status | head -n1)
+    nextp=$(mpc queued)
+    notify-send "Now: $nowp" "Next: $nextp"
+}
+
 jump() {
     local playlist=$(get_playlist)
     local song=$(select_from "$playlist" "song")
@@ -61,7 +68,7 @@ toggle(){
 }
 
 play(){
-    $MPC play
+    $MPC findadd Title "$($MPC list title | $L_MENU)"
 }
 
 pause(){
@@ -90,21 +97,22 @@ a7=" Pause"
 a8=" Stop"
 a9="怜 Next"
 a10="玲 Prev"
-
+a11="󱕱 Queued"
 
 while true; do
-    action=$(DMENU "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10" " Do you want to")
+    action=$(DMENU "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10\n$a11" " Do you want to")
     case $action in
         "$a1") $MPC clear;;
         "$a2") add;;
         "$a3") remove;;
         "$a4") jump;;
-        "$a5") pause;;
-        "$a6") toggle;;
-        "$a7") play;;
+        "$a5") toggle;;
+        "$a6") play;;
+        "$a7") pause;;
         "$a8") stop;;
         "$a9") next;;
         "$a10") prev;;
+        "$a11") queue;;
         "") exit 0;;
     esac
 done
