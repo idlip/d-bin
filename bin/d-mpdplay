@@ -69,6 +69,7 @@ toggle(){
 
 play(){
     $MPC findadd Title "$($MPC list title | $L_MENU)"
+    $MPC play
 }
 
 pause(){
