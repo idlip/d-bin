@@ -8,7 +8,7 @@ echo "$feed" | wl-copy -n
 shortfeed="$(echo ${feed} | cut -d '/' -f3,4,5,6 )"
 
 aria_tor () {
-curl http://localhost:6800/jsonrpc -d '{"jsonrcp":"2.0","id":"someID","method":"aria2.addUri","params":["token:ariatest",["'${feed}'"]]}'
+    curl http://localhost:6800/jsonrpc -d '{"jsonrcp":"2.0","id":"someID","method":"aria2.addUri","params":["token:ariatest",["'${feed}'"]]}'
 }
 
 # Define programs to choose from
