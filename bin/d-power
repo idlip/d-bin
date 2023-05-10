@@ -10,10 +10,10 @@ bmem="bemenu"
 source d-var.conf
 
 a1="   Wifi Menu"
-a2="  Power Menu"
-a3="  Screen Shot"
-a4="  Lock/Suspend"
-a5="  Brightness"
+a2="  Power Menu"
+a3="󰹑  Screen Shot"
+a4="  Lock/Suspend"
+a5="  Brightness"
 a6="   Change Volume"
 
 b1="  Power Off"
@@ -23,9 +23,9 @@ b3="  Screen Off"
 c1="  Increase Brightness"
 c2="  Decrease Brightness"
 
-d1="  Increase Volume"
+d1="  Increase Volume"
 d2="  Decrease Volume"
-d3="  Mute"
+d3="  Mute"
 
 chosen=$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6" | sort | $D_MENU -p '  Control Panel' )
 
