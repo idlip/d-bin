@@ -6,7 +6,7 @@ bmem="bemenu"
 
 source d-var.conf
 
-bookmark="${1:-$(wl-paste -p | $D_MENU -i -p ' Site to Bookmark? ')}"
+bookmark="${1:-$(printf "$(wl-paste -p)\n$(wl-paste)" | $D_MENU -i -p ' Site to Bookmark? ')}"
 
 #file="$HOME/.local/share/dict/bookmarks"
 file="$HOME/sync/org/bookmarks.org"
