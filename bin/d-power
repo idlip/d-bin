@@ -22,11 +22,11 @@ d1="  Increase Volume"
 d2="  Decrease Volume"
 d3="  Mute"
 
-chosen=$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6" | sort | $D_MENU -p '  Control Panel' )
+chosen=$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6" | sort | $D_MENU -p ' ' )
 
 case "$chosen" in
     "$a2")
-	power="$(printf "$b1\n$b2\n$b3" | sort | $D_MENU -p '   System Bed Time zzz..' )"
+	power="$(printf "$b1\n$b2\n$b3" | sort | $D_MENU -p ' ' )"
 	case "$power" in
 	    "$b1") poweroff ;;
 	    "$b2") reboot ;;
@@ -49,7 +49,7 @@ case "$chosen" in
     "$a3") d-sshot ;;
     "$a6")
 
-	vol="$(printf "$d1\n$d2\n$d3" | sort | $D_MENU -p 'adjust volume')"
+	vol="$(printf "$d1\n$d2\n$d3" | sort | $D_MENU -p ' ')"
 	case "$vol" in
 	    "$d1") pamixer -ui 5 ;;
 	    "$d2") pamixer -ud 5 ;;
