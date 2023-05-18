@@ -7,14 +7,14 @@ source d-var.conf
 a1="󰢷 Pick a colour (HEX)"
 a2="🍎 Choose a Colorname"
 a3="🎨 Pick a Colour (RGB)"
-pick_or_treat=$(printf "$a1\n$a2\n$a3" | $D_MENU -i -p "🎃 Pick or Treat ")
+pick_or_treat=$(printf "$a1\n$a2\n$a3" | $D_MENU -i -p "🎃 ")
 
 case $pick_or_treat in
     $a1 )
 	hyprpicker -a -f hex
 	;;
     $a2 )
-	chosen=$(bat ~/d-git/d-bin/treasure/colors | $UNI_MENU -i -p '🎨 Choose Colour  ' | grep -o "#.*" )
+	chosen=$(bat ~/d-git/d-bin/treasure/colors | $UNI_MENU -i -p '🎨 ' | grep -o "#.*" )
 	;;
     $a3 )
 	hyprpicker -a -f rgb
