@@ -1,6 +1,4 @@
 #!/usr/bin/env sh
-rofm="rofi -dmenu -i -config ~/.config/rofi/smenu.rasi"
-bmem="bemenu"
 
 source d-var.conf
 
