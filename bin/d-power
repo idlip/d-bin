@@ -2,11 +2,6 @@
 
 # Powermenu 
 
-rofm="rofi -dmenu -i -config ~/.config/rofi/smenu.rasi "
-dmem="dmenu -i"
-wofm="wofi -dib -l center -H 40% -W 45%"
-bmem="bemenu"
-
 source d-var.conf
 
 a1="   Wifi Menu"
@@ -43,7 +38,7 @@ case "$chosen" in
     "$a4") xset dpms force off ;;
     "$a5") 
 
-	bright="$(printf "$c1\n$c2" | sort | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' -l 3 -p '   Alter Brightness' )"
+	bright="$(printf "$c1\n$c2" | sort | $D_MENU )"
 
 	case "$bright" in
 	    "$c1") brightnessctl set +2% ;;
