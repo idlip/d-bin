@@ -2,13 +2,6 @@
 
 # Script to Insert and copy the unicode char
 
-rofm="rofi -dmenu -config ~/.config/rofi/dmoji.rasi"
-dmem="dmenu"
-font="ComicCodeLigatures Bold 20"
-bem="bemenu -c --fn $font" 
-wofm="wofi -dib -W 90% -H 85% -w 3"
-bmem="bemenu -W 0.9"
-
 source d-var.conf 
 
 
@@ -16,7 +9,7 @@ source d-var.conf
 
 # You can the icons for this script in icons/ directory here
 
-chosen=$(bat ~/d-git/d-bin/treasure/unicodes/* | $UNI_MENU -i -p ' choose emoji  ' | awk '{print $1}' )
+chosen=$(bat ~/d-git/d-bin/treasure/unicodes/* | $UNI_MENU -i -p ' ' | awk '{print $1}' )
 
 # Exit if none chosen.
 [ -z "$chosen" ] && exit
