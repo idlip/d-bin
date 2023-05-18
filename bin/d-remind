@@ -1,7 +1,4 @@
 #!/usr/bin/env sh
-rofm="rofi -dmenu"
-dmem="dmenu"
-bmem="bemenu -W 90%"
 
 source d-var.conf
 
@@ -15,8 +12,10 @@ a6="4pm + 1 days"
 a7="10am Jul 31"
 a8=""
 
-time=$(printf "$1\n$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7" | $L_MENU -p '   Time - Date ? 
-Like Eg -- hh:mm Jul 10')
+info_remind="   Time - Date ? Like Eg -- hh:mm Jul 10"
+notify-send -t 4000 "${info_remind}"
+
+time=$(printf "$1\n$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7" | $L_MENU)
 
 text=$(echo $2 | $L_MENU -p '   Remind of ?')
 
