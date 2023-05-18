@@ -1,11 +1,6 @@
 #!/usr/bin/env sh
 # Dependencies - Deluge, mpv
 
-rofm="rofi -dmenu -i -config ~/.config/rofi/list.rasi"
-dmem="dmenu -i"
-wofm="wofi -d -ib -W 80% -H 80%"
-bmem="bemenu -W 0.9 -l 22"
-
 source d-var.conf
 
 mkdir -p $HOME/.cache/notflix
