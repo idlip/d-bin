@@ -2,10 +2,7 @@
 
 # NOTE : Need package 'bc' to be installed
 
-rofm="rofi -dmenu -i"
-dmem="dmenu -i"
-bmem="bemenu"
-menu=$bmem
+
 usage() {
     echo "    $(tput bold)menu calc$(tput sgr0)
     A calculator for use with Rofi or $menu(2)
