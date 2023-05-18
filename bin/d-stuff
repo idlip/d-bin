@@ -3,7 +3,7 @@
 source d-var.conf 
 
 # Get link from user input or dmenu
-feed="${1:-$(printf "%s" | $D_MENU -i -p 'Paste URL or file path')}"
+feed="${1:-$(printf "%s" | $D_MENU -i -p ' ')}"
 echo "$feed" | wl-copy -n
 shortfeed="$(echo ${feed} | cut -d '/' -f3,4,5,6 )"
 
