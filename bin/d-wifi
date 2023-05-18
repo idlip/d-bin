@@ -1,7 +1,4 @@
 #!/usr/bin/env sh
-rofm="rofi -dmenu -i"
-dmem="dmenu -i"
-bmem="bemenu"
 
 source d-var.conf
 
@@ -37,7 +34,7 @@ else
 		nmcli connection up id "$chosen_id" | grep "successfully" && notify-send "Connection Established" "$success_message"
 	else
 		if [[ "$chosen_network" =~ "" ]]; then
-			wifi_password=$(echo '' | $D_MENU  -password "Password: " )
+			wifi_password=$(echo '' | $D_MENU --password "Password: " )
 		fi
 		nmcli device wifi connect "$chosen_id" password "$wifi_password" | grep "successfully" && notify-send "Connection Established" "$success_message"
 	fi
