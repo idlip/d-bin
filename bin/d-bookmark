@@ -2,7 +2,7 @@
 
 source d-var.conf
 
-bookmark="${1:-$(printf "$(wl-paste -p)\n$(wl-paste)" | $D_MENU -i -p ' Site to Bookmark? ')}"
+bookmark="${1:-$(printf "$(wl-paste -p)\n$(wl-paste)" | $D_MENU -i -p ' ')}"
 
 #file="$HOME/.local/share/dict/bookmarks"
 file="$HOME/sync/org/bookmarks.org"
@@ -15,13 +15,14 @@ if [[ -z "$site" ]]; then
 fi
 
 # Eg names so you can quickly name
-name="$(printf "reddit\ntwitter\ngit-linux\ngit-emacs\ngit-droid\nTODO" | $D_MENU -p 'Give name/alias' -mesg "${site}")"
+# notify-send
+name="$(printf "reddit\ntwitter\ngit-linux\ngit-emacs\ngit-droid\nTODO" | $D_MENU -p 'alias')"
 
 # Add your org mode file path here (headings are in level 2 in my file)
 getheadings="$(cat ${file} | rg "^\*\* "  | awk '{print $2 }')"
 
 # Prints out the heading text, so `sed` can append it to that heading level
- [[ -n "${name}" ]] && section="$(printf "$getheadings" | $D_MENU -p 'Where to add  '| sed 's/ //g')"
+ [[ -n "${name}" ]] && section="$(printf "$getheadings" | $D_MENU -p ' '| sed 's/ //g')"
 
 
 mark-print ()
