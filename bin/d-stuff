@@ -64,8 +64,8 @@ function get_program_index {
 
 # Get user selection
 # selected_program="$(printf '%s\n' "${program_names[@]}" | $D_MENU -i -mesg ${shortfeed})"
-notify-send -t 2000 "Link: ${shortfeed}"
-selected_program="$(printf '%s\n' "${program_names[@]}" | $D_MENU -i)"
+# notify-send -t 2000 "Link: ${shortfeed}"
+selected_program="$(printf '%s\n' "${program_names[@]}" | $D_MENU -i -p ${shortfeed})"
 if [[ -n "$selected_program" ]]; then
     selected_index="$(get_program_index "$selected_program")"
     echo "Evaluating:" "${programs[$selected_index-1]}"
