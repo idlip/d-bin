@@ -19,4 +19,4 @@ time=$(printf "$1\n$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7" | $L_MENU)
 
 text=$(echo $2 | $L_MENU -p '   ?')
 
-echo "notify-send -c reminder ' 🔔  Reminder 💡' '$text'" | at "$time"
+echo "notify-send -u critical ' 🔔  Reminder 💡' '$text'" | at "$time"
