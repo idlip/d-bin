@@ -1,74 +1,51 @@
 #!/usr/bin/env sh
 
+# Link handler for every thinkable purpose
+# I use ts or tsp for task scheduling with mpv
+
 source d-var.conf 
 
-# Get link from user input or dmenu
 feed="${1:-$(printf "%s" | $D_MENU -i -p ' ')}"
 echo "$feed" | wl-copy -n
+# For prompt/notify on chosen link
 shortfeed="$(echo ${feed} | cut -d '/' -f3,4,5,6 )"
 
+# Aria2 for torrents (acts on rpc server)
 aria_tor () {
+    curl 'http://localhost:6800/jsonrpc' || setsid aria2c --enable-rpc --rpc-listen-all &&
     curl http://localhost:6800/jsonrpc -d '{"jsonrcp":"2.0","id":"someID","method":"aria2.addUri","params":["token:ariatest",["'${feed}'"]]}'
 }
 
-# Define programs to choose from
-programs=(
-    "echo '${feed}' | wl-copy -p"
-    "setsid  rdrview -B w3m '${feed}'"
-    "setsid -f firefox '${feed}' >/dev/null 2>&1"
-    "setsid aria2c -j 6 -x 16 -c -d ~/dloads '${feed}' >/dev/null 2>&1"
-    "TS_SOCKET=/tmp/yt-dlp ts yt-dlp --embed-metadata --embed-subs -f 'bestvideo[height<=1080]+bestaudio' -P ~/vids/yt '${feed}' >/dev/null 2>&1"
-    "TS_SOCKET=/tmp/yt-dlp ts yt-dlp -P ~/music/yt/ -icx --embed-metadata '${feed}' && pidof -x mpd || mpd && mpc update"
-    "ts mpv --geometry=15% --title=podcast --vid=1 --external-file=/home/i/pics/dpics/nature/pod.jpg '${feed}' >/dev/null 2>&1"
-    "curl '${feed}' --output /tmp/image  && imv /tmp/image || imv '${feed}'"
-    "ts mpv -quiet '${feed}' >/dev/null 2>&1"
-    "aria2c -j 6 -x 10 -c -d ~/vids/Documentary/.cache/clean.db/ '${feed}'"
-    "d-bookmark '${feed}'"
-    "setsid brave '${feed}'"
-    "setsid librewolf '${feed}'"
-    "setsid chromium '${feed}'"
-    "aria_tor"
-)
+a1="  Copy Url"
+a2="  Fire Fox"
+a3="  Download Files"
+a4="  YT Vid Download"
+a5="  Audio Music"
+a6="  Podcast Listen"
+a7="  View Image"
+a8="  Play Watch Stream"
+a9="  Misc Download"
+a10="  Bookmark"
+a11="  Brave"
+a12="  Libre Wolf"
+a13="  Chromium"
+a14="﨩  Torrent Aria"
 
+case "$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10\n$a11\n$a12\n$a13\n$a14" | sort | $D_MENU -p ${shortfeed})" in
 
-# Define program names for display
-program_names=(
-    "  Copy Url"
-    "󱂿  Article Reader"
-    "  Fire Fox"
-    "  Download Files"
-    "  YT Vid Download"
-    "  Audio Music"
-    "  Podcast Listen"
-    "  View Image"
-    "  Play Watch Stream"
-    "  Misc Download"
-    "  Bookmark"
-    "  Brave"
-    "  Libre Wolf"
-    "  Chromium"
-    "﨩  Torrent Aria"
-)
-
-# Get index of selected program
-function get_program_index {
-    local index=1
-    for program in "${program_names[@]}"; do
-        if [[ "$program" == "$1" ]]; then
-            echo "$index"
-            return
-        fi
-        ((index++))
-    done
-}
-
-# Get user selection
-# selected_program="$(printf '%s\n' "${program_names[@]}" | $D_MENU -i -mesg ${shortfeed})"
-# notify-send -t 2000 "Link: ${shortfeed}"
-selected_program="$(printf '%s\n' "${program_names[@]}" | $D_MENU -i -p ${shortfeed})"
-if [[ -n "$selected_program" ]]; then
-    selected_index="$(get_program_index "$selected_program")"
-    echo "Evaluating:" "${programs[$selected_index-1]}"
-    eval "${programs[$selected_index-1]}"
-fi
-
+    $a1) echo "${feed}" | wl-copy -p ;;
+    $a2) setsid -f firefox "${feed}" >/dev/null 2>&1 ;;
+    $a3) setsid aria2c -j 6 -x 16 -c -d ~/dloads "${feed}" >/dev/null 2>&1 ;;
+    $a4) TS_SOCKET=/tmp/yt-dlp ts yt-dlp --embed-metadata --embed-subs -f "bestvideo[height<=1080]+bestaudio" -P ~/vids/yt "${feed}" >/dev/null 2>&1 ;;
+    $a5) TS_SOCKET=/tmp/yt-dlp ts yt-dlp -P ~/music/yt/ -icx --embed-metadata "${feed}" && pidof -x mpd || mpd && mpc update ;;
+    $a6) ts mpv --geometry=15% --title=podcast --vid=1 --external-file=/home/i/pics/dpics/nature/pod.jpg "${feed}" >/dev/null 2>&1 ;;
+    $a7) curl "${feed}" --output /tmp/image  && imv /tmp/image || imv "${feed}" ;;
+    $a8) ts mpv -quiet "${feed}" >/dev/null 2>&1 ;;
+    $a9) aria2c -j 6 -x 10 -c -d ~/vids/Documentary/.cache/clean.db/ "${feed}" ;;
+    $a10) d-bookmark "${feed}" ;;
+    $a11) setsid brave "${feed}" ;;
+    $a12) setsid librewolf "${feed}" ;;
+    $a13) setsid chromium "${feed}" ;;
+    $a14) aria_tor ;;
+    *) exit 1 ;;
+esac
