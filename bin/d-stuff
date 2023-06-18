@@ -12,8 +12,8 @@ shortfeed="$(echo ${feed} | cut -d '/' -f3,4,5,6 )"
 
 # Aria2 for torrents (acts on rpc server)
 aria_tor () {
-    curl 'http://localhost:6800/jsonrpc' || setsid aria2c --enable-rpc --rpc-listen-all &&
-    curl http://localhost:6800/jsonrpc -d '{"jsonrcp":"2.0","id":"someID","method":"aria2.addUri","params":["token:ariatest",["'${feed}'"]]}'
+    curl 'http://localhost:6800/jsonrpc' || setsid aria2c --enable-rpc --rpc-listen-all &
+    sleep 4 && curl http://localhost:6800/jsonrpc -d '{"jsonrcp":"2.0","id":"someID","method":"aria2.addUri","params":["token:ariatest",["'${feed}'"]]}'
 }
 
 a1="  Copy Url"
