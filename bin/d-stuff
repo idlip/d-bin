@@ -5,7 +5,7 @@
 
 source d-var.conf 
 
-feed="${1:-$(printf "%s" | $D_MENU -i -p ' ')}"
+feed="${1:-$(printf "$(wl-paste -p)\n$(wl-paste)" | $D_MENU -i -p ' ')}"
 echo "$feed" | wl-copy -n
 # For prompt/notify on chosen link
 shortfeed="$(echo ${feed} | cut -d '/' -f3,4,5,6 )"
@@ -36,11 +36,11 @@ case "$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10\n$a11\n$a12\n$
     $a1) echo "${feed}" | wl-copy -p ;;
     $a2) setsid -f firefox "${feed}" >/dev/null 2>&1 ;;
     $a3) setsid aria2c -j 6 -x 16 -c -d ~/dloads "${feed}" >/dev/null 2>&1 ;;
-    $a4) TS_SOCKET=/tmp/yt-dlp ts yt-dlp --embed-metadata --embed-subs -f "bestvideo[height<=1080]+bestaudio" -P ~/vids/yt "${feed}" >/dev/null 2>&1 ;;
-    $a5) TS_SOCKET=/tmp/yt-dlp ts yt-dlp -P ~/music/yt/ -icx --embed-metadata "${feed}" && pidof -x mpd || mpd && mpc update ;;
-    $a6) ts mpv --geometry=15% --title=podcast --vid=1 --external-file=/home/i/pics/dpics/nature/pod.jpg "${feed}" >/dev/null 2>&1 ;;
+    $a4) NQDIR=/tmp/yt-dlp nq yt-dlp --embed-metadata --embed-subs -f "bestvideo[height<=1080]+bestaudio" -P ~/vids/yt "${feed}" >/dev/null 2>&1 ;;
+    $a5) NQDIR=/tmp/yt-dlp nq yt-dlp -P ~/music/yt/ -icx --embed-metadata "${feed}" && pidof -x mpd || mpd && mpc update ;;
+    $a6) nq mpv --geometry=15% --title=podcast --vid=1 --external-file=/home/i/pics/dpics/nature/pod.jpg "${feed}" >/dev/null 2>&1 ;;
     $a7) curl "${feed}" --output /tmp/image  && imv /tmp/image || imv "${feed}" ;;
-    $a8) ts mpv -quiet "${feed}" >/dev/null 2>&1 ;;
+    $a8) nq mpv -quiet "${feed}" >/dev/null 2>&1 ;;
     $a9) aria2c -j 6 -x 10 -c -d ~/vids/Documentary/.cache/clean.db/ "${feed}" ;;
     $a10) d-bookmark "${feed}" ;;
     $a11) setsid brave "${feed}" ;;
