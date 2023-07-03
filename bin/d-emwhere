@@ -1,6 +1,0 @@
-#!/usr/bin/env sh
-
-touch /tmp/BrowserInput.md &&
-emacsclient -c -F "((name . \"BrowserInput\") (height . 30) (width . 120))"  /tmp/BrowserInput.md &&
-wtype -s 1 "$(bat -r 0:100 /tmp/BrowserInput.md)" >/dev/null &&
-rm /tmp/BrowserInput.md >/dev/null
