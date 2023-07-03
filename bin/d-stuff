@@ -37,11 +37,11 @@ case "$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10\n$a11\n$a12\n$
     $a2) setsid -f firefox "${feed}" >/dev/null 2>&1 ;;
     $a3) setsid aria2c -j 6 -x 16 -c -d ~/dloads "${feed}" >/dev/null 2>&1 ;;
     $a4) NQDIR=/tmp/yt-dlp nq yt-dlp --embed-metadata --embed-subs -f "bestvideo[height<=1080]+bestaudio" -P ~/vids/yt "${feed}" >/dev/null 2>&1 ;;
-    $a5) NQDIR=/tmp/yt-dlp nq yt-dlp -P ~/music/yt/ -icx --embed-metadata "${feed}" && pidof -x mpd || mpd && mpc update ;;
-    $a6) nq mpv --geometry=15% --title=podcast --vid=1 --external-file=/home/i/pics/dpics/nature/pod.jpg "${feed}" >/dev/null 2>&1 ;;
+    $a5) NQDIR=/tmp/yt-dlp nq yt-dlp -P ~/d-sync/music/yt/ -icx --embed-metadata "${feed}" && pidof -x mpd || mpd && mpc update ;;
+    $a6) NQDIR=/tmp/podcast nq mpv --geometry=15% --title=podcast --vid=1 --external-file=/home/i/pics/dpics/nature/pod.jpg "${feed}" >/dev/null 2>&1 ;;
     $a7) curl "${feed}" --output /tmp/image  && imv /tmp/image || imv "${feed}" ;;
-    $a8) nq mpv -quiet "${feed}" >/dev/null 2>&1 ;;
-    $a9) aria2c -j 6 -x 10 -c -d ~/vids/Documentary/.cache/clean.db/ "${feed}" ;;
+    $a8) NQDIR=/tmp/stream nq mpv -quiet "${feed}" >/dev/null 2>&1 ;;
+    $a9) aria2c -j 6 -x 10 -c -d ~/vids/documentary/.cache/clean.db/ "${feed}" ;;
     $a10) d-bookmark "${feed}" ;;
     $a11) setsid brave "${feed}" ;;
     $a12) setsid librewolf "${feed}" ;;
