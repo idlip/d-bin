@@ -1,0 +1,30 @@
+#!/usr/bin/env sh
+
+pgrep emacs || notify-send "Are you running emacs daemon?" & exit 1
+source d-var.conf
+
+a1=" Browser Comment"
+a2=" Capture Note/Thought"
+output=$(date +'%d-%a->%H:%M:%S')
+filename="BrowserInput"
+
+choice=$(printf "$a1\n$a2" | $D_MENU -p '󰠮 ')
+
+browser_input () {
+    touch /tmp/${filename}.org &&
+	emacsclient -c -F "((name . \"${filename}\"))"  /tmp/${filename}.org &&
+	pandoc -t markdown -o /tmp/${filename}.md /tmp/${filename}.org &&
+	wtype -s 1 "$(bat -r 0:100 /tmp/${filename}.md)" >/dev/null &&
+	mkdir -p /tmp/browse-inputs
+    mv /tmp/${filename}.org /tmp/browse-inputs/${filename}-${output}.org >/dev/null
+}
+
+capture_note () {
+    emacsclient -c -F "((name . \"${filename}\"))" -e '(org-capture nil "jj")' -e '(delete-other-windows)'
+}
+
+case $choice in
+    $a1) browser_input ;;
+    $a2) capture_note ;;
+    *) exit 1 ;;
+esac
