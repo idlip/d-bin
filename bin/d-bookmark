@@ -5,7 +5,7 @@ source d-var.conf
 bookmark="${1:-$(printf "$(wl-paste -p)\n$(wl-paste)" | $D_MENU -i -p ' ')}"
 
 #file="$HOME/.local/share/dict/bookmarks"
-file="$HOME/sync/org/bookmarks.org"
+file="$HOME/d-sync/notes/bookmarks.org"
 
 # Just a variable to show as prompt while adding name (confirmation)
 site="$(echo "$bookmark" | sed 's/ //g')"
