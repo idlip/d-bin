@@ -6,6 +6,6 @@
 
 source d-var.conf 
 
-wtype "$(rg -v '^$' ~/sync/org/bookmarks.org | \
+wtype "$(rg -v '^$' ~/d-sync/notes/bookmarks.org | \
       bemenu -W 0.80 -l 16 -p ' ' | \
       rg -o '(http|https)://[a-zA-Z0-9./?=_%:-]*')"
