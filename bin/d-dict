@@ -5,13 +5,6 @@
 # enchant --- spell check
 # espeak-ng -- text-to-speech
 
-rofm="rofi -dmenu -config ~/.config/rofi/grid.rasi"
-dmem="dmenu"
-wofm="wofi -dib -W 80% -H 80% -w 3"
-menu=$wofm
-hist="/home/i/.local/share/dict/hist"
-
-
 word=$(echo "$(bat ~/.local/share/dict/hist ~/.local/share/dict/vocab | uniq)"| $menu -p '  Meaning for')
 # echo "$word" >> /home/i/.local/share/dict/hist
 # printf '\n%s\n' "$word" >> /home/i/.local/share/dict/hist
