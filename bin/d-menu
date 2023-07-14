@@ -5,37 +5,23 @@
 source d-var.conf
 
 
-a1=" Powermenu"
-a2=" Change Wallpaper"
-a3=" Handle Stuffs"
-a4=" Music Menu"
-a5=" Pirate Mode"
-a6=" Insert Emoji/Icons"
-a7=" Dictionary"
-a8=" Set Reminder"
-a9="⏲ Time & Date Now"
-a10=" System Stats"
-a11=" YouTube"
-a12="🗒 TODO"
-a13=" Music"
+menuopts=(" Powermenu" "󰸉 Change Wallpaper" " Handle Stuffs" " Music Menu" " Pirate Mode" " Insert Emoji/Icons" "﬜ Dictionary" " Set Reminder" "⏲ Time & Date Now" " System Stats" " YouTube" "🗒 TODO")
 
 
-chosen=$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10\n$a11\n$a12\n$a13" | $D_MENU)
+chosen=$(printf '%s\n' "${menuopts[@]}" | $D_MENU)
 
 case "$chosen" in
-        "$a1") d-power ;;
-        "$a2") d-walls ;;
-        "$a3") d-stuff ;;
-        "$a4") d-mpdplay ;;
-        "$a5") d-pirt ;;	
-        "$a6") d-unicodes ;;
-        "$a7") d-dict ;;
-        "$a8") d-remind ;;
-        "$a9") d-time ;;
-        "$a10") d-stats ;;
-        "$a11") ytfzf -D ;;
-        "$a12") d-todo ;;
-        "$a13") d-mpd ;;
-
+        "${menuopts[0]}") d-power ;;
+        "${menuopts[1]}") d-walls ;;
+        "${menuopts[2]}") d-stuff ;;
+        "${menuopts[3]}") d-mpdplay ;;
+        "${menuopts[4]}") d-pirt ;;	
+        "${menuopts[5]}") d-unicodes ;;
+        "${menuopts[6]}") d-dict ;;
+        "${menuopts[7]}") d-remind ;;
+        "${menuopts[8]}") d-time ;;
+        "${menuopts[9]}") d-stats ;;
+        "${menuopts[10]}") ytfzf -D ;;
+        "${menuopts[11]}") d-todo ;;
 	*) exit 1 ;;
 esac
