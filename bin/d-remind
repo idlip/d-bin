@@ -2,20 +2,12 @@
 
 source d-var.conf
 
-a1="now + 10 minutes"
-a2="now + 15 minutes"
-a3="now + 25 minutes"
-a4="now + 2 hour"
-a5="19:45 today"
-a6="16:30 tomorrow"
-a6="4pm + 1 days"
-a7="10am Jul 31"
-a8=""
+menuopts=("now + 10 minutes" "now + 15 minutes" "now + 25 minutes" "now + 2 hour" "19:45 today" "16:30 tomorrow" "4pm + 1 days" "10am Jul 31")
 
 info_remind="   Time - Date ? Like Eg -- hh:mm Jul 10"
 notify-send -t 4000 "${info_remind}"
 
-time=$(printf "$1\n$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7" | $L_MENU)
+time=$(printf '%s\n' "${menuopts[@]}" | $L_MENU)
 
 text=$(echo $2 | $L_MENU -p '   ?')
 
