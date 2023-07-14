@@ -11,12 +11,12 @@ filename="BrowserInput"
 choice=$(printf "$a1\n$a2" | $D_MENU -p '󰠮 ')
 
 browser_input () {
-    touch /tmp/${filename}.org &&
-	emacsclient -c -F "((name . \"${filename}\"))"  /tmp/${filename}.org &&
-	pandoc -t markdown -o /tmp/${filename}.md /tmp/${filename}.org &&
-	wtype -s 1 "$(bat -r 0:100 /tmp/${filename}.md)" >/dev/null &&
+    touch /tmp/${filename}.md &&
+	emacsclient -c -F "((name . \"${filename}\"))"  /tmp/${filename}.md &&
+	# pandoc -t markdown -o /tmp/${filename}.md /tmp/${filename}.org &&
+	wtype -s 1 "$(bat /tmp/${filename}.md)" >/dev/null &&
 	mkdir -p /tmp/browse-inputs
-    mv /tmp/${filename}.org /tmp/browse-inputs/${filename}-${output}.org >/dev/null
+    mv /tmp/${filename}.md /tmp/browse-inputs/${filename}-${output}.md >/dev/null
 }
 
 capture_note () {
