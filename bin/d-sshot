@@ -2,18 +2,14 @@
 
 source d-var.conf
 
-a1=" Select Area in Mouse"
-a2=" Copy Area of Screen"
-a3=" Full Display"
-a4=" Copy Whole Display"
-a5=" Active Window"
+menuopts=(" Select Area in Mouse" " Copy Area of Screen" " Full Display" " Copy Whole Display" " Active Window")
 
 sleep_for='sleep 0.5'
 temp_pic='/tmp/thescr.png'
 
 gimme() {
 output=$(date +'%d-%a  %H:%M:%S')
-picname=$(printf "printout\ndocs\npresentation\npkg-debug\ngit-issue" | ${D_MENU} -l 5 -i -p ' ' || echo $output )
+picname=$(printf '%s\n' "${menuopts[@]}" | ${D_MENU} -l 5 -i -p ' ' || echo $output )
 
 cp $temp_pic ~/pics/sshots/"$picname.png"
 }
@@ -22,11 +18,11 @@ cp $temp_pic ~/pics/sshots/"$picname.png"
 sshot=$(printf "$a1\n$a2\n$a3\n$a4\n$a5" | sort | $D_MENU -p 'Snap ScreenShot of ')
 
 case "$sshot" in
-    "$a1") $sleep_for && grim -g "$(slurp)" "${temp_pic}" && gimme ;;
-    "$a2") $sleep_for && grim -g "$(slurp)" - | wl-copy --type image/png ;;
-    "$a3") $sleep_for && grim -c "${temp_pic}" && gimme ;;
-    "$a4") $sleep_for && grim -c - | wl-copy --type image/pngi ;;
-    "$a5") $sleep_for && grim -g \
+    "${menuopts[0]}") $sleep_for && grim -g "$(slurp)" "${temp_pic}" && gimme ;;
+    "${menuopts[1]}") $sleep_for && grim -g "$(slurp)" - | wl-copy --type image/png ;;
+    "${menuopts[2]}") $sleep_for && grim -c "${temp_pic}" && gimme ;;
+    "${menuopts[3]}") $sleep_for && grim -c - | wl-copy --type image/pngi ;;
+    "${menuopts[4]}") $sleep_for && grim -g \
            "$(hyprctl activewindow -j | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')" "${temp_pic}" && gimme ;;
     #	*) sleep 0.5 && grim "/tmp/thescr.png" || exit ;;
 esac

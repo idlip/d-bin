@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Link handler for every thinkable purpose
 # I use ts or tsp for task scheduling with mpv
@@ -16,36 +16,32 @@ aria_tor () {
     sleep 4 && curl http://localhost:6800/jsonrpc -d '{"jsonrcp":"2.0","id":"someID","method":"aria2.addUri","params":["token:ariatest",["'${feed}'"]]}'
 }
 
-a1="  Copy Url"
-a2="  Fire Fox"
-a3="  Download Files"
-a4="  YT Vid Download"
-a5="  Audio Download"
-a6="  Podcast Listen Stream"
-a7="  View Image"
-a8="  Play Watch Stream"
-a9="  Misc Download"
-a10="  Bookmark"
-a11="  Brave"
-a12="  Libre Wolf"
-a13="  Chromium"
-a14="﨩  Torrent Aria"
+audio_podcast () {
+    case "$(printf "Song\nPodcast" | $D_MENU -p ' ')" in
+	"Podcast") NQDIR=/tmp/podcast nq mpv --geometry=15% --title=podcast --vid=1 "${feed}" >/dev/null 2>&1 ;;
+	"Song") pgrep mpd || mpd; mpc add "$(yt-dlp -f bestaudio -g "${feed}")" && mpc play ;;
+	*) exit 1 ;;
+    esac
+}
 
-case "$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6\n$a7\n$a8\n$a9\n$a10\n$a11\n$a12\n$a13\n$a14\n$a15" | sort | $D_MENU -p ${shortfeed})" in
+menuopts=("  Copy Url" "  Fire Fox" "  Download Files" "  YT Vid Download" "  Audio Music Download" "  Podcast Listen Stream" "  View Image" "  Play Watch Stream" "  Misc Download" "  Bookmark" "  Brave" "  Libre Wolf" "  Chromium" "  Torrent Aria" " YT Music")
 
-    $a1) echo "${feed}" | wl-copy -p ;;
-    $a2) setsid -f firefox "${feed}" >/dev/null 2>&1 ;;
-    $a3) setsid aria2c -j 6 -x 16 -c -d ~/dloads "${feed}" >/dev/null 2>&1 ;;
-    $a4) NQDIR=/tmp/yt-dlp nq yt-dlp --embed-metadata --embed-subs -f "bestvideo[height<=1080]+bestaudio" -P ~/vids/yt "${feed}" >/dev/null 2>&1 ;;
-    $a5) NQDIR=/tmp/yt-dlp nq yt-dlp -P ~/d-sync/music/yt/ -icx --embed-metadata "${feed}" && pidof -x mpd || mpd && mpc update ;;
-    $a6) pgrep mpd || mpd; mpc add "$(yt-dlp -f bestaudio --get-url "${feed}")"; mpc play ;;
-    $a7) curl "${feed}" --output /tmp/image  && imv /tmp/image || imv "${feed}" ;;
-    $a8) NQDIR=/tmp/stream nq mpv -quiet "${feed}" >/dev/null 2>&1 ;;
-    $a9) aria2c -j 6 -x 10 -c -d ~/vids/documentary/.cache/clean.db/ "${feed}" ;;
-    $a10) d-bookmark "${feed}" ;;
-    $a11) setsid brave "${feed}" ;;
-    $a12) setsid librewolf "${feed}" ;;
-    $a13) setsid chromium "${feed}" ;;
-    $a14) aria_tor ;;
+case "$(printf '%s\n' "${menuopts[@]}" | sort | $D_MENU -p ${shortfeed})" in
+
+    "${menuopts[0]}") echo "${feed}" | wl-copy -p ;;
+    "${menuopts[1]}") setsid -f firefox "${feed}" >/dev/null 2>&1 ;;
+    "${menuopts[2]}") setsid aria2c -j 6 -x 16 -c -d ~/dloads "${feed}" >/dev/null 2>&1 ;;
+    "${menuopts[3]}") NQDIR=/tmp/yt-dlp nq yt-dlp --embed-metadata --embed-subs -f "bestvideo[height<=1080]+bestaudio" -P ~/vids/yt "${feed}" >/dev/null 2>&1 ;;
+    "${menuopts[4]}") NQDIR=/tmp/yt-dlp nq yt-dlp -P ~/d-sync/music/yt/ -icx --embed-metadata "${feed}" && pidof -x mpd || mpd && mpc update ;;
+    "${menuopts[5]}") audio_podcast ;;
+    "${menuopts[6]}") curl "${feed}" --output /tmp/image  && imv /tmp/image || imv "${feed}" ;;
+    "${menuopts[7]}") NQDIR=/tmp/stream nq mpv -quiet "${feed}" >/dev/null 2>&1 ;;
+    "${menuopts[8]}") aria2c -j 6 -x 10 -c -d ~/vids/documentary/.cache/clean.db/ "${feed}" ;;
+    "${menuopts[9]}") d-bookmark "${feed}" ;;
+    "${menuopts[10]}") setsid brave "${feed}" ;;
+    "${menuopts[11]}") setsid librewolf "${feed}" ;;
+    "${menuopts[12]}") setsid chromium "${feed}" ;;
+    "${menuopts[13]}") aria_tor ;;
+    "${menuopts[14]}") pgrep mpd || mpd; mpc add "$(yt-dlp -f bestaudio -g "$(ytfzf -LD ${feed})")" && mpc play ;;
     *) exit 1 ;;
 esac
