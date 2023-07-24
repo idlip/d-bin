@@ -6,7 +6,7 @@ source d-var.conf
 
 DMENU() {
     # Vertical menu if $3 is given
-    printf '%s\n' "$1" | $L_MENU -p "$2" ${3:+"-l" "$3"}
+    printf '%s\n' "$1" | $L_MENU -p "$2"
 }
 
 get_playlist() {
@@ -92,10 +92,10 @@ ytmusic () {
     $MPC add "$(yt-dlp -f bestaudio -g "$(ytfzf -LD)")"
 }
 
-menuopts=( " Add" " Remove" " Jump"  " Toggle" " Play"  " Pause"  " Stop" "怜 Next" "玲 Prev" "󱕱 Queued" " YT Music")
+menuopts=( " Clear"  " Add" " Remove" " Jump"  " Toggle" " Play"  " Pause"  " Stop" "怜 Next" "玲 Prev" "󱕱 Queued" " YT Music")
 
 while true; do
-    action=$(DMENU "${menuopts[@]}" " Do you want to")
+    action=$(printf '%s\n' "${menuopts[@]}" | $L_MENU -p " Do you want to")
     case $action in
         "${menuopts[0]}") $MPC clear ;;
         "${menuopts[1]}") add ;;
