@@ -18,7 +18,7 @@ aria_tor () {
 
 audio_podcast () {
     case "$(printf "Song\nPodcast" | $D_MENU -p ' ')" in
-	"Podcast") NQDIR=/tmp/podcast nq mpv --geometry=15% --title=podcast --vid=1 "${feed}" >/dev/null 2>&1 ;;
+	"Podcast") mpc pause; NQDIR=/tmp/podcast nq mpv --geometry=15% --title=podcast --vid=1 "${feed}" >/dev/null 2>&1 ;;
 	"Song") pgrep mpd || mpd; mpc add "$(yt-dlp -f bestaudio -g "${feed}")" && mpc play ;;
 	*) exit 1 ;;
     esac
