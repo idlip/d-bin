@@ -2,7 +2,7 @@
 
 # Script to Insert and copy the unicode char
 
-source d-var.conf 
+source d-var.conf
 
 
 # The famous "get a menu of emojis to copy" script.
@@ -17,15 +17,15 @@ chosen=$(bat ~/d-git/d-bin/treasure/unicodes/* | $UNI_MENU -i -p ' ' | awk '{
 # If you run this command with an argument, it will automatically insert the
 # character. Otherwise, show a message that the emoji has been copied.
 if [ -n "$1" ]; then
-	wtype "$chosen"
+	  wtype "$chosen"
 else
 
-# replace with xclip or xsel or x11
-        printf "$chosen" | wl-copy
+    # replace with xclip or xsel or x11
+    printf "$chosen" | wl-copy
 
-# Replace with xdotool for X11 
-	wtype "$chosen"    
+    # Replace with xdotool for X11
+	  wtype "$chosen"
 
-# Tbh not required
-	# notify-send "'$chosen' copied to clipboard." &
+    # not required tho
+	  # notify-send "'$chosen' copied to clipboard." &
 fi
