@@ -12,25 +12,29 @@ site="$(echo "$bookmark" | sed 's/ //g')"
 
 if [[ -z "$site" ]]; then
     exit 0
+elif grep -qF "$site" "$file"; then
+    notify-send "Oops.. $site" "Already in bookmark!"
+    exit 0
 fi
 
 # Eg names so you can quickly name
 # notify-send
 examples=("reddit" "twitter" "git-linux" "git-emacs" "git-droid" "TODO")
-name="$(printf '%s\n' "${examples[@]}" | $D_MENU -p ${site})"
+name="$(printf '%s\n' "${examples[@]}" | $D_MENU -W 0.8 -p "${site} => Name")"
 
 # Add your org mode file path here (headings are in level 2 in my file)
 getheadings="$(cat ${file} | rg "^\*\* "  | awk '{print $2 }')"
 
 # Prints out the heading text, so `sed` can append it to that heading level
- [[ -n "${name}" ]] && section="$(printf "$getheadings" | $D_MENU -p ' '| sed 's/ //g')"
+ [[ -n "${name}" ]] && section="$(printf "$getheadings" | $D_MENU -p ' Heading'| sed 's/ //g')"
 
 
 mark-print ()
 {
 # Sed appends the link in a clean way
-    sed -i "/$section$/a *** [[$site][$name]]" "$file" && notify-send "Bookmark added!" "$site is now saved under $section"
-    
+    sed -i "/$section$/a *** [[$site][$name]]" "$file" &&
+        notify-send "Bookmark added!" " $site is now saved under ==>  $section"
+
 }
 
 
