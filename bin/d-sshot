@@ -4,18 +4,24 @@ source d-var.conf
 
 menuopts=(" Select Area in Mouse" " Copy Area of Screen" " Full Display" " Copy Whole Display" " Active Window")
 
+nameopts=(
+    "notes-refer"
+    "receipt-"
+    "ppt-pic"
+    "share-detail"
+    )
+
 sleep_for='sleep 0.5'
 temp_pic='/tmp/thescr.png'
 
 gimme() {
 output=$(date +'%d-%a  %H:%M:%S')
-picname=$(printf '%s\n' "${menuopts[@]}" | ${D_MENU} -l 5 -i -p ' ' || echo $output )
+picname=$(printf '%s\n' "${nameopts[@]}" | ${D_MENU} -l 5 -i -p ' ' || echo $output )
 
 cp $temp_pic ~/pics/sshots/"$picname.png"
 }
 
-
-sshot=$(printf "$a1\n$a2\n$a3\n$a4\n$a5" | sort | $D_MENU -p 'Snap ScreenShot of ')
+sshot=$(printf '%s\n' "${menuopts[@]}" | sort | $D_MENU -p 'Snap ScreenShot of ')
 
 case "$sshot" in
     "${menuopts[0]}") $sleep_for && grim -g "$(slurp)" "${temp_pic}" && gimme ;;
