@@ -3,7 +3,7 @@
 # Link handler for every thinkable purpose
 # I use ts or tsp for task scheduling with mpv
 
-source d-var.conf 
+source d-var.conf
 
 feed="${1:-$(printf "$(wl-paste -p)\n$(wl-paste)" | $D_MENU -i -p ' ')}"
 echo "$feed" | wl-copy -n
@@ -24,17 +24,31 @@ audio_podcast () {
     esac
 }
 
-menuopts=("  Copy Url" "  Fire Fox" "  Download Files" "  YT Vid Download" "  Audio Music Download" "  Podcast Listen Stream" "  View Image" "  Play Watch Stream" "  Misc Download" "  Bookmark" "  Brave" "  Libre Wolf" "  Chromium" "  Torrent Aria" " YT Music")
+menuopts=("  Copy Url"
+          "  Fire Fox"
+          "  Download Files"
+          "  YT Vid Download"
+          "  Audio Music Download"
+          "  Podcast Listen Stream"
+          "  View Image"
+          "  Play Watch Stream"
+          "  Misc Download"
+          "  Bookmark"
+          "  Brave"
+          "  Libre Wolf"
+          "  Chromium"
+          "  Torrent Aria"
+          " YT Music")
 
 case "$(printf '%s\n' "${menuopts[@]}" | sort | $D_MENU -p ${shortfeed})" in
 
     "${menuopts[0]}") echo "${feed}" | wl-copy -p ;;
     "${menuopts[1]}") setsid -f firefox "${feed}" >/dev/null 2>&1 ;;
     "${menuopts[2]}") setsid aria2c -j 6 -x 16 -c -d ~/dloads "${feed}" >/dev/null 2>&1 ;;
-    "${menuopts[3]}") NQDIR=/tmp/yt-dlp nq yt-dlp --embed-metadata --embed-subs -f "bestvideo[height<=1080]+bestaudio" -P ~/vids/yt "${feed}" >/dev/null 2>&1 ;;
-    "${menuopts[4]}") NQDIR=/tmp/yt-dlp nq yt-dlp -P ~/d-sync/music/yt/ -icx --embed-metadata "${feed}" && pidof -x mpd || mpd && mpc update ;;
+    "${menuopts[3]}") NQDIR=/tmp/yt-vid nq yt-dlp --embed-metadata --embed-subs -f "bestvideo[height<=1080]+bestaudio" -P ~/vids/yt "${feed}" >/dev/null 2>&1 ;;
+    "${menuopts[4]}") NQDIR=/tmp/yt-music nq yt-dlp -P ~/d-sync/music/yt/ -icx --embed-metadata "${feed}" && pidof -x mpd || mpd && mpc update ;;
     "${menuopts[5]}") audio_podcast ;;
-    "${menuopts[6]}") curl "${feed}" --output /tmp/image  && imv /tmp/image || imv "${feed}" ;;
+    "${menuopts[6]}") (wget "${feed}" --output-document=/tmp/image  && imv /tmp/image) || imv "${feed}" ;;
     "${menuopts[7]}") NQDIR=/tmp/stream nq mpv -quiet "${feed}" >/dev/null 2>&1 ;;
     "${menuopts[8]}") aria2c -j 6 -x 10 -c -d ~/vids/documentary/.cache/clean.db/ "${feed}" ;;
     "${menuopts[9]}") d-bookmark "${feed}" ;;
