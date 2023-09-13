@@ -5,7 +5,7 @@
 source d-var.conf
 
 
-menuopts=(" Powermenu" "󰸉 Change Wallpaper" " Handle Stuffs" " Music Menu" " Pirate Mode" " Insert Emoji/Icons" "﬜ Dictionary" " Set Reminder" "⏲ Time & Date Now" " System Stats" " YouTube" "🗒 TODO")
+menuopts=(" Powermenu" "󰸉 Change Wallpaper" " Handle Stuffs" " Music Menu" " Pirate Mode" " Insert Emoji/Icons" "﬜ Dictionary" " Set Reminder" "⏲ Time & Date Now" " System Stats" " YouTube" "🗒 TODO" " Web Search")
 
 
 chosen=$(printf '%s\n' "${menuopts[@]}" | $D_MENU)
@@ -23,5 +23,6 @@ case "$chosen" in
         "${menuopts[9]}") d-stats ;;
         "${menuopts[10]}") ytfzf -D ;;
         "${menuopts[11]}") d-todo ;;
+        "${menuopts[12]}") d-search ;;
 	*) exit 1 ;;
 esac
