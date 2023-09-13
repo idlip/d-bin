@@ -38,7 +38,9 @@ menuopts=("  Copy Url"
           "  Libre Wolf"
           "  Chromium"
           "  Torrent Aria"
-          " YT Music")
+          "  YT Music"
+          "  Search Engine"
+)
 
 case "$(printf '%s\n' "${menuopts[@]}" | sort | $D_MENU -p ${shortfeed})" in
 
@@ -57,5 +59,6 @@ case "$(printf '%s\n' "${menuopts[@]}" | sort | $D_MENU -p ${shortfeed})" in
     "${menuopts[12]}") setsid chromium "${feed}" ;;
     "${menuopts[13]}") aria_tor ;;
     "${menuopts[14]}") pgrep mpd || mpd; mpc add "$(yt-dlp -f bestaudio -g "$(ytfzf -LD ${feed})")" && mpc play ;;
+    "${menuopts[15]}") d-search ;;
     *) exit 1 ;;
 esac

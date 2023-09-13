@@ -2,7 +2,7 @@
 MPC="mpc --quiet -p ${1:-6600}"
 pidof -x mpd || mpd
 
-source d-var.conf 
+source d-var.conf
 
 DMENU() {
     # Vertical menu if $3 is given
@@ -89,7 +89,7 @@ prev(){
 }
 
 ytmusic () {
-    $MPC add "$(yt-dlp -f bestaudio -g "$(ytfzf -LD)")"
+    $MPC add "$(yt-dlp -f bestaudio -g "$(ytfzf -LD --ii='y.com.sb')")"
 }
 
 menuopts=( " Clear"  " Add" " Remove" " Jump"  " Toggle" " Play"  " Pause"  " Stop" "怜 Next" "玲 Prev" "󱕱 Queued" " YT Music")
@@ -112,4 +112,3 @@ while true; do
         "") exit 0;;
     esac
 done
-

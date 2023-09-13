@@ -7,13 +7,13 @@ mkdir -p $HOME/.cache/notflix
 
 DOWNLOAD_DIR="$HOME/Documents/Torrent"
 
-baseurl="https://www.1337xx.to"
+baseurl="https://www.1337x.to"
 
 cachedir="$HOME/.cache/notflix"
 
 LOG_FILE="$HOME/.cache/notflix/notflix_history"
 
-[[ -f "$LOG_FILE" ]] && LS="$(cat $LOG_FILE)" 
+[[ -f "$LOG_FILE" ]] && LS="$(cat $LOG_FILE)"
 [[ -z "$LS" ]] && LS=""
 
 PAGE=1
@@ -56,7 +56,7 @@ grep -o '<a href="/torrent/.*</a>' $cachedir/tmp.html | sed 's/<[^>]*>//g' > $ca
 
 result_count=$(wc -l $cachedir/titles.bw | awk '{print $1}')
 if [ "$result_count" -lt 1 ]; then
- echo "No Result found!" 
+ echo "No Result found!"
  exit 0
 fi
 
@@ -81,7 +81,7 @@ sed 's/\./ /g; s/\-/ /g' $cachedir/titles.bw |
 awk '{print NR " - ["$0"]"}' $cachedir/size.bw > $cachedir/tmp && mv $cachedir/tmp $cachedir/size.bw
 awk '{print "[S:"$1 ", L:"$2"]" }' $cachedir/seedleech.bw > $cachedir/tmp && mv $cachedir/tmp $cachedir/seedleech.bw
 
-[[ "$PAGE" > 1 ]] && echo "Previous Page" >> $cachedir/titles.bw 
+[[ "$PAGE" > 1 ]] && echo "Previous Page" >> $cachedir/titles.bw
 
 echo "Next Page" >> $cachedir/titles.bw
 
@@ -91,8 +91,8 @@ LINEO=$(paste -d\   $cachedir/size.bw $cachedir/seedleech.bw $cachedir/titles.bw
 LINE=$( echo "$LINEO" | cut -d\- -f1 | awk '{$1=$1; print}')
 
 if [ -z "$LINE" ]; then
-exit 0 
-fi 
+exit 0
+fi
 
 # Next Page
 [[ "$LINE" = "Next Page" ]] && PAGE=$(($PAGE+1)) && scrape
@@ -123,12 +123,12 @@ case $PROMPTO in
     notify-send " 🛫 Downloading Torrent"
     exit
     ;;
-  "Aria Daemon") 
+  "Aria Daemon")
     curl http://localhost:6800/jsonrpc -d '{"jsonrcp":"2.0","id":"someID","method":"aria2.addUri","params":["token:ariatest",["'${magnet}'"]]}'
     notify-send "Added download"
     ;;
   CopyUrl)
-    echo "$magnet" | wl-copy 
+    echo "$magnet" | wl-copy
     notify-send " 🧲 Copied Magnet"
     exit
     ;;
@@ -144,8 +144,8 @@ exit
 
 
 seqr="$(echo -e "complete\nhashminer\nmusafir\nPSA\nBONE" | $D_MENU -l 10 -p ' ')"
-[[ -z "$@" ]] && 
-QUER_Y="$seqr" && scrape 
+[[ -z "$@" ]] &&
+QUER_Y="$seqr" && scrape
 
 
 
