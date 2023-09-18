@@ -1,0 +1,63 @@
+#!/usr/bin/env sh
+
+# Script to search terms in search engines
+
+source d-var.conf
+
+query="${1:-$(printf "$(wl-paste -p)\n$(wl-paste)" | $D_MENU -i -p ' ')}"
+echo "$feed" | wl-copy -n
+# For prompt/notify on chosen link
+shortquery="$(echo ${feed} | cut -d '/' -f3,4,5,6 )"
+
+browsertab=("  Firefox" "  Librewolf" "  Brave" "󰖂 MullVad")
+enginestab=(
+    "🔗 Website/URL" #0
+    "󰇥  DuckDuckGo" #15
+    "  Brave" #1
+    "  Google Scholar" #2
+    "  Reddit" #3
+    "  NixPkgs" #4
+    "  MyNixOS" #5
+    "  Nixhub - pkgver" #6
+    "󰂦  NCBI" #7
+    "󰏓  BioConductor" #8
+    "󰣇  Arch-Wiki" #9
+    "󰂺  Libgen-Zlib-Books" #10
+    "  GitHub" #11
+    "  AnimeTosho" #12
+    "󰄛  NyaaSi" #13
+    "  Getty Images" #14
+    "  1337 Torrent" #15
+
+)
+
+getbrowser="$(printf '%s\n' "${browsertab[@]}" | $D_MENU -p "${shortfeed}")"
+
+case $getbrowser in
+    "${browsertab[0]}") nowbrowser="setsid -f firefox '%s' >/dev/null 2>&1" ;;
+    "${browsertab[1]}") nowbrowser="setsid -f librewolf '%s' >/dev/null 2>&1" ;;
+    "${browsertab[2]}") nowbrowser="setsid -f brave '%s' >/dev/null 2>&1" ;;
+    "${browsertab[3]}") nowbrowser="setsid -f mullvad '%s' >/dev/null 2>&1" ;;
+esac
+
+dosearch="$(printf '%s\n' "${enginestab[@]}" | $D_MENU -p "${shortfeed}")"
+
+case $dosearch in
+    "${enginestab[0]}") eval $(printf "$nowbrowser" "$query") ;;
+    "${enginestab[15]}") eval $(printf "$nowbrowser" "https://duckduckgo.com/?q=$query") ;;
+    "${enginestab[1]}") eval $(printf "$nowbrowser" "https://search.brave.com/search?q=$query") ;;
+    "${enginestab[2]}") eval $(printf "$nowbrowser" "https://scholar.google.com/scholar?&q=$query") ;;
+    "${enginestab[3]}") eval $(printf "$nowbrowser" "https://old.reddit.com/search?q=$query") ;;
+    "${enginestab[4]}") eval $(printf "$nowbrowser" "https://search.nixos.org/packages?channel=unstable&from=0&size=50&sort=relevance&type=packages&query=$query") ;;
+    "${enginestab[5]}") eval $(printf "$nowbrowser" "https://mynixos.com/search?q=$query") ;;
+    "${enginestab[6]}") eval $(printf "$nowbrowser" "https://www.nixhub.io/search?q=$query") ;;
+    "${enginestab[7]}") eval $(printf "$nowbrowser" "https://www.ncbi.nlm.nih.gov/search/all/?term=$query") ;;
+    "${enginestab[8]}") eval $(printf "$nowbrowser" "https://www.bioconductor.org/help/search/index.html?q=$query") ;;
+    "${enginestab[9]}") eval $(printf "$nowbrowser" "https://wiki.archlinux.org/index.php?search=$query") ;;
+    "${enginestab[10]}") eval $(printf "$nowbrowser" "https://libgen.rs/search.php?req=$query") ;;
+    "${enginestab[11]}") eval $(printf "$nowbrowser" "https://github.com/search?q=$query&type=repositories") ;;
+    "${enginestab[12]}") eval $(printf "$nowbrowser" "https://animetosho.org/search?q=$query") ;;
+    "${enginestab[13]}") eval $(printf "$nowbrowser" "https://nyaa.si/?f=0&c=0_0&q=$query") ;;
+    "${enginestab[14]}") eval $(printf "$nowbrowser" "https://www.gettyimages.in/search/2/image?family=creative&phrase=$query");;
+    "${enginestab[16]}") eval $(printf "$nowbrowser" "https://1337x.to/search/$query/1");;
+esac
