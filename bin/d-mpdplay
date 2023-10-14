@@ -92,7 +92,7 @@ ytmusic () {
     $MPC add "$(yt-dlp -f bestaudio -g "$(ytfzf -LD --ii='y.com.sb')")"
 }
 
-menuopts=( " Clear"  " Add" " Remove" " Jump"  " Toggle" " Play"  " Pause"  " Stop" "怜 Next" "玲 Prev" "󱕱 Queued" " YT Music")
+menuopts=( " Clear"  "󰐒 Add" "󰵩 Remove" "󱫜 Jump"  " Toggle" " Play"  " Pause"  " Stop" "󰒭 Next" "󰒮 Prev" "󱕱 Queued" " YT Music")
 
 while true; do
     action=$(printf '%s\n' "${menuopts[@]}" | $L_MENU -p " Do you want to")
@@ -108,7 +108,7 @@ while true; do
         "${menuopts[8]}") next ;;
         "${menuopts[9]}") prev ;;
         "${menuopts[10]}") queue ;;
-	"${menuopts[11]}") ytmusic ;;
+	    "${menuopts[11]}") ytmusic ;;
         "") exit 0;;
     esac
 done

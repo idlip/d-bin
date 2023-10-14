@@ -5,11 +5,12 @@ source d-var.conf
 menuopts=("Record Video + Audio" "Only Video" "Record Small Area in Mouse" "Kill Recording")
 
 taping=$(printf '%s\n' "${menuopts[@]}" | $D_MENU -p ' ')
+command="wl-screenrec"
 
 case "$taping" in
-  "${menuopts[0]}") wf-recorder -a -f ~/screen-$(date '+%a-%d-%b@%H:%M:%S').mp4 ;;
-  "${menuopts[1]}") wf-recorder -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 ;;
-  "${menuopts[2]}") wf-recorder -g "$(slurp)" -f ~/capture-$(date '+%a-%d-%b@%H:%M:%S').mp4 ;;
-  "${menuopts[3]}") pkill -INT wf-recorder ;;
+  "${menuopts[0]}") $command --audio -f ~/screen-$(date '+%a-%d-%b@%H:%M:%S').mp4 ;;
+  "${menuopts[1]}") $command -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 ;;
+  "${menuopts[2]}") $command -g "$(slurp)" -f ~/capture-$(date '+%a-%d-%b@%H:%M:%S').mp4 ;;
+  "${menuopts[3]}") pkill -INT $command ;;
   *) exit 1 ;;
 esac
