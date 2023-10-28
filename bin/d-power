@@ -35,7 +35,7 @@ case "$chosen" in
 	;;
 
     "$a1") d-wifi ;;
-    "$a4") xset dpms force off ;;
+    "$a4") gtklock & sleep 1 && systemctl suspend ;;
     "$a5")
 
 	bright="$(printf "$c1\n$c2" | sort | $D_MENU )"
