@@ -20,7 +20,7 @@ fi
 # Eg names so you can quickly name
 # notify-send
 examples=("reddit" "twitter" "git-linux" "git-emacs" "git-droid" "TODO")
-name="$(printf '%s\n' "${examples[@]}" | $D_MENU -W 0.8 -p "${site} => Name")"
+name="$(printf '%s\n' "${examples[@]}" | $D_MENU -W 0.8 -mesg "${site} => Name")"
 
 # Add your org mode file path here (headings are in level 2 in my file)
 getheadings="$(cat ${file} | rg "^\*\* "  | awk '{print $2 }')"
