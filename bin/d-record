@@ -6,11 +6,12 @@ menuopts=("Record Video + Audio" "Only Video" "Record Small Area in Mouse" "Kill
 
 taping=$(printf '%s\n' "${menuopts[@]}" | $D_MENU -p ' ')
 command="wl-screenrec"
+refreshbar="pkill -RTMIN+8 waybar"
 
 case "$taping" in
-  "${menuopts[0]}") $command --audio -f ~/screen-$(date '+%a-%d-%b@%H:%M:%S').mp4 ;;
-  "${menuopts[1]}") $command -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 ;;
-  "${menuopts[2]}") $command -g "$(slurp)" -f ~/capture-$(date '+%a-%d-%b@%H:%M:%S').mp4 ;;
-  "${menuopts[3]}") pkill -INT $command ;;
+  "${menuopts[0]}") $command --audio -f ~/screen-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
+  "${menuopts[1]}") $command -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
+  "${menuopts[2]}") $command -g "$(slurp)" -f ~/capture-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
+  "${menuopts[3]}") pkill -INT $command & $refreshbar ;;
   *) exit 1 ;;
 esac
