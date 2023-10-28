@@ -3,12 +3,12 @@
 ##### You may want to check my wallpapers repo : https://github.com/idlip/d-wallpapers
 
 # Path to wallpapers directory
-wall_dir=~/d-git/d-wallpapers/walls/
+wall_dir=~/d-git/d-wallpapers/oled/
 
 if [ -z "$1" ]; then
-  wall="$(find "$wall_dir" | shuf -n1)"
+	wall="$(find "$wall_dir" | shuf -n1)"
 else
-  wall="$1"
+	wall="$1"
 fi
 
 rsync "$wall" ~/.local/share/bg.jpg
