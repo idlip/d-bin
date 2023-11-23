@@ -12,6 +12,6 @@ case "$taping" in
   "${menuopts[0]}") $command --audio -f ~/screen-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
   "${menuopts[1]}") $command -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
   "${menuopts[2]}") $command -g "$(slurp)" -f ~/capture-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
-  "${menuopts[3]}") pkill -INT $command & $refreshbar ;;
+  "${menuopts[3]}") pkill -INT $command && $refreshbar ;;
   *) exit 1 ;;
 esac
