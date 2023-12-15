@@ -1,0 +1,31 @@
+#!/bin/sh
+down() {
+pamixer -d 5
+volume=$(pamixer --get-volume)
+[ $volume -gt 0 ] && volume=`expr $volume`
+notify-send "󰖀 Volume Decreased to $volume%" -h int:value:"$volume" -i audio -r 2593 -u normal
+}
+
+up() {
+pamixer -i 5
+volume=$(pamixer --get-volume)
+[ $volume -lt 100 ] && volume=`expr $volume`
+notify-send " Volume Increased to $volume%" -h int:value:"$volume" -i audio -r 2593 -u normal
+}
+
+mute() {
+muted="$(pamixer --get-mute)"
+if $muted; then
+  pamixer -u
+  notify-send " Volume Unmuted" -i audio -r 2593
+else
+  pamixer -m
+  notify-send " Volume Muted" -i audio -r 2593
+fi
+}
+
+case "$1" in
+  up) up;;
+  down) down;;
+  mute) mute;;
+esac
