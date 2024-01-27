@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+mpv av://v4l2:/dev/video0 --profile=low-latency --no-osc --untimed --video-align-y=0.6 --video-zoom=1.5 --title=webcam "$@"

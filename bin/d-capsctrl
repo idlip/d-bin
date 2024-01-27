@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# hyprctl keyword input:kb_options ctrl:nocaps
+
+hyprctl keyword input:kb_options caps:caps
