@@ -1,9 +1,7 @@
-#!/usr/bin/env sh
-
+#!/usr/bin/env bash
 # Script to Insert and copy the unicode char
 
 source d-var.conf
-
 
 # The famous "get a menu of emojis to copy" script.
 

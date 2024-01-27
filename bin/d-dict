@@ -1,7 +1,5 @@
-#!/usr/bin/env sh
-#word=$(echo "$(cat ~/.local/share/dict/vocab)\n$@"| rofi -rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' -i -theme-str 'window {width: 50%;height: 60%;}' -p '📑 Meaning for ')
-
-# some cool dep : 
+#!/usr/bin/env bash
+# some cool dep :
 # enchant --- spell check
 # espeak-ng -- text-to-speech
 
@@ -20,39 +18,39 @@ notify-send -t 15000 "$word" "$separatedDefinition"
 offlinewn () {
 output=$( sdcv -n0u wn $word )
 notify-send -t 15000 "$word" "$output"
-sdcv -n0u wn $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' 
+sdcv -n0u wn $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}'
 }
 offlineco () {
 output=$( sdcv -n0u collins $word )
 notify-send -t 15000 "$word" "$output"
-sdcv -n0u collins $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' 
+sdcv -n0u collins $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}'
 }
 offlinedd () {
 output=$( sdcv -n0u dictd $word )
 notify-send -t 15000 "$word" "$output"
-sdcv -n0u dictd $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' 
+sdcv -n0u dictd $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}'
 }
 
 offlinejp () {
 output=$( sdcv -n0u enjp $word )
 notify-send -t 15000 "$word" "$output"
-sdcv -n0u enjp $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' 
+sdcv -n0u enjp $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}'
 }
 
 offlinesl () {
 output=$( sdcv -n0u Collin $word )
 notify-send -t 15000 "$word" "$output"
-sdcv -n0u Collin $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' 
+sdcv -n0u Collin $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}'
 }
 offlinefr () {
 output=$( sdcv -n0u enfr $word )
 notify-send -t 15000 "$word" "$output"
-sdcv -n0u enfr $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' 
+sdcv -n0u enfr $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}'
 }
 offlinesp () {
 output=$( sdcv -n0u ensp $word )
 notify-send -t 15000 "$word" "$output"
-sdcv -n0u ensp $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}' 
+sdcv -n0u ensp $word | rofi -dmenu -i -theme-str 'window {height:50%; width:50%;}'
 }
 
 a1="  WordNet Dictionary"

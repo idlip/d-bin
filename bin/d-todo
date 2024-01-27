@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 file="$HOME/.todo.org"
 touch "$file"
 height=$(wc -l "$file" | awk '{print $1}')

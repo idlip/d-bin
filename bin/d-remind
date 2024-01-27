@@ -1,5 +1,4 @@
-#!/usr/bin/env sh
-
+#!/usr/bin/env bash
 source d-var.conf
 
 menuopts=("now + 10 minutes" "now + 15 minutes" "now + 25 minutes" "now + 2 hour" "19:45 today" "16:30 tomorrow" "4pm + 1 days" "10am Jul 31")

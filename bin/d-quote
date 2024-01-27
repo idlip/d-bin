@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#!/usr/bin/env bash
 
 RED='\033[0;31m'
 BLUE='\033[0;34m'
@@ -30,4 +31,3 @@ echo ===================================================
 
 echo
 fortune
-

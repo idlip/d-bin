@@ -1,8 +1,5 @@
-#!/usr/bin/env sh
-
-# Script to Insert and copy the color
-
-source d-var.conf 
+#!/usr/bin/env bash
+source d-var.conf
 
 a1="󰢷 Pick a colour (HEX)"
 a2="🍎 Choose a Colorname"
@@ -38,8 +35,8 @@ else
     # replace with xclip or xsel or x11
     printf "$chosen" | wl-copy
 
-    # Replace with xdotool for X11 
-    wtype "$chosen"    
+    # Replace with xdotool for X11
+    wtype "$chosen"
 
     # Tbh not required
     # notify-send "'$chosen' copied to clipboard." &

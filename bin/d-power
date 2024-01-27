@@ -1,7 +1,4 @@
-#!/usr/bin/env sh
-
-# Powermenu
-
+#!/usr/bin/env bash
 source d-var.conf
 
 a1="  Wifi Menu"

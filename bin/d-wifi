@@ -1,5 +1,4 @@
-#!/usr/bin/env sh
-
+#!/usr/bin/env bash
 source d-var.conf
 
 a1="󰖪 Disable Wi-Fi"

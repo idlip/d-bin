@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-
 # Link handler for every thinkable purpose
-# I use ts or tsp for task scheduling with mpv
+# I use `nq` for task scheduling with mpv
 
 source d-var.conf
 
@@ -17,7 +16,7 @@ aria_tor () {
 }
 
 audio_podcast () {
-    case "$(printf "Song\nPodcast" | $D_MENU -p ' ')" in
+    case "$(printf "Song\nPodcast" | $D_MENU -p ' ')" in
 	"Podcast") mpc pause; NQDIR=/tmp/podcast nq mpv --geometry=15% --title=podcast --vid=1 "${feed}" >/dev/null 2>&1 ;;
 	"Song") pgrep mpd || mpd; mpc add "$(yt-dlp -f bestaudio -g "${feed}")" ;;
 	*) exit 1 ;;
@@ -40,6 +39,7 @@ menuopts=("  Copy Url"
           "  Torrent Aria"
           "  YT Music"
           "  Search Engine"
+          "  Document Viewer"
 )
 
 case "$(printf '%s\n' "${menuopts[@]}" | sort | $D_MENU -p ${shortfeed})" in
@@ -60,5 +60,6 @@ case "$(printf '%s\n' "${menuopts[@]}" | sort | $D_MENU -p ${shortfeed})" in
     "${menuopts[13]}") aria_tor ;;
     "${menuopts[14]}") pgrep mpd || mpd; mpc add "$(yt-dlp -f bestaudio -g "$(ytfzf -LD ${feed})")" && mpc play ;;
     "${menuopts[15]}") d-search ;;
+    "${menuopts[16]}") sioyek ${feed} ;;
     *) exit 1 ;;
 esac

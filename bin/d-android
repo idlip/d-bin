@@ -1,12 +1,7 @@
 #!/usr/bin/env bash
-
-
-# Todo : how to use mic/camera for video calling
-# credits: https://github.com/sayanta01/dotfiles
-
 # setup
 connect() {
-	ip=$(adb shell ip route | awk '{print $9}')
+	ip="$(adb shell ip route | awk '{print $9}')"
 	adb devices && adb tcpip 5555 && adb connect "$ip":5555
 	# Run `adb disconnect` once you're done
 }

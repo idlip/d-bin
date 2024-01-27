@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 rofm="rofi -dmenu "
 mymem=$rofm
 

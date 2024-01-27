@@ -1,10 +1,10 @@
-#!/usr/bin/env sh
-
+#!/usr/bin/env bash
 # Simple script which show the bookmarks from org-file which are inserted via d-bookmark
 
 # We can select and it insert the link
-source d-var.conf 
+source d-var.conf
+file="$HOME/d-sync/notes/bookmarks.org"
 
-wtype "$(rg -v '^$' ~/d-sync/notes/bookmarks.org | \
-      ${L_MENU} | \
-      rg -o '(http|https)://[a-zA-Z0-9./?=_%:-]*')"
+wtype "$(rg '\*\*\*' ${file} | ${L_MENU} | rg -o '(http|https)://[a-zA-Z0-9./?=_%:-]*')"
+
+# search for *** H3 level links and show list in menu and type the link of selected item

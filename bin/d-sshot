@@ -1,5 +1,4 @@
-#!/usr/bin/env sh
-
+#!/usr/bin/env bash
 source d-var.conf
 
 menuopts=(" Select Area in Mouse" " Copy Area of Screen" " Full Display" " Copy Whole Display" " Active Window")
@@ -13,12 +12,14 @@ nameopts=(
 
 sleep_for='sleep 0.5'
 temp_pic='/tmp/thescr.png'
+ident=$(date +%Y%m%dT%H%M%S)
 
 gimme() {
 output=$(date +'%d-%a  %H:%M:%S')
 picname=$(printf '%s\n' "${nameopts[@]}" | ${D_MENU} -l 5 -i -p ' ' || echo $output )
+tagname=$(echo "" | ${D_MENU} -l 5 -i -p ' ')
 
-cp $temp_pic ~/pics/sshots/"$picname.png"
+cp $temp_pic ~/pics/sshots/"${ident}-${picname}_${tagname}.png"
 }
 
 sshot=$(printf '%s\n' "${menuopts[@]}" | sort | $D_MENU -p 'Snap ScreenShot of ')

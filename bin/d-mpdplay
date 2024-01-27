@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 MPC="mpc --quiet -p ${1:-6600}"
 pidof -x mpd || mpd
 

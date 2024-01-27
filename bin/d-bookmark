@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 source d-var.conf
 
 bookmark="${1:-$(printf "$(wl-paste -p)\n$(wl-paste)" | $D_MENU -i -p ' ')}"
@@ -23,7 +22,9 @@ examples=("reddit" "twitter" "git-linux" "git-emacs" "git-droid" "TODO")
 name="$(printf '%s\n' "${examples[@]}" | $D_MENU -W 0.8 -mesg "${site} => Name")"
 
 # Add your org mode file path here (headings are in level 2 in my file)
-getheadings="$(cat ${file} | rg "^\*\* "  | awk '{print $2 }')"
+getheadings="$(cat ${file} | rg "^\*\* " | sed '/** elfeed/q' | awk '{print $2 }')"
+# ^ prints heading upto "** elfeed"
+# i have added rest as rss feeds so
 
 # Prints out the heading text, so `sed` can append it to that heading level
  [[ -n "${name}" ]] && section="$(printf "$getheadings" | $D_MENU -p ' Heading'| sed 's/ //g')"

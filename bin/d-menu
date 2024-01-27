@@ -1,12 +1,7 @@
 #!/usr/bin/env bash
-
-# One script to index them all. 
-
 source d-var.conf
 
-
-menuopts=(" Powermenu" "󰸉 Change Wallpaper" " Handle Stuffs" " Music Menu" " Pirate Mode" " Insert Emoji/Icons" "﬜ Dictionary" " Set Reminder" "⏲ Time & Date Now" " System Stats" " YouTube" "🗒 TODO" " Web Search")
-
+menuopts=(" Powermenu" "󰸉 Change Wallpaper" " Handle Stuffs" " Music Menu" " Pirate Mode" " Insert Emoji/Icons" "﬜ Dictionary" " Set Reminder" "⏲ Time & Date Now" " System Stats" " YouTube" " TODO" " Web Search")
 
 chosen=$(printf '%s\n' "${menuopts[@]}" | $D_MENU)
 
@@ -15,7 +10,7 @@ case "$chosen" in
         "${menuopts[1]}") d-walls ;;
         "${menuopts[2]}") d-stuff ;;
         "${menuopts[3]}") d-mpdplay ;;
-        "${menuopts[4]}") d-pirt ;;	
+        "${menuopts[4]}") d-pirt ;;
         "${menuopts[5]}") d-unicodes ;;
         "${menuopts[6]}") d-dict ;;
         "${menuopts[7]}") d-remind ;;

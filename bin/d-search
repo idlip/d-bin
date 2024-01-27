@@ -1,5 +1,4 @@
-#!/usr/bin/env sh
-
+#!/usr/bin/env bash
 # Script to search terms in search engines
 
 source d-var.conf

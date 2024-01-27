@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-## zaread - a simple script created by paoloap.
-
 # zaread cache path
 ZADIR="$HOME"'/.cache/zaread/'
 # reader with which we'll open pdf, epub and converted files
@@ -130,4 +128,3 @@ else
   # ...and after the conversion we open the file
   $reader "$ZADIR$pdffile"
 fi
-

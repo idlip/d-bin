@@ -1,9 +1,6 @@
-#!/usr/bin/env sh
-
-##### You may want to check my wallpapers repo : https://github.com/idlip/d-wallpapers
-
+#!/usr/bin/env bash
 # Path to wallpapers directory
-wall_dir=~/d-git/d-wallpapers/oled/
+wall_dir=~/d-git/d-wallpapers/walls/
 
 if [ -z "$1" ]; then
 	wall="$(find "$wall_dir" | shuf -n1)"
