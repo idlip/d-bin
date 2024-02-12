@@ -70,13 +70,13 @@ fi
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-bookmark
 source d-var.conf
 
-bookmark="${1:-$(printf "$(wl-paste -p)\n$(wl-paste)" | $D_MENU -i -p ' ')}"
+bookmark="${1:-$(printf "%s\n%s" "$(wl-paste -p)" "$(wl-paste)" | $D_MENU -i -p ' ')}"
 
 #file="$HOME/.local/share/dict/bookmarks"
 file="$HOME/d-sync/notes/bookmarks.org"
 
 # Just a variable to show as prompt while adding name (confirmation)
-site="$(echo "$bookmark" | sed 's/ //g')"
+site="$(echo "${bookmark}" | sed 's/ //g')"
 
 if [[ -z "$site" ]]; then
     exit 0
@@ -88,21 +88,23 @@ fi
 # Eg names so you can quickly name
 # notify-send
 examples=("reddit" "twitter" "git-linux" "git-emacs" "git-droid" "TODO")
-name="$(printf '%s\n' "${examples[@]}" | $D_MENU -W 0.8 -mesg "${site} => Name")"
+name="$(printf '%s\n' "${examples[@]}" | $D_MENU -l 2 -p "${site} => Name")"
 
 # Add your org mode file path here (headings are in level 2 in my file)
-getheadings="$(cat ${file} | rg "^\*\* " | sed '/** elfeed/q' | awk '{print $2 }')"
+getheadings="$(rg "^\*\* " "${file}" | sed '/** elfeed/q' | awk '{print $2 }')"
 # ^ prints heading upto "** elfeed"
 # i have added rest as rss feeds so
 
+tags="$(rg -wo ":.*:" "$file" | uniq | cut -d':' -f2 |$D_MENU -p "${name} =>  ")"
+
 # Prints out the heading text, so `sed` can append it to that heading level
- [[ -n "${name}" ]] && section="$(printf "$getheadings" | $D_MENU -p ' Heading'| sed 's/ //g')"
+ [[ -n "${name}" ]] && section="$(printf "%s" "$getheadings" | $D_MENU -p ' Heading'| sed 's/ //g')"
 
 
 mark-print ()
 {
 # Sed appends the link in a clean way
-    sed -i "/$section$/a *** [[$site][$name]]" "$file" &&
+    sed -i "/$section$/a *** [[$site][$name]]  :$tags:" "$file" &&
         notify-send "Bookmark added!" " $site is now saved under ==>  $section"
 
 }
