@@ -1,4 +1,4 @@
-#+PROPERTY: header-args :results silent :tangle-mode (identity #o444) :mkdirp yes
+#+PROPERTY: header-args :results silent :tangle-mode (identity #o555) :mkdirp yes
 
 ** Webcam
 - Use =mpv= for webcam. =ffplay= could also be used, but =mpv= is easier for shortcuts.
