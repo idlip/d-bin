@@ -1109,6 +1109,18 @@ echo "🔋 Battery: " "$(cat /sys/class/power_supply/BAT1/capacity)" "%"
 )"
 # acpi
 #+end_src
+** Password entry
+- Give a menu prompt to input the password in places where no pasting is allowed.
+#+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-passentry
+source d-var.conf
+
+sleepfor=$(printf "1\n2\n3\n4\n5" | $D_MENU -p "󰒲 Sleep for")
+typetool="wtype"
+
+password=$(printf "%s" "$(wl-paste -p)" | $D_MENU -x -p " password: ")
+
+sleep "${sleepfor}" && "$typetool" "$password"
+#+end_src
 ** Link handler - Stuff
 - Stuff, and all link handler.
 - Most used, universal way.
