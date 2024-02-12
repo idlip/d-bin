@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+source d-var.conf
+
+sleepfor=$(printf "1\n2\n3\n4\n5" | $D_MENU -p "󰒲 Sleep for")
+typetool="wtype"
+
+password=$(printf "%s" "$(wl-paste -p)" | $D_MENU -x -p " password: ")
+
+sleep "${sleepfor}" && "$typetool" "$password"
