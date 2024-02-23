@@ -5,6 +5,6 @@
 source d-var.conf
 file="$HOME/d-sync/notes/bookmarks.org"
 
-wtype "$(rg '\*\*\*' ${file} | ${L_MENU} | rg -o '(http|https)://[a-zA-Z0-9./?=_%:-]*')"
+wtype "$(rg '^\+' ${file} | sed 's/+ //g' | ${L_MENU} | rg -o '(http|https)://[a-zA-Z0-9./?=_%:-]*')"
 
-# search for *** H3 level links and show list in menu and type the link of selected item
+# search for links and show list in menu and type the link of selected item
