@@ -263,23 +263,23 @@ esac
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-ext
 for fi in "$@"; do
     if [ -f "$fi" ] ; then
-	    case $1 in
-		    ,*.tar.bz2)	tar xjf "$1"	;;
-		    ,*.tar.gz)	tar xzf "$1"	;;
-		    ,*.bz2)		bunzip2 "$1"	;;
-		    ,*.rar)		unrar x "$1"	;;
-		    ,*.gz)		gunzip "$1"	;;
-		    ,*.tar)		tar xf "$1"	;;
-		    ,*.tbz2)		tar xjf "$1"	;;
-		    ,*.tgz)		tar xzf "$1"	;;
-		    ,*.zip)		unzip "$1"	;;
-		    ,*.7z)		7z x "$1"	;;
-		    ,*.tar.xz)	tar xf "$1"	;;
-		    ,*.tar.zst)	unzstd "$1"	;;
-		    ,*)		echo "'$1' cannot be extracted via ex()" ;;
+	    case $fi in
+		    ,*.tar.bz2)	tar xjf "$fi"	;;
+		    ,*.tar.gz)	tar xzf "$fi"	;;
+		    ,*.bz2)		bunzip2 "$fi"	;;
+		    ,*.rar)		unrar x "$fi"	;;
+		    ,*.gz)		gunzip "$fi"	;;
+		    ,*.tar)		tar xf "$fi"	;;
+		    ,*.tbz2)		tar xjf "$fi"	;;
+		    ,*.tgz)		tar xzf "$fi"	;;
+		    ,*.zip)		unzip "$fi"	;;
+		    ,*.7z)		7z x "$fi"	;;
+		    ,*.tar.xz)	tar xf "$fi"	;;
+		    ,*.tar.zst)	unzstd "$fi"	;;
+		    ,*)		echo "'$fi' cannot be extracted via ex()" ;;
 	    esac
     else
-	    echo "'$1' is not a valid file"
+	    echo "'$fi' is not a valid file"
     fi;
 done
 #+end_src
