@@ -322,13 +322,15 @@ else
 fi
 
 #+end_src
-** TODO Idle
-- Do not suspend while playing audio.
+** Idle
+- To run idle timeout function when audio is running or not.
+- Useful to avoid suspending or locking screen.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-idle
-pw-cli i all | rg running
 # only suspend if audio isn't running
-if [ $? == 1 ]; then
-    systemctl suspend
+if [ "$(pw-cli i all | rg running)" ]; then
+    eval "$1"
+else
+    eval "$2"
 fi
 
 #+end_src
