@@ -947,7 +947,6 @@ echo "notify-send -u critical ' 🔔  Reminder 💡' '$text'" | at "$time"
 - Script to help with building regexp with sensible steps.
 - Credits to https://aurelio.net/projects/txt2regex/
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-regex
-#!/usr/bin/env sh
 # txt2regex.sh - Regular Expressions "wizard" made with Bash builtins
 #
 # Website : https://aurelio.net/projects/txt2regex/

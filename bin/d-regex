@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-#!/usr/bin/env sh
 # txt2regex.sh - Regular Expressions "wizard" made with Bash builtins
 #
 # Website : https://aurelio.net/projects/txt2regex/
