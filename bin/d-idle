@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-pw-cli i all | rg running
 # only suspend if audio isn't running
-if [ $? == 1 ]; then
-    systemctl suspend
+if [ "$(pw-cli i all | rg running)" ]; then
+    eval "$1"
+else
+    eval "$2"
 fi
