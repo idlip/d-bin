@@ -1,31 +1,36 @@
 #!/usr/bin/env bash
+# mixercli="pamixer --allow-boost"
+volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@)
+volcli="wpctl set-volume @DEFAULT_AUDIO_SINK@"
+togglecli="wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+
 down() {
-pamixer -d 5
-volume=$(pamixer --get-volume)
-[ $volume -gt 0 ] && volume=`expr $volume`
-notify-send "󰖀 Volume Decreased to $volume%" -h int:value:"$volume" -i audio -r 2593 -u normal
+    $mixercli -d 5
+    # volume=$(pamixer --get-volume)
+    # [ $volume -gt 0 ] && volume=`expr $volume`
+    # notify-send "󰖀 Volume Decreased to $volume%" -h int:value:"$volume" -i audio -r 2593 -u normal
 }
 
 up() {
-pamixer -i 5
-volume=$(pamixer --get-volume)
-[ $volume -lt 100 ] && volume=`expr $volume`
-notify-send " Volume Increased to $volume%" -h int:value:"$volume" -i audio -r 2593 -u normal
+    $mixercli -i 5
+    # volume=$(pamixer --get-volume)
+    # [ $volume -lt 100 ] && volume=`expr $volume`
+    # notify-send " Volume Increased to $volume%" -h int:value:"$volume" -i audio -r 2593 -u normal
 }
 
-mute() {
-muted="$(pamixer --get-mute)"
-if $muted; then
-  pamixer -u
-  notify-send " Volume Unmuted" -i audio -r 2593
-else
-  pamixer -m
-  notify-send " Volume Muted" -i audio -r 2593
-fi
+toggle() {
+    muted="$(pamixer --get-mute)"
+    if $muted; then
+        $mixercli -u
+        notify-send " Volume Unmuted"
+    else
+        $mixercli -m
+        notify-send " Volume Muted"
+    fi
 }
 
 case "$1" in
-  up) up;;
-  down) down;;
-  mute) mute;;
+    up) up;;
+    down) down;;
+    toggle) toggle;;
 esac

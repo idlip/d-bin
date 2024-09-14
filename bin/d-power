@@ -1,56 +1,56 @@
 #!/usr/bin/env bash
 source d-var.conf
 
-a1="  Wifi Menu"
-a2="  Power Menu"
-a3="󰹑  Screen Shot"
-a4="  Lock/Suspend"
-a5="󰃡  Brightness"
-a6="  Change Volume"
+wifi_m="  Wifi Menu"
+power_m="  Power Menu"
+sshot_m="󰹑  Screen Shot"
+lock="  Lock/Suspend"
+brightn="󰃡  Brightness"
+volume="  Change Volume"
 
-b1="  Power Off"
-b2="  Reboot"
-b3="  Screen Off"
+poweroff="  Power Off"
+reboot="  Reboot"
+screenoff="  Screen Off"
 
-c1="󰃝  Increase Brightness"
-c2="  Decrease Brightness"
+brightup="󰃝  Increase Brightness"
+brightdown="  Decrease Brightness"
 
-d1="  Increase Volume"
-d2="  Decrease Volume"
-d3="  Mute"
+volup="  Increase Volume"
+voldown="  Decrease Volume"
+mute="  Mute"
 
-chosen=$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6" | sort | $D_MENU -p ' ' )
+chosen="$(printf "$wifi_m\n$power_m\n$sshot_m\n$lock\n$brightn\n$volume" | sort | $S_MENU -p ' ' )"
 
 case "$chosen" in
-    "$a2")
-	power="$(printf "$b1\n$b2\n$b3" | sort | $D_MENU -p ' ' )"
+    "$power_m")
+	power="$(printf "$poweroff\n$reboot\n$screenoff" | sort | $S_MENU -p ' ' )"
 	case "$power" in
-	    "$b1") poweroff ;;
-	    "$b2") reboot ;;
-	    "$b3") hyprctl dispatch dpms  off ;;
+	    "$poweroff") poweroff ;;
+	    "$reboot") reboot ;;
+	    "$screenoff") hyprctl dispatch dpms  off ;;
 	esac
 	;;
 
-    "$a1") d-wifi ;;
-    "$a4") gtklock -d; sleep 1 && systemctl suspend ;;
-    "$a5")
+    "$wifi_m") d-wifi ;;
+    "$lock") hyprlock ;;
+    "$brightn")
 
-	bright="$(printf "$c1\n$c2" | sort | $D_MENU )"
+	bright="$(printf "$brightup\n$brightdown" | sort | $D_MENU )"
 
 	case "$bright" in
-	    "$c1") brightnessctl set +2% ;;
-	    "$c2") brightnessctl set 2%- ;;
+	    "$brightup") brightnessctl set +2% ;;
+	    "$brightdown") brightnessctl set 2%- ;;
 	esac
 	;;
 
-    "$a3") d-sshot ;;
-    "$a6")
+    "$sshot_m") d-sshot ;;
+    "$volume")
 
-	vol="$(printf "$d1\n$d2\n$d3" | sort | $D_MENU -p ' ')"
+	vol="$(printf "$volup\n$voldown\n$mute" | sort | $D_MENU -p ' ')"
 	case "$vol" in
-	    "$d1") pamixer -ui 5 ;;
-	    "$d2") pamixer -ud 5 ;;
-	    "$d3") pamixer -t ;;
+	    "$volup") pamixer -ui 5 ;;
+	    "$voldown") pamixer -ud 5 ;;
+	    "$mute") pamixer -t ;;
 	esac
 	;;
     *) exit 1 ;;

@@ -4,14 +4,15 @@ source d-var.conf
 menuopts=("Record Video + Audio" "Record Webcam and screen" "Only Video" "Record Small Area in Mouse" "Kill Recording")
 
 action=$(printf '%s\n' "${menuopts[@]}" | $D_MENU -p ' ')
-command="wl-screenrec --codec=vp9"
+command="wl-screenrec "
+opts="--codec=av1"
 refreshbar="pkill -RTMIN+8 waybar"
 
 case "$action" in
-  "${menuopts[0]}") $command --audio -f ~/screen-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
-  "${menuopts[1]}") d-webcam & $command --audio -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
-  "${menuopts[2]}") $command -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
-  "${menuopts[3]}") $command -g "$(slurp)" -f ~/capture-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
+  "${menuopts[0]}") $command $opts --audio -f ~/screen-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
+  "${menuopts[1]}") d-webcam & $command $opts --audio -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
+  "${menuopts[2]}") $command $opts -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
+  "${menuopts[3]}") $command $opts -g "$(slurp)" -f ~/capture-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
   "${menuopts[4]}") pkill -INT $command && $refreshbar ;;
   *) exit 1 ;;
 esac

@@ -20,10 +20,10 @@ fi
 # notify-send
 examples=("reddit" "twitter" "git-linux" "git-emacs" "git-droid" "TODO")
 
-title="$(printf '%s\n' "${examples[@]}" | $D_MENU -l 2 -p "${site} => Title" | sed 's/ /-/g')"
+title="$(printf '%s\n' "${examples[@]}" | $W_MENU -l 2 -p "${site} => Title" | sed 's/ /-/g')"
 
 # Add your org mode file path here (headings are in level 2 in my file)
-getheadings="$(rg "^\*\* " "${file}" | sed '/** elfeed/q' | awk '{print $2 }')"
+getheadings="$(rg "^\*\* " "${file}" | sed '/** gnus/q' | awk '{print $2 }')"
 # ^ prints heading upto "** elfeed"
 # i have added rest as rss feeds so
 

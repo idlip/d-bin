@@ -2,8 +2,8 @@
 source d-var.conf
 
 sleepfor=$(printf "1\n2\n3\n4\n5" | $D_MENU -p "󰒲 Sleep for")
-typetool="wtype"
+typetool="dotoolc"
 
 password=$(printf "%s" "$(wl-paste -p)" | $D_MENU -x -p " password: ")
 
-sleep "${sleepfor}" && "$typetool" "$password"
+sleep "${sleepfor}" && echo type "$password" | "$typetool"

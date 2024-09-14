@@ -1,13 +1,26 @@
 #!/usr/bin/env bash
 source d-var.conf
 
-menuopts=("now + 10 minutes" "now + 15 minutes" "now + 25 minutes" "now + 2 hour" "19:45 today" "16:30 tomorrow" "4pm + 1 days" "10am Jul 31")
+menuopts=("now + 5 minutes" "now + 10 minutes" "now + 15 minutes" "now + 25 minutes" "now + 2 hour" "19:45 today" "16:30 tomorrow" "4pm + 1 days" "10am Jul 31")
+
+remindopt=(
+    "Short break Over!"
+    "Long break done!"
+    "Drink Water!"
+    "Stop wasting time & Read something"
+    "Learn the market"
+)
 
 info_remind="   Time - Date ? Like Eg -- hh:mm Jul 10"
-notify-send -t 4000 "${info_remind}"
+# notify-send -t 4000 "${info_remind}"
 
-time=$(printf '%s\n' "${menuopts[@]}" | $L_MENU)
+# define variable for time and text
+time="${1:-$(printf '%s\n' "${menuopts[@]}" | $L_MENU -i -p '󰁫 ')}" && \
+    text="$(printf "%s\n" "${remindopts[@]}" | $L_MENU -p ' ')"
 
-text=$(echo $2 | $L_MENU -p '   ?')
-
-echo "notify-send -u critical ' 🔔  Reminder 💡' '$text'" | at "$time"
+# check if both arg given
+if [[ "$time" ]]; then
+    echo "notify-send -u critical ' 🔔  Reminder 💡' '$text'" | at "$time"
+else
+    notify-send "Please set the time and clock"
+fi

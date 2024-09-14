@@ -7,7 +7,7 @@ mkdir -p $HOME/.cache/notflix
 
 DOWNLOAD_DIR="$HOME/Documents/Torrent"
 
-baseurl="https://www.1337xx.to"
+baseurl="https://www.1337x.to"
 
 cachedir="$HOME/.cache/notflix"
 

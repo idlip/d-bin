@@ -491,7 +491,7 @@ mkdir -p $HOME/.cache/notflix
 
 DOWNLOAD_DIR="$HOME/Documents/Torrent"
 
-baseurl="https://www.1337xx.to"
+baseurl="https://www.1337x.to"
 
 cachedir="$HOME/.cache/notflix"
 
@@ -2841,7 +2841,7 @@ fi
 source d-var.conf
 file="$HOME/d-sync/notes/bookmarks.org"
 
-wtype "$(rg '^\+' ${file} | sed 's/+ //g' | ${L_MENU} | rg -o '(http|https)://[a-zA-Z0-9./?=_%:-]*')"
+wtype "$(rg '^\+' ${file} | sed 's/+ //g' | ${L_MENU} | rg -o '(http|https)://[a-zA-Z0-9./?=_%&:-]*')"
 
 # search for links and show list in menu and type the link of selected item
 
@@ -2870,35 +2870,38 @@ L_MENU="bemenu -l 20 -W 0.85 -s -i -CT"
 ** Volume
 - To get notification and interactive volume as slider.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-volume
+
+mixercli="pamixer --allow-boost"
+
 down() {
-pamixer -d 5
-volume=$(pamixer --get-volume)
-[ $volume -gt 0 ] && volume=`expr $volume`
-notify-send "󰖀 Volume Decreased to $volume%" -h int:value:"$volume" -i audio -r 2593 -u normal
+    $mixercli -d 5
+    volume=$(pamixer --get-volume)
+    [ $volume -gt 0 ] && volume=`expr $volume`
+    notify-send "󰖀 Volume Decreased to $volume%" -h int:value:"$volume" -i audio -r 2593 -u normal
 }
 
 up() {
-pamixer -i 5
-volume=$(pamixer --get-volume)
-[ $volume -lt 100 ] && volume=`expr $volume`
-notify-send " Volume Increased to $volume%" -h int:value:"$volume" -i audio -r 2593 -u normal
+    $mixercli -i 5
+    volume=$(pamixer --get-volume)
+    [ $volume -lt 100 ] && volume=`expr $volume`
+    notify-send " Volume Increased to $volume%" -h int:value:"$volume" -i audio -r 2593 -u normal
 }
 
-mute() {
-muted="$(pamixer --get-mute)"
-if $muted; then
-  pamixer -u
-  notify-send " Volume Unmuted" -i audio -r 2593
-else
-  pamixer -m
-  notify-send " Volume Muted" -i audio -r 2593
-fi
+toggle() {
+    muted="$(pamixer --get-mute)"
+    if $muted; then
+        $mixercli -u
+        notify-send " Volume Unmuted" -i audio -r 2593
+    else
+        $mixercli -m
+        notify-send " Volume Muted" -i audio -r 2593
+    fi
 }
 
 case "$1" in
-  up) up;;
-  down) down;;
-  mute) mute;;
+    up) up;;
+    down) down;;
+    toggle) toggle;;
 esac
 
 #+end_src

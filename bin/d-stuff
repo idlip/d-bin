@@ -5,7 +5,7 @@
 source d-var.conf
 
 feed="${1:-$(printf "$(wl-paste -p)\n$(wl-paste)" | $D_MENU -i -p ' ')}"
-echo "$feed" | wl-copy -n
+# echo "$feed" | wl-copy -n
 # For prompt/notify on chosen link
 shortfeed="$(echo ${feed} | cut -d '/' -f3,4,5,6 )"
 
@@ -17,7 +17,7 @@ aria_tor () {
 
 audio_podcast () {
     case "$(printf "Song\nPodcast" | $D_MENU -p ' ')" in
-	"Podcast") mpc pause; NQDIR=/tmp/podcast nq mpv --geometry=15% --title=podcast --vid=1 "${feed}" >/dev/null 2>&1 ;;
+	"Podcast") mpc pause; NQDIR=/tmp/podcast nq mpv --force-window --geometry=15% --title=podcast --vid=1 "${feed}" >/dev/null 2>&1 ;;
 	"Song") pgrep mpd || mpd; mpc add "$(yt-dlp -f bestaudio -g "${feed}")" ;;
 	*) exit 1 ;;
     esac
@@ -34,12 +34,14 @@ menuopts=("  Copy Url"
           "  Misc Download"
           "  Bookmark"
           "  Brave"
-          "󰪃  Libre Wolf"
+          "󱣻  Mullvad"
           "  Chromium"
           "  Torrent Aria"
           "  YT Music"
           "  Search Engine"
           "  Document Viewer"
+          "  LibreWolf"
+          "󰚂  Transmission"
 )
 
 case "$(printf '%s\n' "${menuopts[@]}" | sort | $D_MENU -p ${shortfeed})" in
@@ -51,15 +53,17 @@ case "$(printf '%s\n' "${menuopts[@]}" | sort | $D_MENU -p ${shortfeed})" in
     "${menuopts[4]}") NQDIR=/tmp/yt-music nq yt-dlp -P ~/d-sync/music/yt/ -icx --embed-metadata "${feed}" && pidof -x mpd || mpd && mpc update ;;
     "${menuopts[5]}") audio_podcast ;;
     "${menuopts[6]}") (wget "${feed}" --output-document=/tmp/image  && imv /tmp/image) || imv "${feed}" ;;
-    "${menuopts[7]}") NQDIR=/tmp/stream nq mpv --ytdl-format=best -quiet "${feed}" >/dev/null 2>&1 ;;
+    "${menuopts[7]}") NQDIR=/tmp/stream nq mpv -quiet "${feed}" >/dev/null 2>&1 ;;
     "${menuopts[8]}") aria2c -j 6 -x 10 -c -d ~/vids/documentary/.cache/clean.db/ "${feed}" ;;
     "${menuopts[9]}") d-bookmark "${feed}" ;;
     "${menuopts[10]}") setsid brave "${feed}" ;;
-    "${menuopts[11]}") setsid librewolf "${feed}" ;;
+    "${menuopts[11]}") setsid mullvad-browser "${feed}" ;;
     "${menuopts[12]}") setsid chromium "${feed}" ;;
     "${menuopts[13]}") aria_tor ;;
     "${menuopts[14]}") pgrep mpd || mpd; mpc add "$(yt-dlp -f bestaudio -g "$(ytfzf -LD ${feed})")" && mpc play ;;
     "${menuopts[15]}") d-search ;;
     "${menuopts[16]}") sioyek ${feed} ;;
+    "${menuopts[17]}") setsid librewolf "${feed}";;
+    "${menuopts[18]}") transmission-remote -a "${feed}";;
     *) exit 1 ;;
 esac
