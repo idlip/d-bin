@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+audio=${1:-"/home/idlip/music/yt/misc/linux-notify.ogg"}
+
+ffplay -nodisp -autoexit -loglevel quiet $audio
+# mpv --speed=1.0 $audio
