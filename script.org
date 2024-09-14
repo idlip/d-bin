@@ -89,10 +89,10 @@ fi
 # notify-send
 examples=("reddit" "twitter" "git-linux" "git-emacs" "git-droid" "TODO")
 
-title="$(printf '%s\n' "${examples[@]}" | $D_MENU -l 2 -p "${site} => Title" | sed 's/ /-/g')"
+title="$(printf '%s\n' "${examples[@]}" | $W_MENU -l 2 -p "${site} => Title" | sed 's/ /-/g')"
 
 # Add your org mode file path here (headings are in level 2 in my file)
-getheadings="$(rg "^\*\* " "${file}" | sed '/** elfeed/q' | awk '{print $2 }')"
+getheadings="$(rg "^\*\* " "${file}" | sed '/** gnus/q' | awk '{print $2 }')"
 # ^ prints heading upto "** elfeed"
 # i have added rest as rss feeds so
 
@@ -675,56 +675,56 @@ esac
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-power
 source d-var.conf
 
-a1="  Wifi Menu"
-a2="  Power Menu"
-a3="󰹑  Screen Shot"
-a4="  Lock/Suspend"
-a5="󰃡  Brightness"
-a6="  Change Volume"
+wifi_m="  Wifi Menu"
+power_m="  Power Menu"
+sshot_m="󰹑  Screen Shot"
+lock="  Lock/Suspend"
+brightn="󰃡  Brightness"
+volume="  Change Volume"
 
-b1="  Power Off"
-b2="  Reboot"
-b3="  Screen Off"
+poweroff="  Power Off"
+reboot="  Reboot"
+screenoff="  Screen Off"
 
-c1="󰃝  Increase Brightness"
-c2="  Decrease Brightness"
+brightup="󰃝  Increase Brightness"
+brightdown="  Decrease Brightness"
 
-d1="  Increase Volume"
-d2="  Decrease Volume"
-d3="  Mute"
+volup="  Increase Volume"
+voldown="  Decrease Volume"
+mute="  Mute"
 
-chosen=$(printf "$a1\n$a2\n$a3\n$a4\n$a5\n$a6" | sort | $D_MENU -p ' ' )
+chosen="$(printf "$wifi_m\n$power_m\n$sshot_m\n$lock\n$brightn\n$volume" | sort | $S_MENU -p ' ' )"
 
 case "$chosen" in
-    "$a2")
-	power="$(printf "$b1\n$b2\n$b3" | sort | $D_MENU -p ' ' )"
+    "$power_m")
+	power="$(printf "$poweroff\n$reboot\n$screenoff" | sort | $S_MENU -p ' ' )"
 	case "$power" in
-	    "$b1") poweroff ;;
-	    "$b2") reboot ;;
-	    "$b3") hyprctl dispatch dpms  off ;;
+	    "$poweroff") poweroff ;;
+	    "$reboot") reboot ;;
+	    "$screenoff") hyprctl dispatch dpms  off ;;
 	esac
 	;;
 
-    "$a1") d-wifi ;;
-    "$a4") gtklock -d; sleep 1 && systemctl suspend ;;
-    "$a5")
+    "$wifi_m") d-wifi ;;
+    "$lock") hyprlock ;;
+    "$brightn")
 
-	bright="$(printf "$c1\n$c2" | sort | $D_MENU )"
+	bright="$(printf "$brightup\n$brightdown" | sort | $D_MENU )"
 
 	case "$bright" in
-	    "$c1") brightnessctl set +2% ;;
-	    "$c2") brightnessctl set 2%- ;;
+	    "$brightup") brightnessctl set +2% ;;
+	    "$brightdown") brightnessctl set 2%- ;;
 	esac
 	;;
 
-    "$a3") d-sshot ;;
-    "$a6")
+    "$sshot_m") d-sshot ;;
+    "$volume")
 
-	vol="$(printf "$d1\n$d2\n$d3" | sort | $D_MENU -p ' ')"
+	vol="$(printf "$volup\n$voldown\n$mute" | sort | $D_MENU -p ' ')"
 	case "$vol" in
-	    "$d1") pamixer -ui 5 ;;
-	    "$d2") pamixer -ud 5 ;;
-	    "$d3") pamixer -t ;;
+	    "$volup") pamixer -ui 5 ;;
+	    "$voldown") pamixer -ud 5 ;;
+	    "$mute") pamixer -t ;;
 	esac
 	;;
     ,*) exit 1 ;;
@@ -913,14 +913,15 @@ source d-var.conf
 menuopts=("Record Video + Audio" "Record Webcam and screen" "Only Video" "Record Small Area in Mouse" "Kill Recording")
 
 action=$(printf '%s\n' "${menuopts[@]}" | $D_MENU -p ' ')
-command="wl-screenrec --codec=vp9"
+command="wl-screenrec "
+opts="--codec=av1"
 refreshbar="pkill -RTMIN+8 waybar"
 
 case "$action" in
-  "${menuopts[0]}") $command --audio -f ~/screen-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
-  "${menuopts[1]}") d-webcam & $command --audio -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
-  "${menuopts[2]}") $command -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
-  "${menuopts[3]}") $command -g "$(slurp)" -f ~/capture-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
+  "${menuopts[0]}") $command $opts --audio -f ~/screen-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
+  "${menuopts[1]}") d-webcam & $command $opts --audio -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
+  "${menuopts[2]}") $command $opts -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
+  "${menuopts[3]}") $command $opts -g "$(slurp)" -f ~/capture-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
   "${menuopts[4]}") pkill -INT $command && $refreshbar ;;
   ,*) exit 1 ;;
 esac
@@ -931,17 +932,29 @@ esac
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-remind
 source d-var.conf
 
-menuopts=("now + 10 minutes" "now + 15 minutes" "now + 25 minutes" "now + 2 hour" "19:45 today" "16:30 tomorrow" "4pm + 1 days" "10am Jul 31")
+menuopts=("now + 5 minutes" "now + 10 minutes" "now + 15 minutes" "now + 25 minutes" "now + 2 hour" "19:45 today" "16:30 tomorrow" "4pm + 1 days" "10am Jul 31")
+
+remindopt=(
+    "Short break Over!"
+    "Long break done!"
+    "Drink Water!"
+    "Stop wasting time & Read something"
+    "Learn the market"
+)
 
 info_remind="   Time - Date ? Like Eg -- hh:mm Jul 10"
-notify-send -t 4000 "${info_remind}"
+# notify-send -t 4000 "${info_remind}"
 
-time=$(printf '%s\n' "${menuopts[@]}" | $L_MENU)
+# define variable for time and text
+time="${1:-$(printf '%s\n' "${menuopts[@]}" | $L_MENU -i -p '󰁫 ')}" && \
+    text="$(printf "%s\n" "${remindopts[@]}" | $L_MENU -p ' ')"
 
-text=$(echo $2 | $L_MENU -p '   ?')
-
-echo "notify-send -u critical ' 🔔  Reminder 💡' '$text'" | at "$time"
-
+# check if both arg given
+if [[ "$time" ]]; then
+    echo "notify-send -u critical ' 🔔  Reminder 💡' '$text'" | at "$time"
+else
+    notify-send "Please set the time and clock"
+fi
 #+end_src
 ** Text to Regex
 - Script to help with building regexp with sensible steps.
@@ -2693,11 +2706,11 @@ echo "🔋 Battery: " "$(cat /sys/class/power_supply/BAT1/capacity)" "%"
 source d-var.conf
 
 sleepfor=$(printf "1\n2\n3\n4\n5" | $D_MENU -p "󰒲 Sleep for")
-typetool="wtype"
+typetool="dotoolc"
 
 password=$(printf "%s" "$(wl-paste -p)" | $D_MENU -x -p " password: ")
 
-sleep "${sleepfor}" && "$typetool" "$password"
+sleep "${sleepfor}" && echo type "$password" | "$typetool"
 #+end_src
 ** Link handler - Stuff
 - Stuff, and all link handler.
@@ -2709,7 +2722,7 @@ sleep "${sleepfor}" && "$typetool" "$password"
 source d-var.conf
 
 feed="${1:-$(printf "$(wl-paste -p)\n$(wl-paste)" | $D_MENU -i -p ' ')}"
-echo "$feed" | wl-copy -n
+# echo "$feed" | wl-copy -n
 # For prompt/notify on chosen link
 shortfeed="$(echo ${feed} | cut -d '/' -f3,4,5,6 )"
 
@@ -2721,7 +2734,7 @@ aria_tor () {
 
 audio_podcast () {
     case "$(printf "Song\nPodcast" | $D_MENU -p ' ')" in
-	"Podcast") mpc pause; NQDIR=/tmp/podcast nq mpv --geometry=15% --title=podcast --vid=1 "${feed}" >/dev/null 2>&1 ;;
+	"Podcast") mpc pause; NQDIR=/tmp/podcast nq mpv --force-window --geometry=15% --title=podcast --vid=1 "${feed}" >/dev/null 2>&1 ;;
 	"Song") pgrep mpd || mpd; mpc add "$(yt-dlp -f bestaudio -g "${feed}")" ;;
 	,*) exit 1 ;;
     esac
@@ -2738,12 +2751,14 @@ menuopts=("  Copy Url"
           "  Misc Download"
           "  Bookmark"
           "  Brave"
-          "󰪃  Libre Wolf"
+          "󱣻  Mullvad"
           "  Chromium"
           "  Torrent Aria"
           "  YT Music"
           "  Search Engine"
           "  Document Viewer"
+          "  LibreWolf"
+          "󰚂  Transmission"
 )
 
 case "$(printf '%s\n' "${menuopts[@]}" | sort | $D_MENU -p ${shortfeed})" in
@@ -2755,16 +2770,18 @@ case "$(printf '%s\n' "${menuopts[@]}" | sort | $D_MENU -p ${shortfeed})" in
     "${menuopts[4]}") NQDIR=/tmp/yt-music nq yt-dlp -P ~/d-sync/music/yt/ -icx --embed-metadata "${feed}" && pidof -x mpd || mpd && mpc update ;;
     "${menuopts[5]}") audio_podcast ;;
     "${menuopts[6]}") (wget "${feed}" --output-document=/tmp/image  && imv /tmp/image) || imv "${feed}" ;;
-    "${menuopts[7]}") NQDIR=/tmp/stream nq mpv --ytdl-format=best -quiet "${feed}" >/dev/null 2>&1 ;;
+    "${menuopts[7]}") NQDIR=/tmp/stream nq mpv -quiet "${feed}" >/dev/null 2>&1 ;;
     "${menuopts[8]}") aria2c -j 6 -x 10 -c -d ~/vids/documentary/.cache/clean.db/ "${feed}" ;;
     "${menuopts[9]}") d-bookmark "${feed}" ;;
     "${menuopts[10]}") setsid brave "${feed}" ;;
-    "${menuopts[11]}") setsid librewolf "${feed}" ;;
+    "${menuopts[11]}") setsid mullvad-browser "${feed}" ;;
     "${menuopts[12]}") setsid chromium "${feed}" ;;
     "${menuopts[13]}") aria_tor ;;
     "${menuopts[14]}") pgrep mpd || mpd; mpc add "$(yt-dlp -f bestaudio -g "$(ytfzf -LD ${feed})")" && mpc play ;;
     "${menuopts[15]}") d-search ;;
     "${menuopts[16]}") sioyek ${feed} ;;
+    "${menuopts[17]}") setsid librewolf "${feed}";;
+    "${menuopts[18]}") transmission-remote -a "${feed}";;
     ,*) exit 1 ;;
 esac
 
@@ -2841,10 +2858,17 @@ fi
 source d-var.conf
 file="$HOME/d-sync/notes/bookmarks.org"
 
-wtype "$(rg '^\+' ${file} | sed 's/+ //g' | ${L_MENU} | rg -o '(http|https)://[a-zA-Z0-9./?=_%&:-]*')"
+echo type "$(rg '^\+' ${file} | sed 's/+ //g' | ${L_MENU} | rg -o '(http|https)://[a-zA-Z0-9./?=_%&:-]*')" | dotoolc
 
 # search for links and show list in menu and type the link of selected item
 
+#+end_src
+** Clipboard history
+- Script to get clip history and select via dmenu
+#+begin_src sh  :shebang "#!/usr/bin/env bash" :tangle bin/d-clip
+source d-var.conf
+
+cliphist list | $L_MENU| cliphist decode | wl-copy
 #+end_src
 ** Script Variable
 - Variable to define the choice of launcher configuration.
@@ -2855,46 +2879,52 @@ wtype "$(rg '^\+' ${file} | sed 's/+ //g' | ${L_MENU} | rg -o '(http|https)://[a
 # Options are : rofi, bemenu/dmenu, wofi(search is too slow), fuzzel
 
 ############## Dynamic menu for common scripts ##############
-# D_MENU="rofi -dmenu -i -config ~/.config/rofi/smenu.rasi"
-D_MENU="bemenu -CT"
+D_MENU="fuzzel -d"
+W_MENU="fuzzel -d -w 120"
 
 ############## Menu for emoji/icons picker ##############
-# UNI_MENU="rofi -dmenu -i -config ~/.config/rofi/grid.rasi"
-UNI_MENU="bemenu -W 0.25 -l 8 -CT"
+UNI_MENU="fuzzel -d -l 8"
 
 ############## Menu for listing ##############
-# L_MENU="rofi -dmenu -i -config ~/.config/rofi/list.rasi"
-# L_MENU="fuzzel -d -w 85% -l 22"
-L_MENU="bemenu -l 20 -W 0.85 -s -i -CT"
+L_MENU="fuzzel -d -w 85% -l 22"
+# L_MENU="bemenu -l 20 -W 0.85"
+# L_MENU="rofi -dmenu -i"
+
+# for short width menu
+# S_MENU="bemenu -l 5 -c -W 0.14"
+S_MENU="fuzzel -d -w 30%"
 #+end_src
 ** Volume
 - To get notification and interactive volume as slider.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-volume
 
-mixercli="pamixer --allow-boost"
+# mixercli="pamixer --allow-boost"
+volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@)
+volcli="wpctl set-volume @DEFAULT_AUDIO_SINK@"
+togglecli="wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
 
 down() {
     $mixercli -d 5
-    volume=$(pamixer --get-volume)
-    [ $volume -gt 0 ] && volume=`expr $volume`
-    notify-send "󰖀 Volume Decreased to $volume%" -h int:value:"$volume" -i audio -r 2593 -u normal
+    # volume=$(pamixer --get-volume)
+    # [ $volume -gt 0 ] && volume=`expr $volume`
+    # notify-send "󰖀 Volume Decreased to $volume%" -h int:value:"$volume" -i audio -r 2593 -u normal
 }
 
 up() {
     $mixercli -i 5
-    volume=$(pamixer --get-volume)
-    [ $volume -lt 100 ] && volume=`expr $volume`
-    notify-send " Volume Increased to $volume%" -h int:value:"$volume" -i audio -r 2593 -u normal
+    # volume=$(pamixer --get-volume)
+    # [ $volume -lt 100 ] && volume=`expr $volume`
+    # notify-send " Volume Increased to $volume%" -h int:value:"$volume" -i audio -r 2593 -u normal
 }
 
 toggle() {
     muted="$(pamixer --get-mute)"
     if $muted; then
         $mixercli -u
-        notify-send " Volume Unmuted" -i audio -r 2593
+        notify-send " Volume Unmuted"
     else
         $mixercli -m
-        notify-send " Volume Muted" -i audio -r 2593
+        notify-send " Volume Muted"
     fi
 }
 
@@ -2975,4 +3005,15 @@ else
 	fi
 fi
 
+#+end_src
+** notify
+:PROPERTIES:
+:ID:       20240906T144754
+:END:
+- script to just play the notifying sound
+#+begin_src bash :shebang "#!/usr/bin/env bash" :tangle bin/d-notify
+audio=${1:-"/home/idlip/music/yt/misc/linux-notify.ogg"}
+
+ffplay -nodisp -autoexit -loglevel quiet $audio
+# mpv --speed=1.0 $audio
 #+end_src
