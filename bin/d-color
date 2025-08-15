@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 source d-var.conf
 
-a1="󰢷 Pick a colour (HEX)"
-a2="🍎 Choose a Colorname"
-a3="🎨 Pick a Colour (RGB)"
+a1="Pick a colour (HEX)"
+a2="Choose a Colorname"
+a3="Pick a Colour (RGB)"
 pick_or_treat=$(printf "$a1\n$a2\n$a3" | $D_MENU -i -p "🎃 ")
 
 case $pick_or_treat in

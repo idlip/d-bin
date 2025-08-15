@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# mixercli="pamixer --allow-boost"
+volcmd="wpctl set-volume @DEFAULT_AUDIO_SINK@"
+toggle_vol="wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+toggle_mic="wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+
+case "$1" in
+    "volume")
+        case "$2" in
+            up) $volcmd "0.05+" ;;
+            down) $volcmd "0.05-" ;;
+            toggle) $toggle_vol ;;
+        esac
+        value="$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | cut -d. -f2)" ;;
+    "mic") $toggle_mic ;;
+    "brightness")
+        case "$2" in
+            up) brightnessctl set +2% ;;
+            down) brightnessctl set 2%- ;;
+        esac
+        value="$(expr $(brightnessctl g) / 4)"
+
+esac
+
+notify-send "control value changed: $value%" -h int:value:$value -h string:synchronous:notify-music -r 2592 -u low -t 1000

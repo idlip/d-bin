@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+source d-var.conf
+
+fish_hist="$HOME/.local/share/fish/fish_history"
+bash_hist="$HOME/.bash_history"
+tmp_hist="/tmp/histlist"
+
+sort ${fish_hist} | rg --no-config cmd | sed 's|- cmd: ||' | sort -u > $tmp_hist
+
+sort -u ${bash_hist} >> $tmp_hist
+
+cat $tmp_hist | rg --no-config '.{11,}' | $L_MENU | wl-copy

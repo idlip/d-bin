@@ -6,7 +6,7 @@ a2=" Enable Wi-Fi"
 
 # Starts a scan of available broadcasting SSIDs
 # nmcli dev wifi rescan
-notify-send "Getting list of available Wi-Fi networks..."
+notify-send "Getting list of available Wi-Fi networks..." -t 1000
 wifi_list=$(nmcli --fields "SECURITY,SSID" device wifi list | sed 1d | sed 's/  */ /g' | sed -E "s/WPA*.?\S/ /g" | sed "s/^--/ /g" | sed "s/  //g" | sed "/--/d")
 # Gives a list of known connections so we can parse it later
 
@@ -33,11 +33,11 @@ else
 	# Get known connections
 	saved_connections=$(nmcli -g NAME connection)
 	if [[ $(echo "$saved_connections" | grep -w "$chosen_id") = "$chosen_id" ]]; then
-		nmcli connection up id "$chosen_id" | grep "successfully" && notify-send "Connection Established" "$success_message"
+		nmcli connection up id "$chosen_id" | grep "successfully" && notify-send "Connection Established" "$success_message" -t 1000
 	else
 		if [[ "$chosen_network" =~ "" ]]; then
-			wifi_password=$(echo '' | $D_MENU -password "Password: " )
+			wifi_password=$(echo '' | $D_MENU -p "Password: " )
 		fi
-		nmcli device wifi connect "$chosen_id" password "$wifi_password" | grep "successfully" && notify-send "Connection Established" "$success_message"
+		nmcli device wifi connect "$chosen_id" password "$wifi_password" | grep "successfully" && notify-send "Connection Established" "$success_message" -t 1000
 	fi
 fi

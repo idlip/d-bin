@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 source d-var.conf
 
-menuopts=(" Powermenu" "󰸉 Change Wallpaper" " Handle Stuffs" " Music Menu" " Pirate Mode" " Insert Emoji/Icons" "﬜ Dictionary" " Set Reminder" "⏲ Time & Date Now" " System Stats" " YouTube" " TODO" " Web Search")
+menuopts=("Powermenu" "Change Wallpaper" "Link handler stuff" "Music Menu" "Pirate Mode" "Insert Unicodes Emoji/Icons" "Dictionary" "Set Reminder" "Time & Date Now" "System Stats" "YouTube" "TODO" "Web Search")
 
 chosen=$(printf '%s\n' "${menuopts[@]}" | $D_MENU)
 

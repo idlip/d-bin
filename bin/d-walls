@@ -3,12 +3,15 @@
 wall_dir=~/d-git/d-wallpapers/walls/
 
 if [ -z "$1" ]; then
-	wall="$(find "$wall_dir" | shuf -n1)"
+	  wall1="$(find "$wall_dir" | shuf -n1)"
+    wall2="$(find "$wall_dir" | shuf -n1)"
 else
-	wall="$1"
+	wall1="$1"
+  wall2="$2"
 fi
 
-rsync "$wall" ~/.local/share/bg.jpg
+cp "$wall1" ~/.local/share/bg1
+cp "$wall2" ~/.local/share/bg2
 
 ########### If you use pywal (If not use feh)
 #wal -c
@@ -18,4 +21,4 @@ rsync "$wall" ~/.local/share/bg.jpg
 
 # For wayland users
 pkill swaybg
-swaybg -i ~/.local/share/bg.jpg &
+swaybg -i ~/.local/share/bg1 &

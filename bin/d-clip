@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 source d-var.conf
 
-cliphist list | $L_MENU| cliphist decode | wl-copy
+cliphist list | $L_MENU -p 'Clip: ' | cliphist decode | wl-copy

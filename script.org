@@ -8,8 +8,13 @@
 - video-zoom :: Zooms the video, so face and certain region is well covered.
 - title :: To give, so useful to set window rules in WindowManager
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-webcam
-mpv av://v4l2:/dev/video0 --profile=low-latency --no-osc --untimed --video-align-y=0.6 --video-zoom=1.5 --title=webcam "$@"
+  mpv av://v4l2:/dev/video0 \
+  	--profile=low-latency --no-osc --untimed \
+  	--demuxer-lavf-o=video_size=640x480,input_format=mjpeg \
+  	--video-align-y=0.9 --video-zoom=0.8 \
+  	--title=webcam "$@"
 #+end_src
+
 
 - Window rule with hyprland
 #+begin_src conf
@@ -19,6 +24,7 @@ windowrule = size 17% 27%, title:webcam
 windowrulev2 = move 82% 71%, title:webcam
 bind = SUPER, F7, exec, d-webcam
 #+end_src
+
 ** Android
 - Script for Android, =adb= usage.
 - Todo : how to use mic/camera for video calling
@@ -65,63 +71,67 @@ else
 	exit 1
 fi
 #+end_src
+
 ** Bookmark
 - Script to bookmark link into org-mode file.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-bookmark
-source d-var.conf
+  source d-var.conf
 
-bookmark="${1:-$(printf "%s\n%s" "$(wl-paste -p)" "$(wl-paste)" | $D_MENU -i -p ' ')}"
+  bookmark="${1:-$(printf "%s\n%s" "$(wl-paste -p)" "$(wl-paste)" | $D_MENU -i -p ' ')}"
 
-#file="$HOME/.local/share/dict/bookmarks"
-file="$HOME/d-sync/notes/bookmarks.org"
+  #file="$HOME/.local/share/dict/bookmarks"
+  file="$HOME/d-sync/notes/bookmarks.org"
 
-# Just a variable to show as prompt while adding name (confirmation)
-site="$(echo "${bookmark}" | sed 's/ //g')"
+  # Just a variable to show as prompt while adding name (confirmation)
+  site="$(echo "${bookmark}" | sed 's/ //g')"
 
-if [[ -z "$site" ]]; then
-    exit 0
-elif grep -qF "$site" "$file"; then
-    notify-send "Oops.. $site" "Already in bookmark!"
-    exit 0
-fi
+  notargs="-t 3000 -r 2597"
 
-# Eg names so you can quickly name
-# notify-send
-examples=("reddit" "twitter" "git-linux" "git-emacs" "git-droid" "TODO")
+  if [[ -z "$site" ]]; then
+      exit 0
+  elif grep -qF "$site" "$file"; then
+      notify-send ${notargs} "Oops.. $site" "Already in bookmark!"
+      exit 0
+  fi
 
-title="$(printf '%s\n' "${examples[@]}" | $W_MENU -l 2 -p "${site} => Title" | sed 's/ /-/g')"
+  # Eg names so you can quickly name
+  # notify-send
+  examples=("reddit" "twitter" "git-linux" "git-emacs" "git-droid" "TODO")
 
-# Add your org mode file path here (headings are in level 2 in my file)
-getheadings="$(rg "^\*\* " "${file}" | sed '/** gnus/q' | awk '{print $2 }')"
-# ^ prints heading upto "** elfeed"
-# i have added rest as rss feeds so
+  title="$(printf '%s\n' "${examples[@]}" | $W_MENU -l 2 -p "Title: " -mesg "=> ${site}" | sed 's/ /-/g')"
 
-tags="$(rg -o "__([[:alnum:][:nonascii:]_-]*)" "$file" | uniq | sed 's/__//g' | $D_MENU -p "${title} =>  " | sed 's/ /_/g')"
+  # Add your org mode file path here (headings are in level 2 in my file)
+  getheadings="$(rg --no-config "^\*\* " "${file}" | sed '/** gnus/q' | awk '{print $2 }')"
+  # ^ prints heading upto "** elfeed"
+  # i have added rest as rss feeds so
 
-# Prints out the heading text, so `sed` can append it to that heading level
-[[ -n "${title}" ]] && section="$(printf "%s" "$getheadings" | $D_MENU -p ' Heading'| sed 's/ //g')"
+  tags="$(rg --no-config -o "__([[:alnum:][:nonascii:]_-]*)" "$file" | sed 's/__//g' | sort | uniq | $D_MENU -p "${title} =>  : " | sed 's/ /_/g')"
 
-
-mark-print ()
-{
-# Sed appends the link in a clean way
-    sed -i "/$section$/a + [[$site][${title}__${tags}]]" "$file" &&
-        notify-send "Bookmark added!" " $site is now saved under ==>  $section"
-
-}
+  # Prints out the heading text, so `sed` can append it to that heading level
+  [[ -n "${title}" ]] && section="$(printf "%s" "$getheadings" | $D_MENU -p ' Heading: '| sed 's/ //g')"
 
 
-if grep -qF "$site" "$file"; then
-    notify-send "Oops.. $site" "Already in bookmark!"
+  mark-print ()
+  {
+  # Sed appends the link in a clean way
+      sed -i "/$section$/a + [[$site][${title}__${tags}]]" "$file" &&
+          notify-send ${notargs} "Bookmark added!" " $site is now saved under ==>  $section"
 
-elif [[ -n "${section}" ]]; then
-    mark-print
+  }
 
-else
-    notify-send "Give a title & section to add mark"
-fi
+
+  if grep -qF "$site" "$file"; then
+      notify-send ${notargs} "Oops.. $site" "Already in bookmark!"
+
+  elif [[ -n "${section}" ]]; then
+      mark-print
+
+  else
+      notify-send ${notargs} "Give a title & section to add mark"
+  fi
 
 #+end_src
+
 ** Capslock in Wayland
 - To toggle capslock with control
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-capsctrl
@@ -129,15 +139,16 @@ fi
 
 hyprctl keyword input:kb_options caps:caps
 #+end_src
+
 ** Color Picker
 - Picker using hyprpicker
 - To insert the colors in hex value
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-color
 source d-var.conf
 
-a1="󰢷 Pick a colour (HEX)"
-a2="🍎 Choose a Colorname"
-a3="🎨 Pick a Colour (RGB)"
+a1="Pick a colour (HEX)"
+a2="Choose a Colorname"
+a3="Pick a Colour (RGB)"
 pick_or_treat=$(printf "$a1\n$a2\n$a3" | $D_MENU -i -p "🎃 ")
 
 case $pick_or_treat in
@@ -177,6 +188,7 @@ else
 fi
 
 #+end_src
+
 ** Dictionary
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-dict
 # some cool dep :
@@ -257,6 +269,7 @@ case $chose in
     "$a7") offlinesp ;;
 esac
 #+end_src
+
 ** Extract
 - Extract utility on most compressed files.
 - Usage :: ~d-ext <files>~
@@ -283,6 +296,7 @@ for fi in "$@"; do
     fi;
 done
 #+end_src
+
 ** Toggle touchpad in wayland
 - Sometimes touchpad can get in the way of typing.
 - Credits: https://github.com/day0xy
@@ -322,6 +336,7 @@ else
 fi
 
 #+end_src
+
 ** Idle
 - To run idle timeout function when audio is running or not.
 - Useful to avoid suspending or locking screen.
@@ -334,152 +349,155 @@ else
 fi
 
 #+end_src
+
 ** Menu Launcher
 - Generic menu launcher for scripts.
 - To index all scripts.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-menu
-source d-var.conf
+  source d-var.conf
 
-menuopts=(" Powermenu" "󰸉 Change Wallpaper" " Handle Stuffs" " Music Menu" " Pirate Mode" " Insert Emoji/Icons" "﬜ Dictionary" " Set Reminder" "⏲ Time & Date Now" " System Stats" " YouTube" " TODO" " Web Search")
+  menuopts=("Powermenu" "Change Wallpaper" "Link handler stuff" "Music Menu" "Pirate Mode" "Insert Unicodes Emoji/Icons" "Dictionary" "Set Reminder" "Time & Date Now" "System Stats" "YouTube" "TODO" "Web Search")
 
-chosen=$(printf '%s\n' "${menuopts[@]}" | $D_MENU)
+  chosen=$(printf '%s\n' "${menuopts[@]}" | $D_MENU)
 
-case "$chosen" in
-        "${menuopts[0]}") d-power ;;
-        "${menuopts[1]}") d-walls ;;
-        "${menuopts[2]}") d-stuff ;;
-        "${menuopts[3]}") d-mpdplay ;;
-        "${menuopts[4]}") d-pirt ;;
-        "${menuopts[5]}") d-unicodes ;;
-        "${menuopts[6]}") d-dict ;;
-        "${menuopts[7]}") d-remind ;;
-        "${menuopts[8]}") d-time ;;
-        "${menuopts[9]}") d-stats ;;
-        "${menuopts[10]}") ytfzf -D ;;
-        "${menuopts[11]}") d-todo ;;
-        "${menuopts[12]}") d-search ;;
-	,*) exit 1 ;;
-esac
+  case "$chosen" in
+          "${menuopts[0]}") d-power ;;
+          "${menuopts[1]}") d-walls ;;
+          "${menuopts[2]}") d-stuff ;;
+          "${menuopts[3]}") d-mpdplay ;;
+          "${menuopts[4]}") d-pirt ;;
+          "${menuopts[5]}") d-unicodes ;;
+          "${menuopts[6]}") d-dict ;;
+          "${menuopts[7]}") d-remind ;;
+          "${menuopts[8]}") d-time ;;
+          "${menuopts[9]}") d-stats ;;
+          "${menuopts[10]}") ytfzf -D ;;
+          "${menuopts[11]}") d-todo ;;
+          "${menuopts[12]}") d-search ;;
+  	,*) exit 1 ;;
+  esac
 
 #+end_src
-** Music Player Menu
+
+** Music Player Menu mpd
 - An script to play mpd music.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-mpdplay
-MPC="mpc --quiet -p ${1:-6600}"
-pidof -x mpd || mpd
+  MPC="mpc --quiet -p ${1:-6600}"
+  pidof -x mpd || mpd
 
-source d-var.conf
+  source d-var.conf
 
-DMENU() {
-    # Vertical menu if $3 is given
-    printf '%s\n' "$1" | $L_MENU -p "$2"
-}
+  DMENU() {
+      # Vertical menu if $3 is given
+      printf '%s\n' "$1" | $L_MENU -p "$2"
+  }
 
-get_playlist() {
-    $MPC -f "%position% - %artist% - %album% - %title%" playlist
-}
+  get_playlist() {
+      $MPC -f "%position% - %artist% - %album% - %title%" playlist
+  }
 
-select_from() {
-    DMENU "$1" "Select $2" $height
-}
+  select_from() {
+      DMENU "$1" "Select $2" $height
+  }
 
-add() {
-    all="[ALL]"
+  add() {
+      all="[ALL]"
 
-    local artist=$(select_from "$($MPC list Artist)\n$all" "artist")
+      local artist=$(select_from "$($MPC list Artist)\n$all" "artist")
 
-    if [ "$artist" = "$all" ]; then
-        $MPC listall | $MPC add;
-    elif [ -n "$artist" ]; then
-        local albums=$($MPC list Album Artist "$artist")
-        local album=$(select_from "$albums\n$all" "album")
+      if [ "$artist" = "$all" ]; then
+          $MPC listall | $MPC add;
+      elif [ -n "$artist" ]; then
+          local albums=$($MPC list Album Artist "$artist")
+          local album=$(select_from "$albums\n$all" "album")
 
-        if [ "$album" = "$all" ]; then
-            $MPC findadd Artist "$artist"
-        elif [ -n "$album" ]; then
-            local songs=$($MPC list Title Album "$album")
-            local song=$(select_from "$songs\n$all" "song")
+          if [ "$album" = "$all" ]; then
+              $MPC findadd Artist "$artist"
+          elif [ -n "$album" ]; then
+              local songs=$($MPC list Title Album "$album")
+              local song=$(select_from "$songs\n$all" "song")
 
-            if [ "$song" = "$all" ]; then
-                $MPC findadd Album "$album"
-            elif [ -n "$song" ]; then
-                $MPC findadd Title "$song"
-            fi
-        fi
-    fi
-}
+              if [ "$song" = "$all" ]; then
+                  $MPC findadd Album "$album"
+              elif [ -n "$song" ]; then
+                  $MPC findadd Title "$song"
+              fi
+          fi
+      fi
+  }
 
-remove() {
-    local playlist=$(get_playlist)
-    local song=$(select_from "$playlist" "song")
+  remove() {
+      local playlist=$(get_playlist)
+      local song=$(select_from "$playlist" "song")
 
-    [ -n "$song" ] && $MPC del "${song%%\ *}"
-}
+      [ -n "$song" ] && $MPC del "${song%%\ *}"
+  }
 
-queue() {
-    nowp=$(mpc status | head -n1)
-    nextp=$(mpc queued)
-    notify-send "Now: $nowp" "Next: $nextp"
-}
+  queue() {
+      nowp=$(mpc status | head -n1)
+      nextp=$(mpc queued)
+      notify-send "Now: $nowp" "Next: $nextp"
+  }
 
-jump() {
-    local playlist=$(get_playlist)
-    local song=$(select_from "$playlist" "song")
+  jump() {
+      local playlist=$(get_playlist)
+      local song=$(select_from "$playlist" "song")
 
-    [ -n "$song" ] && $MPC play "${song%%\ *}"
-}
+      [ -n "$song" ] && $MPC play "${song%%\ *}"
+  }
 
-toggle(){
-    $MPC toggle
-}
+  toggle(){
+      $MPC toggle
+  }
 
-play(){
-    $MPC findadd Title "$($MPC list title | $L_MENU)"
-    $MPC play
-}
+  play(){
+      $MPC findadd Title "$($MPC list title | $L_MENU)"
+      $MPC play
+  }
 
-pause(){
-    $MPC pause
-}
+  pause(){
+      $MPC pause
+  }
 
-stop(){
-    $MPC stop
-}
+  stop(){
+      $MPC stop
+  }
 
-next(){
-    $MPC next
-}
+  next(){
+      $MPC next
+  }
 
-prev(){
-    $MPC prev
-}
+  prev(){
+      $MPC prev
+  }
 
-ytmusic () {
-    $MPC add "$(yt-dlp -f bestaudio -g "$(ytfzf -LD --ii='y.com.sb')")"
-}
+  ytmusic () {
+      $MPC add "$(yt-dlp -f bestaudio -g "$(ytfzf -LD --ii='y.com.sb')")"
+  }
 
-menuopts=( " Clear"  "󰐒 Add" "󰵩 Remove" "󱫜 Jump"  " Toggle" " Play"  " Pause"  " Stop" "󰒭 Next" "󰒮 Prev" "󱕱 Queued" " YT Music")
+  menuopts=( "Clear"  "Add" "Remove" "Jump"  "Toggle" "Play"  "Pause"  "Stop" "Next" "Prev" "Queued" "YT Music")
 
-while true; do
-    action=$(printf '%s\n' "${menuopts[@]}" | $L_MENU -p " Do you want to")
-    case $action in
-        "${menuopts[0]}") $MPC clear ;;
-        "${menuopts[1]}") add ;;
-        "${menuopts[2]}") remove ;;
-        "${menuopts[3]}") jump ;;
-        "${menuopts[4]}") toggle ;;
-        "${menuopts[5]}") play ;;
-        "${menuopts[6]}") pause ;;
-        "${menuopts[7]}") stop ;;
-        "${menuopts[8]}") next ;;
-        "${menuopts[9]}") prev ;;
-        "${menuopts[10]}") queue ;;
-	    "${menuopts[11]}") ytmusic ;;
-        "") exit 0;;
-    esac
-done
+  while true; do
+      action=$(printf '%s\n' "${menuopts[@]}" | $L_MENU -p " Do you want to")
+      case $action in
+          "${menuopts[0]}") $MPC clear ;;
+          "${menuopts[1]}") add ;;
+          "${menuopts[2]}") remove ;;
+          "${menuopts[3]}") jump ;;
+          "${menuopts[4]}") toggle ;;
+          "${menuopts[5]}") play ;;
+          "${menuopts[6]}") pause ;;
+          "${menuopts[7]}") stop ;;
+          "${menuopts[8]}") next ;;
+          "${menuopts[9]}") prev ;;
+          "${menuopts[10]}") queue ;;
+  	    "${menuopts[11]}") ytmusic ;;
+          "") exit 0;;
+      esac
+  done
 
 #+end_src
+
 ** Pirt
 - Script to get the free stuffs.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-pirt
@@ -637,6 +655,7 @@ QUER_Y="$seqr" && scrape
 #Search Torrent: " $seqr && scrape || QUER_Y="$seqr" && scrape
 
 #+end_src
+
 ** Scratch Note
 - To type note in emacs buffer, and input it into some input place.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-scratch
@@ -670,67 +689,76 @@ case $choice in
 esac
 
 #+end_src
+
 ** Power Menu
 - Power menu script.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-power
-source d-var.conf
+  source d-var.conf
 
-wifi_m="  Wifi Menu"
-power_m="  Power Menu"
-sshot_m="󰹑  Screen Shot"
-lock="  Lock/Suspend"
-brightn="󰃡  Brightness"
-volume="  Change Volume"
+  wifi_m="Wifi Menu"
+  power_m="Power Menu"
+  sshot_m="Screen Shot"
+  lock="Lock"
+  suspend="Suspend/Sleep"
+  brightn="Brightness"
+  volume="Change Volume"
+  stats="System Stats"
 
-poweroff="  Power Off"
-reboot="  Reboot"
-screenoff="  Screen Off"
+  poweroff="Power Off"
+  reboot="Reboot"
+  screenoff="Screen Off"
 
-brightup="󰃝  Increase Brightness"
-brightdown="  Decrease Brightness"
+  brightup="Increase Brightness"
+  brightdown="Decrease Brightness"
 
-volup="  Increase Volume"
-voldown="  Decrease Volume"
-mute="  Mute"
+  volup="Increase Volume"
+  voldown="Decrease Volume"
+  mute="Mute"
 
-chosen="$(printf "$wifi_m\n$power_m\n$sshot_m\n$lock\n$brightn\n$volume" | sort | $S_MENU -p ' ' )"
+  chosen="$(printf "$wifi_m\n$power_m\n$sshot_m\n$lock\n$suspend\n$brightn\n$volume\n$stats" | sort | $S_MENU -p 'Control: ' )"
 
-case "$chosen" in
-    "$power_m")
-	power="$(printf "$poweroff\n$reboot\n$screenoff" | sort | $S_MENU -p ' ' )"
-	case "$power" in
-	    "$poweroff") poweroff ;;
-	    "$reboot") reboot ;;
-	    "$screenoff") hyprctl dispatch dpms  off ;;
-	esac
-	;;
+  case "$chosen" in
+      "$power_m")
+  	power="$(printf "$poweroff\n$reboot\n$screenoff" | sort | $S_MENU -p 'Power: ' )"
+  	case "$power" in
+  	    "$poweroff") poweroff ;;
+  	    "$reboot") reboot ;;
+  	    "$screenoff") hyprctl dispatch dpms  off ;;
+  	esac
+  	;;
 
-    "$wifi_m") d-wifi ;;
-    "$lock") hyprlock ;;
-    "$brightn")
+      "$wifi_m") d-wifi ;;
+      "$lock") hyprlock ;;
+      "$suspend") systemctl suspend;;
+      "$brightn")
 
-	bright="$(printf "$brightup\n$brightdown" | sort | $D_MENU )"
+  	bright="$(printf "$brightup\n$brightdown" | sort | $D_MENU )"
 
-	case "$bright" in
-	    "$brightup") brightnessctl set +2% ;;
-	    "$brightdown") brightnessctl set 2%- ;;
-	esac
-	;;
+  	case "$bright" in
+  	    "$brightup") brightnessctl set +2% ;;
+  	    "$brightdown") brightnessctl set 2%- ;;
+  	esac
+  	;;
 
-    "$sshot_m") d-sshot ;;
-    "$volume")
+      "$sshot_m") d-sshot ;;
+      "$volume")
 
-	vol="$(printf "$volup\n$voldown\n$mute" | sort | $D_MENU -p ' ')"
-	case "$vol" in
-	    "$volup") pamixer -ui 5 ;;
-	    "$voldown") pamixer -ud 5 ;;
-	    "$mute") pamixer -t ;;
-	esac
-	;;
-    ,*) exit 1 ;;
-esac
+  	vol="$(printf "$volup\n$voldown\n$mute" | sort | $D_MENU -p 'Volume: ')"
+  	case "$vol" in
+  	    "$volup") pamixer -ui 5 ;;
+  	    "$voldown") pamixer -ud 5 ;;
+  	    "$mute") pamixer -t ;;
+  	esac
+  	;;
+
+      "$stats")
+          d-stats ;;
+
+      ,*) exit 1 ;;
+  esac
 
 #+end_src
+
 ** ppt -> pdf
 - Script to read ppt files as pdf.
 - Requires: soffice | ebook-convert | md2pdf
@@ -867,6 +895,7 @@ fi
 
 
 #+end_src
+
 ** Quote
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-quote
 #!/usr/bin/env bash
@@ -904,58 +933,74 @@ fortune
 
 
 #+end_src
+
 ** Recorder
 - An efficient, minimal screen recording script.
 - =wl-screenrec= is alot efficient, and fast (rust) than wf-screenrecorder.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-record
-source d-var.conf
+  source d-var.conf
 
-menuopts=("Record Video + Audio" "Record Webcam and screen" "Only Video" "Record Small Area in Mouse" "Kill Recording")
+  menuopts=("record VA" "rec+cam" "video" "crop record" "stop")
 
-action=$(printf '%s\n' "${menuopts[@]}" | $D_MENU -p ' ')
-command="wl-screenrec "
-opts="--codec=av1"
-refreshbar="pkill -RTMIN+8 waybar"
+  # action=$(printf '%s\n' "${menuopts[@]}" | $D_MENU -p ' ')
+  action="${1:-$(printf '%s\n' "${menuopts[@]}" | $D_MENU -p ' ')}"
 
-case "$action" in
-  "${menuopts[0]}") $command $opts --audio -f ~/screen-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
-  "${menuopts[1]}") d-webcam & $command $opts --audio -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
-  "${menuopts[2]}") $command $opts -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
-  "${menuopts[3]}") $command $opts -g "$(slurp)" -f ~/capture-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
-  "${menuopts[4]}") pkill -INT $command && $refreshbar ;;
-  ,*) exit 1 ;;
-esac
+  if [[ "$action" != "stop" ]]; then
+      filename="/home/idlip/media/stream/$(echo "" | $D_MENU -p "File name: ").mp4"
+  fi
+
+  command="wl-screenrec"
+  # opts="--encode-resolution 1440x900 -b 1MB"
+  # opts="--encode-resolution 1440x900"
+  opts=""
+
+  case "$action" in
+  	"${menuopts[0]}")
+  		$command $opts --audio -f $filename ;;
+  	"${menuopts[1]}")
+  		d-webcam & $command $opts --audio -f $filename ;;
+  	"${menuopts[2]}")
+  		$command $opts -f $filename ;;
+  	"${menuopts[3]}")
+  		$command $opts -g "$(slurp)" -f $filename ;;
+  	"${menuopts[4]}")
+  		pkill -INT $command ;;
+    ,*) exit 1 ;;
+  esac
 
 #+end_src
+
 ** Reminder using at
 - Simple notifier as reminder using =at=
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-remind
-source d-var.conf
+  source d-var.conf
 
-menuopts=("now + 5 minutes" "now + 10 minutes" "now + 15 minutes" "now + 25 minutes" "now + 2 hour" "19:45 today" "16:30 tomorrow" "4pm + 1 days" "10am Jul 31")
+  menuopts=("now + 5 minutes" "now + 10 minutes" "now + 15 minutes" "now + 25 minutes" "now + 2 hour" "19:45 today" "16:30 tomorrow" "4pm + 1 days" "10am Jul 31")
 
-remindopt=(
-    "Short break Over!"
-    "Long break done!"
-    "Drink Water!"
-    "Stop wasting time & Read something"
-    "Learn the market"
-)
+  remindopt=(
+      "Short break Over!"
+      "Long break done!"
+      "Drink Water!"
+      "Stop wasting time & Read something"
+      "Learn the market"
+  )
 
-info_remind="   Time - Date ? Like Eg -- hh:mm Jul 10"
-# notify-send -t 4000 "${info_remind}"
+  info_remind="   Time - Date ? Like Eg -- hh:mm Jul 10"
+  # notify-send -t 4000 "${info_remind}"
 
-# define variable for time and text
-time="${1:-$(printf '%s\n' "${menuopts[@]}" | $L_MENU -i -p '󰁫 ')}" && \
-    text="$(printf "%s\n" "${remindopts[@]}" | $L_MENU -p ' ')"
+  # define variable for time and text
+  time="${1:-$(printf '%s\n' "${menuopts[@]}" | $L_MENU -i -p '󰁫 ')}" && \
+      text="$(printf "%s\n" "${remindopts[@]}" | $L_MENU -p ' ')"
 
-# check if both arg given
-if [[ "$time" ]]; then
-    echo "notify-send -u critical ' 🔔  Reminder 💡' '$text'" | at "$time"
-else
-    notify-send "Please set the time and clock"
-fi
+  # check if both arg given
+  if [[ "$time" ]]; then
+      echo "notify-send -u critical ' 🔔  Reminder 💡' '$text'" | at "$time"
+      notify-send "Schedules: " "$(atq)" -t 3000
+  else
+      notify-send "Please set the time and clock" -t 2000
+  fi
 #+end_src
+
 ** Text to Regex
 - Script to help with building regexp with sensible steps.
 - Credits to https://aurelio.net/projects/txt2regex/
@@ -2524,6 +2569,7 @@ while :; do
 done
 
 #+end_src
+
 ** Rssfeed
 - Try to fetch rss feed link from the site.
 - Note: May take time and not fetch result
@@ -2547,10 +2593,11 @@ done
 exit 1
 
 #+end_src
+
 ** Rss for YT
 - Rss feed for youtube channels
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-rssyt
-rofm="rofi -dmenu "
+rofm="fuzzel -d "
 mymem=$rofm
 
 # Give the link and it will throw the feed url in YouTube.
@@ -2571,79 +2618,105 @@ case $choose in
 esac
 
 #+end_src
+
+** bibtex get bib reference
+- To get bibliography reference fro the doi url
+  #+begin_src shell :shebang "#!/usr/bin/env bash" :tangle bin/d-bibtex
+
+    [ -z "$1" ] && echo "Give either a pdf file or a DOI as an argument." && exit
+
+    if [ -f "$1" ]; then
+    	# Try to get DOI from pdfinfo or pdftotext output.
+    	doi=$(pdfinfo "$1" | grep -io "doi:.*") ||
+    	doi=$(pdftotext "$1" 2>/dev/null - | sed -n '/[dD][oO][iI]:/{s/.*[dD][oO][iI]:\s*\(\S\+[[:alnum:]]\).*/\1/p;q}') ||
+    	exit 1
+    else
+    	doi="$1"
+    fi
+
+    # Check crossref.org for the bib citation.
+    if [ -z "$2" ]; then
+        curl -s "https://api.crossref.org/works/$doi/transform/application/x-bibtex" -w "\\n" | wl-copy
+    else
+        curl -s "https://api.crossref.org/works/$doi/transform/application/x-bibtex" -w "\\n" >> $2
+    fi
+  #+end_src
+
+
 ** Search script
 - Generic script acts as a search engine for sites.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-search
-# Script to search terms in search engines
+  # Script to search terms in search engines
 
-source d-var.conf
+  source d-var.conf
 
-query="${1:-$(printf "$(wl-paste -p)\n$(wl-paste)" | $D_MENU -i -p ' ')}"
-echo "$feed" | wl-copy -n
-# For prompt/notify on chosen link
-shortquery="$(echo ${feed} | cut -d '/' -f3,4,5,6 )"
+  query="${1:-$(printf "$(wl-paste -p)\n$(wl-paste)" | $D_MENU -i -p ' ')}"
+  echo "$feed" | wl-copy -n
+  # For prompt/notify on chosen link
+  shortquery="$(echo ${feed} | cut -d '/' -f3,4,5,6 )"
 
-browsertab=("  Firefox" "  Librewolf" "  Brave" "󰖂 MullVad")
-enginestab=(
-    "🔗 Website/URL" #0
-    "  Brave" #1
-    "  Google Scholar" #2
-    "  Reddit" #3
-    "  NixPkgs" #4
-    "  MyNixOS" #5
-    "  Nixhub - pkgver" #6
-    "󰂦  NCBI" #7
-    "󰏓  BioConductor" #8
-    "󰣇  Arch-Wiki" #9
-    "󰂺  Libgen-Zlib-Books" #10
-    "  GitHub" #11
-    "  AnimeTosho" #12
-    "󰄛  NyaaSi" #13
-    "  Getty Images" #14
-    "󰇥  DuckDuckGo" #15
-    "  1337 Torrent" #16
+  browsertab=("Firefox" "Librewolf" "Brave" "MullVad")
+  enginestab=(
+      "Website/URL" #0
+      "Brave" #1
+      "Google Scholar" #2
+      "Reddit" #3
+      "NixPkgs" #4
+      "MyNixOS" #5
+      "Nixhub - pkgver" #6
+      "NCBI" #7
+      "BioConductor" #8
+      "Arch-Wiki" #9
+      "Libgen-Zlib-Books" #10
+      "GitHub" #11
+      "AnimeTosho" #12
+      "NyaaSi" #13
+      "Getty Images" #14
+      "DuckDuckGo" #15
+      "1337 Torrent" #16
 
-)
+  )
 
-viabrowser () {
-    echo "Opening  ${nowsearch} in  $nowbrowser"
-    setsid -f $nowbrowser "${nowsearch}" >/dev/null 2>&1
-}
+  viabrowser () {
+      echo "Opening  ${nowsearch} in  $nowbrowser"
+      setsid -f $nowbrowser "${nowsearch}" >/dev/null 2>&1
+  }
 
-getbrowser="$(printf '%s\n' "${browsertab[@]}" | $D_MENU -p "${shortfeed}")"
+  getbrowser="$(printf '%s\n' "${browsertab[@]}" | $D_MENU -p "${shortfeed}")"
 
-case $getbrowser in
-    "${browsertab[0]}") nowbrowser="firefox" ;;
-    "${browsertab[1]}") nowbrowser="librewolf" ;;
-    "${browsertab[2]}") nowbrowser="brave" ;;
-    "${browsertab[3]}") nowbrowser="mullvad" ;;
-esac
+  case $getbrowser in
+      "${browsertab[0]}") nowbrowser="firefox" ;;
+      "${browsertab[1]}") nowbrowser="librewolf" ;;
+      "${browsertab[2]}") nowbrowser="brave" ;;
+      "${browsertab[3]}") nowbrowser="mullvad" ;;
+  esac
 
-dosearch="$(printf '%s\n' "${enginestab[@]}" | $D_MENU -p "${shortfeed}")"
+  dosearch="$(printf '%s\n' "${enginestab[@]}" | $D_MENU -p "${shortfeed}")"
 
-case $dosearch in
-    "${enginestab[0]}") nowsearch="${query}" ;;
-    "${enginestab[1]}") nowsearch="https://search.brave.com/search?q=$query" ;;
-    "${enginestab[2]}") nowsearch="https://scholar.google.com/scholar?&q=$query" ;;
-    "${enginestab[3]}") nowsearch="https://old.reddit.com/search?q=$query" ;;
-    "${enginestab[4]}") nowsearch="https://search.nixos.org/packages?channel=unstable&from=0&size=50&sort=relevance&type=packages&query=$query" ;;
-    "${enginestab[5]}") nowsearch="https://mynixos.com/search?q=$query" ;;
-    "${enginestab[6]}") nowsearch="https://www.nixhub.io/search?q=$query" ;;
-    "${enginestab[7]}") nowsearch="https://www.ncbi.nlm.nih.gov/search/all/?term=$query" ;;
-    "${enginestab[8]}") nowsearch="https://www.bioconductor.org/help/search/index.html?q=$query" ;;
-    "${enginestab[9]}") nowsearch="https://wiki.archlinux.org/index.php?search=$query" ;;
-    "${enginestab[10]}") nowsearch="https://libgen.rs/search.php?req=$query" ;;
-    "${enginestab[11]}") nowsearch="https://github.com/search?q=$query&type=repositories" ;;
-    "${enginestab[12]}") nowsearch="https://animetosho.org/search?q=$query" ;;
-    "${enginestab[13]}") nowsearch="https://nyaa.si/?f=0&c=0_0&q=$query" ;;
-    "${enginestab[14]}") nowsearch="https://www.gettyimages.in/search/2/image?family=creative&phrase=$query";;
-    "${enginestab[15]}") nowsearch="https://duckduckgo.com/?q=$query" ;;
-    "${enginestab[16]}") nowsearch="https://1337x.to/search/$query/1";;
-esac
+  case $dosearch in
+      "${enginestab[0]}") nowsearch="${query}" ;;
+      "${enginestab[1]}") nowsearch="https://search.brave.com/search?q=$query" ;;
+      "${enginestab[2]}") nowsearch="https://scholar.google.com/scholar?&q=$query" ;;
+      "${enginestab[3]}") nowsearch="https://old.reddit.com/search?q=$query" ;;
+      "${enginestab[4]}") nowsearch="https://search.nixos.org/packages?channel=unstable&from=0&size=50&sort=relevance&type=packages&query=$query" ;;
+      "${enginestab[5]}") nowsearch="https://mynixos.com/search?q=$query" ;;
+      "${enginestab[6]}") nowsearch="https://www.nixhub.io/search?q=$query" ;;
+      "${enginestab[7]}") nowsearch="https://www.ncbi.nlm.nih.gov/search/all/?term=$query" ;;
+      "${enginestab[8]}") nowsearch="https://www.bioconductor.org/help/search/index.html?q=$query" ;;
+      "${enginestab[9]}") nowsearch="https://wiki.archlinux.org/index.php?search=$query" ;;
+      "${enginestab[10]}") nowsearch="https://libgen.rs/search.php?req=$query" ;;
+      "${enginestab[11]}") nowsearch="https://github.com/search?q=$query&type=repositories" ;;
+      "${enginestab[12]}") nowsearch="https://animetosho.org/search?q=$query" ;;
+      "${enginestab[13]}") nowsearch="https://nyaa.si/?f=0&c=0_0&q=$query" ;;
+      "${enginestab[14]}") nowsearch="https://www.gettyimages.in/search/2/image?family=creative&phrase=$query";;
+      "${enginestab[15]}") nowsearch="https://duckduckgo.com/?q=$query" ;;
+      "${enginestab[16]}") nowsearch="https://1337x.to/search/$query/1";;
+  esac
 
-viabrowser
+  viabrowser
 
 #+end_src
+
 ** Screenshot
 - Script to capture screenshot.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-sshot
@@ -2690,251 +2763,347 @@ case "$sshot" in
 esac
 
 #+end_src
+
 ** System Stats
 - Status on system as notification.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-stats
-notify-send -t 8000 "$(
-free -m | awk 'NR==2{printf "🐏 Usage: %s/%sMB (%.2f%%)\n", $3,$2,$3*100/$2 }'
-top -bn1 | grep load | awk '{printf "🧠 Load: %.2f\n", $(NF-2)}'
-echo "🔋 Battery: " "$(cat /sys/class/power_supply/BAT1/capacity)" "%"
-)"
-# acpi
+  #!/bin/bash
+
+  greet="Greetings!"
+  interface="wlp0s20f3"  # Change this to your network interface
+  sleep_time=1
+
+  # Get battery percentage
+  batval="$(< /sys/class/power_supply/BAT1/capacity)"
+
+  # Determine priority level
+  if (( batval > 70 )); then
+      priority="low"
+  elif (( batval > 40 )); then
+      priority="normal"
+  else
+      priority="critical"
+  fi
+
+  # Decide output method based on terminal type
+  if [[ "$TERM" == "dumb" || -t 1 ]]; then
+      cmdout="echo"
+      count=1
+  else
+      cmdout="notify-send -t 2000 -u $priority $greet -h string:synchronous:notify-stats -r 2556"
+      count=2
+  fi
+
+  # Get current download and upload speed
+  netspeed() {
+      rx1=$(< /sys/class/net/$interface/statistics/rx_bytes)
+      tx1=$(< /sys/class/net/$interface/statistics/tx_bytes)
+
+      sleep "$sleep_time"
+
+      rx2=$(< /sys/class/net/$interface/statistics/rx_bytes)
+      tx2=$(< /sys/class/net/$interface/statistics/tx_bytes)
+
+      rx_kbps=$(( (rx2 - rx1) / 1024 / sleep_time ))
+      tx_kbps=$(( (tx2 - tx1) / 1024 / sleep_time ))
+
+      down_speed="$rx_kbps KB/s"
+      up_speed="$tx_kbps KB/s"
+  }
+
+  # Loop for interactive/notify-send output
+  for ((i = 1; i <= count; i++)); do
+      now="$(date "+%a %d %b %Y %H:%M:%S")"
+
+      vol_raw=$(wpctl get-volume @DEFAULT_AUDIO_SINK@)
+      vol_percent=$(awk '{printf "%.0f%%", $2 * 100}' <<< "$vol_raw")
+
+      read used total <<< $(free -m | awk '/Mem:/ {print $3, $2}')
+      mem_percent=$(awk "BEGIN {printf \"%.1f%%\", ($used / $total) * 100}")
+
+      netspeed
+
+      output=$(printf "%-10s : %s\n" \
+          "Time"    "$now" \
+          "Volume"  "$vol_percent" \
+          "Memory"  "$used/$total MB ($mem_percent)" \
+          "Battery" "$batval%" \
+          "Download" "$down_speed" \
+          "Upload"   "$up_speed"
+      )
+
+      eval "$cmdout \"$output\""
+  done
 #+end_src
+
 ** Password entry
 - Give a menu prompt to input the password in places where no pasting is allowed.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-passentry
-source d-var.conf
+  source d-var.conf
 
-sleepfor=$(printf "1\n2\n3\n4\n5" | $D_MENU -p "󰒲 Sleep for")
-typetool="dotoolc"
+  sleepfor=$(printf "0\n1\n2\n3\n4\n5" | $D_MENU -p "Sleep for:  ")
 
-password=$(printf "%s" "$(wl-paste -p)" | $D_MENU -x -p " password: ")
+  password=$(cliphist list -max-items 10 | $D_MENU -p 'password: ' | cliphist decode)
 
-sleep "${sleepfor}" && echo type "$password" | "$typetool"
+  sleep "${sleepfor}" && wtype "${password}"
 #+end_src
+
 ** Link handler - Stuff
 - Stuff, and all link handler.
 - Most used, universal way.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-stuff
-# Link handler for every thinkable purpose
-# I use `nq` for task scheduling with mpv
+  # Link handler for every thinkable purpose
+  # I use `nq` for task scheduling with mpv
 
-source d-var.conf
+  source d-var.conf
 
-feed="${1:-$(printf "$(wl-paste -p)\n$(wl-paste)" | $D_MENU -i -p ' ')}"
-# echo "$feed" | wl-copy -n
-# For prompt/notify on chosen link
-shortfeed="$(echo ${feed} | cut -d '/' -f3,4,5,6 )"
+  feed="${1:-$(printf "$(wl-paste -p)\n$(wl-paste)" | $D_MENU -i -p 'Link: ')}"
+  echo "$feed" | wl-copy -n
+  # For prompt/notify on chosen link
+  shortfeed="$(echo ${feed} | cut -d '/' -f3,4,5,6 )"
 
-# Aria2 for torrents (acts on rpc server)
-aria_tor () {
-    curl 'http://localhost:6800/jsonrpc' || setsid aria2c --enable-rpc --rpc-listen-all &
-    sleep 4 && curl http://localhost:6800/jsonrpc -d '{"jsonrcp":"2.0","id":"someID","method":"aria2.addUri","params":["token:ariatest",["'${feed}'"]]}'
-}
+  # Aria2 for torrents (acts on rpc server)
+  aria_tor () {
+      curl 'http://localhost:6800/jsonrpc' || setsid aria2c --enable-rpc --rpc-listen-all &
+      sleep 4 && curl http://localhost:6800/jsonrpc -d '{"jsonrcp":"2.0","id":"someID","method":"aria2.addUri","params":["token:ariatest",["'${feed}'"]]}'
+  }
 
-audio_podcast () {
-    case "$(printf "Song\nPodcast" | $D_MENU -p ' ')" in
-	"Podcast") mpc pause; NQDIR=/tmp/podcast nq mpv --force-window --geometry=15% --title=podcast --vid=1 "${feed}" >/dev/null 2>&1 ;;
-	"Song") pgrep mpd || mpd; mpc add "$(yt-dlp -f bestaudio -g "${feed}")" ;;
-	,*) exit 1 ;;
-    esac
-}
+  audio_podcast () {
+      case "$(printf "Song\nPodcast" | $D_MENU -p ' ')" in
+  	"Podcast") mpc pause; NQDIR=/tmp/podcast nq mpv --ytdl-format='bestaudio' --force-window --geometry=15% --title=podcast --vid=1 "${feed}" >/dev/null 2>&1 ;;
+  	"Song") pgrep mpd || mpd; mpc add "$(yt-dlp -f bestaudio -g "${feed}")" ;;
+  	,*) exit 1 ;;
+      esac
+  }
 
-menuopts=("  Copy Url"
-          "  Fire Fox"
-          "  Download Files"
-          "  YT Vid Download"
-          "  Audio Music Download"
-          "  Podcast Listen Stream"
-          "  View Image"
-          "  Play Watch Stream"
-          "  Misc Download"
-          "  Bookmark"
-          "  Brave"
-          "󱣻  Mullvad"
-          "  Chromium"
-          "  Torrent Aria"
-          "  YT Music"
-          "  Search Engine"
-          "  Document Viewer"
-          "  LibreWolf"
-          "󰚂  Transmission"
-)
+  ytdlf () {
+      yt-dlp -F "${feed}"
+      read -p "Choose format: " format
+      yt-dlp -f $format "${feed}"
+  }
 
-case "$(printf '%s\n' "${menuopts[@]}" | sort | $D_MENU -p ${shortfeed})" in
+  menuopts=("Copy Url"
+            "Open via Fire Fox"
+            "Download Files via Aria2c"
+            "Media YT Vid Download"
+            "Media Audio Music Download"
+            "Podcast Listen Stream Song Music Mpd"
+            "View Image via swayimg"
+            "Play Watch Stream HQ"
+            "Misc Download.."
+            "Bookmark Url with tags"
+            "Open via Brave"
+            "Open via Mullvad"
+            "Open via Chromium"
+            "Torrent files via Aria"
+            "Ytfzf"
+            "Open Search Engine"
+            "Document Pdf/cbz Manga via Sioyek"
+            "Open via LibreWolf"
+            "Add Torrent via Transmission"
+            "Play Watch Stream LQ"
+            "CLI Youtube DL with Format Options"
+            "Get BibTex biblio reference"
+  )
 
-    "${menuopts[0]}") echo "${feed}" | wl-copy -p ;;
-    "${menuopts[1]}") setsid -f firefox "${feed}" >/dev/null 2>&1 ;;
-    "${menuopts[2]}") setsid aria2c -j 6 -x 16 -c -d ~/dloads "${feed}" >/dev/null 2>&1 ;;
-    "${menuopts[3]}") NQDIR=/tmp/yt-vid nq yt-dlp --embed-metadata --embed-subs -f "bestvideo[height<=1080]+bestaudio" -P ~/vids/yt "${feed}" >/dev/null 2>&1 ;;
-    "${menuopts[4]}") NQDIR=/tmp/yt-music nq yt-dlp -P ~/d-sync/music/yt/ -icx --embed-metadata "${feed}" && pidof -x mpd || mpd && mpc update ;;
-    "${menuopts[5]}") audio_podcast ;;
-    "${menuopts[6]}") (wget "${feed}" --output-document=/tmp/image  && imv /tmp/image) || imv "${feed}" ;;
-    "${menuopts[7]}") NQDIR=/tmp/stream nq mpv -quiet "${feed}" >/dev/null 2>&1 ;;
-    "${menuopts[8]}") aria2c -j 6 -x 10 -c -d ~/vids/documentary/.cache/clean.db/ "${feed}" ;;
-    "${menuopts[9]}") d-bookmark "${feed}" ;;
-    "${menuopts[10]}") setsid brave "${feed}" ;;
-    "${menuopts[11]}") setsid mullvad-browser "${feed}" ;;
-    "${menuopts[12]}") setsid chromium "${feed}" ;;
-    "${menuopts[13]}") aria_tor ;;
-    "${menuopts[14]}") pgrep mpd || mpd; mpc add "$(yt-dlp -f bestaudio -g "$(ytfzf -LD ${feed})")" && mpc play ;;
-    "${menuopts[15]}") d-search ;;
-    "${menuopts[16]}") sioyek ${feed} ;;
-    "${menuopts[17]}") setsid librewolf "${feed}";;
-    "${menuopts[18]}") transmission-remote -a "${feed}";;
-    ,*) exit 1 ;;
-esac
+  case "$(printf '%s\n' "${menuopts[@]}" | sort | $D_MENU -p "Open in: " -mesg "=> ${shortfeed} : ")" in
+
+      "${menuopts[0]}") echo "${feed}" | wl-copy -n ;;
+      "${menuopts[1]}") setsid -f firefox "${feed}" >/dev/null 2>&1 ;;
+      "${menuopts[2]}") setsid aria2c -j 6 -x 16 -c -d "${XDG_DOWNLOAD_DIR}" "${feed}" >/dev/null 2>&1 ;;
+      "${menuopts[3]}") NQDIR=/tmp/yt-vid nq yt-dlp --embed-metadata --embed-subs -f "bestvideo[height<=1080]+bestaudio" -P "${XDG_VIDEOS_DIR}" "${feed}" >/dev/null 2>&1 ;;
+      "${menuopts[4]}") NQDIR=/tmp/yt-music nq yt-dlp -P "${XDG_MUSIC_DIR}" -icx --embed-metadata "${feed}" && mpc update ;;
+      "${menuopts[5]}") audio_podcast ;;
+      "${menuopts[6]}") (wget "${feed}" --output-document=/tmp/image  && swayimg /tmp/image) || swayimg "${feed}" ;;
+      "${menuopts[7]}") NQDIR=/tmp/stream nq mpv -quiet "${feed}" >/dev/null 2>&1 ;;
+      "${menuopts[8]}") aria2c -j 6 -x 10 -c -d "${XDG_VIDEOS_DIR}" "${feed}" ;;
+      "${menuopts[9]}") d-bookmark "${feed}" ;;
+      "${menuopts[10]}") setsid brave "${feed}" ;;
+      "${menuopts[11]}") setsid mullvad-browser "${feed}" ;;
+      "${menuopts[12]}") setsid chromium "${feed}" ;;
+      "${menuopts[13]}") aria_tor ;;
+      "${menuopts[14]}") mpc add "$(yt-dlp -f bestaudio -g "$(ytfzf -LD $"{feed}")")" ;;
+      "${menuopts[15]}") d-search ;;
+      "${menuopts[16]}") sioyek "${feed}" ;;
+      "${menuopts[17]}") setsid librewolf "${feed}";;
+      "${menuopts[18]}") transmission-remote -a "${feed}";;
+      "${menuopts[19]}") NQDIR=/tmp/stream nq mpv --ytdl-format=18 -quiet "${feed}" >/dev/null 2>&1 ;;
+      "${menuopts[20]}") ytdlf;;
+      "${menuopts[21]}") d-bibtex "${feed}";;
+      ,*) exit 1 ;;
+  esac
 
 #+end_src
+
 ** Time
 - Notify the time!
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-time
 notify-send -t 3500 "$(date '+%a %b %e %r')"
 #+end_src
+
 ** Todo
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-todo
-file="$HOME/.todo.org"
-touch "$file"
-height=$(wc -l "$file" | awk '{print $1}')
-prompt="Add/delete a task: "
+  source d-var.conf
 
-cmd=$(rofi -dmenu -l "$height" -config ~/.config/rofi/list.rasi -p "$prompt" "$@" < "$file")
-while [ -n "$cmd" ]; do
- 	if grep -q "^$cmd\$" "$file"; then
-		grep -v "^$cmd\$" "$file" > "$file.$$"
-		mv "$file.$$" "$file"
-        height=$(( height - 1 ))
- 	else
-		echo "* TODO $cmd" >> "$file"
-		height=$(( height + 1 ))
- 	fi
+  file="$HOME/.todo.org"
+  touch "$file"
+  height=$(wc -l "$file" | awk '{print $1}')
+  prompt="Add/delete a task: "
 
-	cmd=$(rofi -dmenu -l "$height" -config ~/.config/rofi/list.rasi -p "$prompt" "$@" < "$file")
-done
+  cmd=$($D_MENU -l "$height" -p "$prompt" "$@" < "$file")
+  while [ -n "$cmd" ]; do
+   	if grep -q "^$cmd\$" "$file"; then
+  		grep -v "^$cmd\$" "$file" > "$file.$$"
+  		mv "$file.$$" "$file"
+          height=$(( height - 1 ))
+   	else
+  		echo "* TODO $cmd" >> "$file"
+  		height=$(( height + 1 ))
+   	fi
 
-exit 0
+  	cmd=$($D_MENU -l "$height" -p "$prompt" "$@" < "$file")
+  done
+
+  exit 0
 
 #+end_src
+
 ** Unicodes
 - Script to give choice and display unicodes.
 - =M-x insert-char= in Emacs.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-unicodes
-# Script to Insert and copy the unicode char
+  # Script to Insert and copy the unicode char
 
-source d-var.conf
+  source d-var.conf
 
-# The famous "get a menu of emojis to copy" script.
+  # The famous "get a menu of emojis to copy" script.
 
-# You can the icons for this script in icons/ directory here
+  # You can the icons for this script in icons/ directory here
 
-chosen=$(bat ~/d-git/d-bin/treasure/unicodes/* | $UNI_MENU -i -p ' ' | awk '{print $1}' )
+  chosen=$(bat ~/d-git/d-bin/treasure/unicodes/* | $UNI_MENU -i -p ' ' | awk '{print $1}' )
 
-# Exit if none chosen.
-[ -z "$chosen" ] && exit
+  # Exit if none chosen.
+  [ -z "$chosen" ] && exit
 
-# If you run this command with an argument, it will automatically insert the
-# character. Otherwise, show a message that the emoji has been copied.
-if [ -n "$1" ]; then
-	  wtype "$chosen"
-else
+  # If you run this command with an argument, it will automatically insert the
+  # character. Otherwise, show a message that the emoji has been copied.
+  if [ -n "$1" ]; then
+  	  wtype "$chosen"
+  else
 
-    # replace with xclip or xsel or x11
-    printf "$chosen" | wl-copy
+      # replace with xclip or xsel or x11
+      printf "$chosen" | wl-copy
 
-    # Replace with xdotool for X11
-	  wtype "$chosen"
+      # Replace with xdotool for X11
+  	  wtype "$chosen"
 
-    # not required tho
-	  # notify-send "'$chosen' copied to clipboard." &
-fi
+      # not required tho
+  	  # notify-send "'$chosen' copied to clipboard." &
+  fi
 
 #+end_src
+
 ** Urls from Bookmark
 - Insert the chosen URL from bookmark file.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-urls
-# Simple script which show the bookmarks from org-file which are inserted via d-bookmark
+  # Simple script which show the bookmarks from org-file which are inserted via d-bookmark
 
-# We can select and it insert the link
-source d-var.conf
-file="$HOME/d-sync/notes/bookmarks.org"
+  # We can select and it insert the link
+  source d-var.conf
+  file="$HOME/d-sync/notes/bookmarks.org"
 
-echo type "$(rg '^\+' ${file} | sed 's/+ //g' | ${L_MENU} | rg -o '(http|https)://[a-zA-Z0-9./?=_%&:-]*')" | dotoolc
+  wtype "$(rg --no-config '^\+' ${file} | sed 's/+ //g' | ${L_MENU} -p 'Link: ' | rg --no-config -o '(http|https)://[a-zA-Z0-9./?=_%&:-]*')" 
 
-# search for links and show list in menu and type the link of selected item
+  # search for links and show list in menu and type the link of selected item
 
 #+end_src
+
 ** Clipboard history
 - Script to get clip history and select via dmenu
 #+begin_src sh  :shebang "#!/usr/bin/env bash" :tangle bin/d-clip
-source d-var.conf
+  source d-var.conf
 
-cliphist list | $L_MENU| cliphist decode | wl-copy
+  cliphist list | $L_MENU -p 'Clip: ' | cliphist decode | wl-copy
 #+end_src
-** Script Variable
+
+** Shell history
+- Script to get shell command history from bash and fish shells via fuzzel
+
+  #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-hist
+    source d-var.conf
+
+    fish_hist="$HOME/.local/share/fish/fish_history"
+    bash_hist="$HOME/.bash_history"
+    tmp_hist="/tmp/histlist"
+
+    sort ${fish_hist} | rg --no-config cmd | sed 's|- cmd: ||' | sort -u > $tmp_hist
+
+    sort -u ${bash_hist} >> $tmp_hist
+
+    cat $tmp_hist | rg --no-config '.{11,}' | $L_MENU | wl-copy
+
+  #+end_src
+
+
+** Script Variable conf
 - Variable to define the choice of launcher configuration.
 #+begin_src sh :tangle bin/d-var.conf
-# Just a file to put variable for $mymem for all scripts.
-# So we can unify the menu launcher for all here.
+  # Just a file to put variable for $mymem for all scripts.
+  # So we can unify the menu launcher for all here.
 
-# Options are : rofi, bemenu/dmenu, wofi(search is too slow), fuzzel
+  # Options are : rofi, bemenu/dmenu, fuzzel
 
-############## Dynamic menu for common scripts ##############
-D_MENU="fuzzel -d"
-W_MENU="fuzzel -d -w 120"
+  ############## Dynamic menu for common scripts ##############
+  # D_MENU="fuzzel -d"
+  # W_MENU="fuzzel -d -w 120"
+  D_MENU="rofi -dmenu -i"
+  W_MENU="rofi -dmenu -i"
 
-############## Menu for emoji/icons picker ##############
-UNI_MENU="fuzzel -d -l 8"
+  ############## Menu for emoji/icons picker ##############
+  UNI_MENU="fuzzel -d -l 14 -w 80"
 
-############## Menu for listing ##############
-L_MENU="fuzzel -d -w 85% -l 22"
-# L_MENU="bemenu -l 20 -W 0.85"
-# L_MENU="rofi -dmenu -i"
+  ############## Menu for listing ##############
+  # L_MENU="fuzzel -d -w 85% -l 22"
+  # L_MENU="walker -d"
+  # L_MENU="bemenu -l 20 -W 0.85"
+  L_MENU="rofi -dmenu -i"
 
-# for short width menu
-# S_MENU="bemenu -l 5 -c -W 0.14"
-S_MENU="fuzzel -d -w 30%"
+  # for short width menu
+  # S_MENU="bemenu -l 5 -c -W 0.14"
+  # S_MENU="fuzzel -d -w 30%"
+  S_MENU="rofi -dmenu -i"
 #+end_src
-** Volume
+
+** Controller - ctrl
 - To get notification and interactive volume as slider.
-#+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-volume
+#+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-ctrl
 
-# mixercli="pamixer --allow-boost"
-volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@)
-volcli="wpctl set-volume @DEFAULT_AUDIO_SINK@"
-togglecli="wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+  # mixercli="pamixer --allow-boost"
+  volcmd="wpctl set-volume @DEFAULT_AUDIO_SINK@"
+  toggle_vol="wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+  toggle_mic="wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
 
-down() {
-    $mixercli -d 5
-    # volume=$(pamixer --get-volume)
-    # [ $volume -gt 0 ] && volume=`expr $volume`
-    # notify-send "󰖀 Volume Decreased to $volume%" -h int:value:"$volume" -i audio -r 2593 -u normal
-}
+  case "$1" in
+      "volume")
+          case "$2" in
+              up) $volcmd "0.05+" ;;
+              down) $volcmd "0.05-" ;;
+              toggle) $toggle_vol ;;
+          esac
+          value="$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | cut -d. -f2)" ;;
+      "mic") $toggle_mic ;;
+      "brightness")
+          case "$2" in
+              up) brightnessctl set +2% ;;
+              down) brightnessctl set 2%- ;;
+          esac
+          value="$(expr $(brightnessctl g) / 4)"
 
-up() {
-    $mixercli -i 5
-    # volume=$(pamixer --get-volume)
-    # [ $volume -lt 100 ] && volume=`expr $volume`
-    # notify-send " Volume Increased to $volume%" -h int:value:"$volume" -i audio -r 2593 -u normal
-}
+  esac
 
-toggle() {
-    muted="$(pamixer --get-mute)"
-    if $muted; then
-        $mixercli -u
-        notify-send " Volume Unmuted"
-    else
-        $mixercli -m
-        notify-send " Volume Muted"
-    fi
-}
-
-case "$1" in
-    up) up;;
-    down) down;;
-    toggle) toggle;;
-esac
-
+  notify-send "control value changed: $value%" -h int:value:$value -h string:synchronous:notify-music -r 2592 -u low -t 1000
 #+end_src
+
 ** Wallpaper Changer
 - Script to change random wallpaper.
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-walls
@@ -2942,12 +3111,15 @@ esac
 wall_dir=~/d-git/d-wallpapers/walls/
 
 if [ -z "$1" ]; then
-	wall="$(find "$wall_dir" | shuf -n1)"
+	  wall1="$(find "$wall_dir" | shuf -n1)"
+    wall2="$(find "$wall_dir" | shuf -n1)"
 else
-	wall="$1"
+	wall1="$1"
+  wall2="$2"
 fi
 
-rsync "$wall" ~/.local/share/bg.jpg
+cp "$wall1" ~/.local/share/bg1
+cp "$wall2" ~/.local/share/bg2
 
 ########### If you use pywal (If not use feh)
 #wal -c
@@ -2957,63 +3129,132 @@ rsync "$wall" ~/.local/share/bg.jpg
 
 # For wayland users
 pkill swaybg
-swaybg -i ~/.local/share/bg.jpg &
-
+swaybg -i ~/.local/share/bg1 &
 #+end_src
+
 ** Wifi Menu
 #+begin_src sh :shebang "#!/usr/bin/env bash" :tangle bin/d-wifi
-source d-var.conf
+  source d-var.conf
 
-a1="󰖪 Disable Wi-Fi"
-a2=" Enable Wi-Fi"
+  a1="󰖪 Disable Wi-Fi"
+  a2=" Enable Wi-Fi"
 
-# Starts a scan of available broadcasting SSIDs
-# nmcli dev wifi rescan
-notify-send "Getting list of available Wi-Fi networks..."
-wifi_list=$(nmcli --fields "SECURITY,SSID" device wifi list | sed 1d | sed 's/  */ /g' | sed -E "s/WPA*.?\S/ /g" | sed "s/^--/ /g" | sed "s/  //g" | sed "/--/d")
-# Gives a list of known connections so we can parse it later
+  # Starts a scan of available broadcasting SSIDs
+  # nmcli dev wifi rescan
+  notify-send "Getting list of available Wi-Fi networks..." -t 1000
+  wifi_list=$(nmcli --fields "SECURITY,SSID" device wifi list | sed 1d | sed 's/  */ /g' | sed -E "s/WPA*.?\S/ /g" | sed "s/^--/ /g" | sed "s/  //g" | sed "/--/d")
+  # Gives a list of known connections so we can parse it later
 
-connected=$(nmcli -fields WIFI g)
-if [[ "$connected" =~ "enabled" ]]; then
-	toggle="$a1"
-elif [[ "$connected" =~ "disabled" ]]; then
-	toggle="$a2"
-fi
+  connected=$(nmcli -fields WIFI g)
+  if [[ "$connected" =~ "enabled" ]]; then
+  	toggle="$a1"
+  elif [[ "$connected" =~ "disabled" ]]; then
+  	toggle="$a2"
+  fi
 
-chosen_network=$(echo -e "$toggle\n$wifi_list" | uniq -u | $D_MENU  "Wi-Fi SSID: " )
-chosen_id=$(echo "${chosen_network:3}" | xargs)
+  chosen_network=$(echo -e "$toggle\n$wifi_list" | uniq -u | $D_MENU  "Wi-Fi SSID: " )
+  chosen_id=$(echo "${chosen_network:3}" | xargs)
 
-# Parses the list of preconfigured connections to see if it already contains the chosen SSID. This speeds up the connection process
-if [ "$chosen_network" = "" ]; then
-	exit
-elif [ "$chosen_network" = "$a2" ]; then
-	nmcli radio wifi on
-elif [ "$chosen_network" = "$a1" ]; then
-	nmcli radio wifi off
-else
-	# Message to show when connection is activated successfully
-	success_message="You are now connected to the Wi-Fi network \"$chosen_id\"."
-	# Get known connections
-	saved_connections=$(nmcli -g NAME connection)
-	if [[ $(echo "$saved_connections" | grep -w "$chosen_id") = "$chosen_id" ]]; then
-		nmcli connection up id "$chosen_id" | grep "successfully" && notify-send "Connection Established" "$success_message"
-	else
-		if [[ "$chosen_network" =~ "" ]]; then
-			wifi_password=$(echo '' | $D_MENU -password "Password: " )
-		fi
-		nmcli device wifi connect "$chosen_id" password "$wifi_password" | grep "successfully" && notify-send "Connection Established" "$success_message"
-	fi
-fi
+  # Parses the list of preconfigured connections to see if it already contains the chosen SSID. This speeds up the connection process
+  if [ "$chosen_network" = "" ]; then
+  	exit
+  elif [ "$chosen_network" = "$a2" ]; then
+  	nmcli radio wifi on
+  elif [ "$chosen_network" = "$a1" ]; then
+  	nmcli radio wifi off
+  else
+  	# Message to show when connection is activated successfully
+  	success_message="You are now connected to the Wi-Fi network \"$chosen_id\"."
+  	# Get known connections
+  	saved_connections=$(nmcli -g NAME connection)
+  	if [[ $(echo "$saved_connections" | grep -w "$chosen_id") = "$chosen_id" ]]; then
+  		nmcli connection up id "$chosen_id" | grep "successfully" && notify-send "Connection Established" "$success_message" -t 1000
+  	else
+  		if [[ "$chosen_network" =~ "" ]]; then
+  			wifi_password=$(echo '' | $D_MENU -p "Password: " )
+  		fi
+  		nmcli device wifi connect "$chosen_id" password "$wifi_password" | grep "successfully" && notify-send "Connection Established" "$success_message" -t 1000
+  	fi
+  fi
 
 #+end_src
+
 ** notify
 :PROPERTIES:
 :ID:       20240906T144754
 :END:
 - script to just play the notifying sound
 #+begin_src bash :shebang "#!/usr/bin/env bash" :tangle bin/d-notify
-audio=${1:-"/home/idlip/music/yt/misc/linux-notify.ogg"}
+  # audio=${1:-"/home/idlip/music/yt/misc/linux-notify.ogg"}
+  audio=${1:-"/home/idlip/music/yt/misc/ltt-notify.ogg"}
 
-ffplay -nodisp -autoexit -loglevel quiet $audio
-# mpv --speed=1.0 $audio
+  # ffplay -nodisp -autoexit -loglevel quiet $audio
+  # mpv --speed=1.0 $audio
 #+end_src
+
+** niri-workspace switcher
+
+#+begin_src bash :shebang "#!/usr/bin/env bash" :tangle bin/d-niri
+  #shellcheck shell=bash
+  windows="$(niri msg --json windows)"
+  selection="$(echo "${windows}" \
+    | jaq -r '.[] | "\(.app_id) - \(.title)\u0000icon\u001f\(.app_id)"' \
+    | fuzzel --counter --dmenu --index --width 65 --lines "$(echo "$windows" | jaq length)"
+  )"
+
+  if [ "$selection" != -1 ]; then
+    niri msg action focus-window --id "$(echo "${windows}" | jaq -c --arg INDEX "$selection" '.[$INDEX | tonumber].id')"
+  fi
+
+#+end_src
+
+** dotool type
+
+#+begin_src bash :shebang "#!/usr/bin/env bash" :tangle bin/d-type
+  # sleep 1 && cat <<< "type" "$1" | dotoolc
+  input="$1"
+
+  # Check if the input is a file
+  if [[ -f "$input" ]]; then
+      while IFS= read -r line; do
+          echo "type" "$line" | dotoolc
+          echo key "k:101" | dotoolc
+      done < "$input"
+  else
+      # Treat input as a multiline string
+      while IFS= read -r line; do
+          echo "type" "$line" | dotoolc
+          echo key "k:101" | dotoolc
+      done <<< "$input"
+  fi
+#+end_src
+
+
+** pastebin 0x0.st
+#+begin_src bash :shebang "#!/usr/bin/env bash" :tangle bin/d-pastebin
+  source d-var.conf
+
+  if [ -t 0 ] && [ -n "$1" ]; then
+      # Argument passed, use dmenu to choose service
+      file="$1"
+      service=$(printf "paste.rs\n0x0.st" | $D_MENU -p "Choose upload service:")
+      case "$service" in
+          "paste.rs")
+              curl --data-binary @"$file" https://paste.rs | wl-copy
+              ;;
+          "0x0.st")
+              curl -X POST -F "file=@$file" https://0x0.st | wl-copy
+              ;;
+          ,*)
+              echo "No valid service selected." >&2
+              return 1
+              ;;
+      esac
+  else
+      # No file argument, read from stdin and upload to paste.rs
+      curl --data-binary @- https://paste.rs | wl-copy
+  fi
+
+
+#+end_src
+

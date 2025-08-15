@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-rofm="rofi -dmenu "
+rofm="fuzzel -d "
 mymem=$rofm
 
 # Give the link and it will throw the feed url in YouTube.

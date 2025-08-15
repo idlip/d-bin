@@ -21,6 +21,7 @@ time="${1:-$(printf '%s\n' "${menuopts[@]}" | $L_MENU -i -p '󰁫 ')}" && \
 # check if both arg given
 if [[ "$time" ]]; then
     echo "notify-send -u critical ' 🔔  Reminder 💡' '$text'" | at "$time"
+    notify-send "Schedules: " "$(atq)" -t 3000
 else
-    notify-send "Please set the time and clock"
+    notify-send "Please set the time and clock" -t 2000
 fi

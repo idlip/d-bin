@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+source d-var.conf
+
+if [ -t 0 ] && [ -n "$1" ]; then
+    # Argument passed, use dmenu to choose service
+    file="$1"
+    service=$(printf "paste.rs\n0x0.st" | $D_MENU -p "Choose upload service:")
+    case "$service" in
+        "paste.rs")
+            curl --data-binary @"$file" https://paste.rs | wl-copy
+            ;;
+        "0x0.st")
+            curl -X POST -F "file=@$file" https://0x0.st | wl-copy
+            ;;
+        *)
+            echo "No valid service selected." >&2
+            return 1
+            ;;
+    esac
+else
+    # No file argument, read from stdin and upload to paste.rs
+    curl --data-binary @- https://paste.rs | wl-copy
+fi

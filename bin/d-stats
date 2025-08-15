@@ -1,7 +1,68 @@
 #!/usr/bin/env bash
-notify-send -t 8000 "$(
-free -m | awk 'NR==2{printf "🐏 Usage: %s/%sMB (%.2f%%)\n", $3,$2,$3*100/$2 }'
-top -bn1 | grep load | awk '{printf "🧠 Load: %.2f\n", $(NF-2)}'
-echo "🔋 Battery: " "$(cat /sys/class/power_supply/BAT1/capacity)" "%"
-)"
-# acpi
+#!/bin/bash
+
+greet="Greetings!"
+interface="wlp0s20f3"  # Change this to your network interface
+sleep_time=1
+
+# Get battery percentage
+batval="$(< /sys/class/power_supply/BAT1/capacity)"
+
+# Determine priority level
+if (( batval > 70 )); then
+    priority="low"
+elif (( batval > 40 )); then
+    priority="normal"
+else
+    priority="critical"
+fi
+
+# Decide output method based on terminal type
+if [[ "$TERM" == "dumb" || -t 1 ]]; then
+    cmdout="echo"
+    count=1
+else
+    cmdout="notify-send -t 2000 -u $priority $greet -h string:synchronous:notify-stats -r 2556"
+    count=2
+fi
+
+# Get current download and upload speed
+netspeed() {
+    rx1=$(< /sys/class/net/$interface/statistics/rx_bytes)
+    tx1=$(< /sys/class/net/$interface/statistics/tx_bytes)
+
+    sleep "$sleep_time"
+
+    rx2=$(< /sys/class/net/$interface/statistics/rx_bytes)
+    tx2=$(< /sys/class/net/$interface/statistics/tx_bytes)
+
+    rx_kbps=$(( (rx2 - rx1) / 1024 / sleep_time ))
+    tx_kbps=$(( (tx2 - tx1) / 1024 / sleep_time ))
+
+    down_speed="$rx_kbps KB/s"
+    up_speed="$tx_kbps KB/s"
+}
+
+# Loop for interactive/notify-send output
+for ((i = 1; i <= count; i++)); do
+    now="$(date "+%a %d %b %Y %H:%M:%S")"
+
+    vol_raw=$(wpctl get-volume @DEFAULT_AUDIO_SINK@)
+    vol_percent=$(awk '{printf "%.0f%%", $2 * 100}' <<< "$vol_raw")
+
+    read used total <<< $(free -m | awk '/Mem:/ {print $3, $2}')
+    mem_percent=$(awk "BEGIN {printf \"%.1f%%\", ($used / $total) * 100}")
+
+    netspeed
+
+    output=$(printf "%-10s : %s\n" \
+        "Time"    "$now" \
+        "Volume"  "$vol_percent" \
+        "Memory"  "$used/$total MB ($mem_percent)" \
+        "Battery" "$batval%" \
+        "Download" "$down_speed" \
+        "Upload"   "$up_speed"
+    )
+
+    eval "$cmdout \"$output\""
+done

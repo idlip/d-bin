@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# sleep 1 && cat <<< "type" "$1" | dotoolc
+input="$1"
+
+# Check if the input is a file
+if [[ -f "$input" ]]; then
+    while IFS= read -r line; do
+        echo "type" "$line" | dotoolc
+        echo key "k:101" | dotoolc
+    done < "$input"
+else
+    # Treat input as a multiline string
+    while IFS= read -r line; do
+        echo "type" "$line" | dotoolc
+        echo key "k:101" | dotoolc
+    done <<< "$input"
+fi

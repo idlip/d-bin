@@ -8,25 +8,25 @@ echo "$feed" | wl-copy -n
 # For prompt/notify on chosen link
 shortquery="$(echo ${feed} | cut -d '/' -f3,4,5,6 )"
 
-browsertab=("  Firefox" "  Librewolf" "  Brave" "󰖂 MullVad")
+browsertab=("Firefox" "Librewolf" "Brave" "MullVad")
 enginestab=(
-    "🔗 Website/URL" #0
-    "  Brave" #1
-    "  Google Scholar" #2
-    "  Reddit" #3
-    "  NixPkgs" #4
-    "  MyNixOS" #5
-    "  Nixhub - pkgver" #6
-    "󰂦  NCBI" #7
-    "󰏓  BioConductor" #8
-    "󰣇  Arch-Wiki" #9
-    "󰂺  Libgen-Zlib-Books" #10
-    "  GitHub" #11
-    "  AnimeTosho" #12
-    "󰄛  NyaaSi" #13
-    "  Getty Images" #14
-    "󰇥  DuckDuckGo" #15
-    "  1337 Torrent" #16
+    "Website/URL" #0
+    "Brave" #1
+    "Google Scholar" #2
+    "Reddit" #3
+    "NixPkgs" #4
+    "MyNixOS" #5
+    "Nixhub - pkgver" #6
+    "NCBI" #7
+    "BioConductor" #8
+    "Arch-Wiki" #9
+    "Libgen-Zlib-Books" #10
+    "GitHub" #11
+    "AnimeTosho" #12
+    "NyaaSi" #13
+    "Getty Images" #14
+    "DuckDuckGo" #15
+    "1337 Torrent" #16
 
 )
 

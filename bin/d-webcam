@@ -1,2 +1,6 @@
 #!/usr/bin/env bash
-mpv av://v4l2:/dev/video0 --profile=low-latency --no-osc --untimed --video-align-y=0.6 --video-zoom=1.5 --title=webcam "$@"
+mpv av://v4l2:/dev/video0 \
+	--profile=low-latency --no-osc --untimed \
+	--demuxer-lavf-o=video_size=640x480,input_format=mjpeg \
+	--video-align-y=0.9 --video-zoom=0.8 \
+	--title=webcam "$@"

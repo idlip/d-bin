@@ -4,8 +4,8 @@
 
 source d-var.conf
 
-feed="${1:-$(printf "$(wl-paste -p)\n$(wl-paste)" | $D_MENU -i -p ' ')}"
-# echo "$feed" | wl-copy -n
+feed="${1:-$(printf "$(wl-paste -p)\n$(wl-paste)" | $D_MENU -i -p 'Link: ')}"
+echo "$feed" | wl-copy -n
 # For prompt/notify on chosen link
 shortfeed="$(echo ${feed} | cut -d '/' -f3,4,5,6 )"
 
@@ -17,53 +17,65 @@ aria_tor () {
 
 audio_podcast () {
     case "$(printf "Song\nPodcast" | $D_MENU -p ' ')" in
-	"Podcast") mpc pause; NQDIR=/tmp/podcast nq mpv --force-window --geometry=15% --title=podcast --vid=1 "${feed}" >/dev/null 2>&1 ;;
+	"Podcast") mpc pause; NQDIR=/tmp/podcast nq mpv --ytdl-format='bestaudio' --force-window --geometry=15% --title=podcast --vid=1 "${feed}" >/dev/null 2>&1 ;;
 	"Song") pgrep mpd || mpd; mpc add "$(yt-dlp -f bestaudio -g "${feed}")" ;;
 	*) exit 1 ;;
     esac
 }
 
-menuopts=("  Copy Url"
-          "  Fire Fox"
-          "  Download Files"
-          "  YT Vid Download"
-          "  Audio Music Download"
-          "  Podcast Listen Stream"
-          "  View Image"
-          "  Play Watch Stream"
-          "  Misc Download"
-          "  Bookmark"
-          "  Brave"
-          "󱣻  Mullvad"
-          "  Chromium"
-          "  Torrent Aria"
-          "  YT Music"
-          "  Search Engine"
-          "  Document Viewer"
-          "  LibreWolf"
-          "󰚂  Transmission"
+ytdlf () {
+    yt-dlp -F "${feed}"
+    read -p "Choose format: " format
+    yt-dlp -f $format "${feed}"
+}
+
+menuopts=("Copy Url"
+          "Open via Fire Fox"
+          "Download Files via Aria2c"
+          "Media YT Vid Download"
+          "Media Audio Music Download"
+          "Podcast Listen Stream Song Music Mpd"
+          "View Image via swayimg"
+          "Play Watch Stream HQ"
+          "Misc Download.."
+          "Bookmark Url with tags"
+          "Open via Brave"
+          "Open via Mullvad"
+          "Open via Chromium"
+          "Torrent files via Aria"
+          "Ytfzf"
+          "Open Search Engine"
+          "Document Pdf/cbz Manga via Sioyek"
+          "Open via LibreWolf"
+          "Add Torrent via Transmission"
+          "Play Watch Stream LQ"
+          "CLI Youtube DL with Format Options"
+          "Get BibTex biblio reference"
 )
 
-case "$(printf '%s\n' "${menuopts[@]}" | sort | $D_MENU -p ${shortfeed})" in
+case "$(printf '%s\n' "${menuopts[@]}" | sort | $D_MENU -p "Open in: " -mesg "=> ${shortfeed} : ")" in
 
-    "${menuopts[0]}") echo "${feed}" | wl-copy -p ;;
+    "${menuopts[0]}") echo "${feed}" | wl-copy -n ;;
     "${menuopts[1]}") setsid -f firefox "${feed}" >/dev/null 2>&1 ;;
-    "${menuopts[2]}") setsid aria2c -j 6 -x 16 -c -d ~/dloads "${feed}" >/dev/null 2>&1 ;;
-    "${menuopts[3]}") NQDIR=/tmp/yt-vid nq yt-dlp --embed-metadata --embed-subs -f "bestvideo[height<=1080]+bestaudio" -P ~/vids/yt "${feed}" >/dev/null 2>&1 ;;
-    "${menuopts[4]}") NQDIR=/tmp/yt-music nq yt-dlp -P ~/d-sync/music/yt/ -icx --embed-metadata "${feed}" && pidof -x mpd || mpd && mpc update ;;
+    "${menuopts[2]}") setsid aria2c -j 6 -x 16 -c -d "${XDG_DOWNLOAD_DIR}" "${feed}" >/dev/null 2>&1 ;;
+    "${menuopts[3]}") NQDIR=/tmp/yt-vid nq yt-dlp --embed-metadata --embed-subs -f "bestvideo[height<=1080]+bestaudio" -P "${XDG_VIDEOS_DIR}" "${feed}" >/dev/null 2>&1 ;;
+    "${menuopts[4]}") NQDIR=/tmp/yt-music nq yt-dlp -P "${XDG_MUSIC_DIR}" -icx --embed-metadata "${feed}" && mpc update ;;
     "${menuopts[5]}") audio_podcast ;;
-    "${menuopts[6]}") (wget "${feed}" --output-document=/tmp/image  && imv /tmp/image) || imv "${feed}" ;;
+    "${menuopts[6]}") (wget "${feed}" --output-document=/tmp/image  && swayimg /tmp/image) || swayimg "${feed}" ;;
     "${menuopts[7]}") NQDIR=/tmp/stream nq mpv -quiet "${feed}" >/dev/null 2>&1 ;;
-    "${menuopts[8]}") aria2c -j 6 -x 10 -c -d ~/vids/documentary/.cache/clean.db/ "${feed}" ;;
+    "${menuopts[8]}") aria2c -j 6 -x 10 -c -d "${XDG_VIDEOS_DIR}" "${feed}" ;;
     "${menuopts[9]}") d-bookmark "${feed}" ;;
     "${menuopts[10]}") setsid brave "${feed}" ;;
     "${menuopts[11]}") setsid mullvad-browser "${feed}" ;;
     "${menuopts[12]}") setsid chromium "${feed}" ;;
     "${menuopts[13]}") aria_tor ;;
-    "${menuopts[14]}") pgrep mpd || mpd; mpc add "$(yt-dlp -f bestaudio -g "$(ytfzf -LD ${feed})")" && mpc play ;;
+    "${menuopts[14]}") mpc add "$(yt-dlp -f bestaudio -g "$(ytfzf -LD $"{feed}")")" ;;
     "${menuopts[15]}") d-search ;;
-    "${menuopts[16]}") sioyek ${feed} ;;
+    "${menuopts[16]}") sioyek "${feed}" ;;
     "${menuopts[17]}") setsid librewolf "${feed}";;
     "${menuopts[18]}") transmission-remote -a "${feed}";;
+    "${menuopts[19]}") NQDIR=/tmp/stream nq mpv --ytdl-format=18 -quiet "${feed}" >/dev/null 2>&1 ;;
+    "${menuopts[20]}") ytdlf;;
+    "${menuopts[21]}") d-bibtex "${feed}";;
     *) exit 1 ;;
 esac

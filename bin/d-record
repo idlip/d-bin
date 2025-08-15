@@ -1,18 +1,30 @@
 #!/usr/bin/env bash
 source d-var.conf
 
-menuopts=("Record Video + Audio" "Record Webcam and screen" "Only Video" "Record Small Area in Mouse" "Kill Recording")
+menuopts=("record VA" "rec+cam" "video" "crop record" "stop")
 
-action=$(printf '%s\n' "${menuopts[@]}" | $D_MENU -p ' ')
-command="wl-screenrec "
-opts="--codec=av1"
-refreshbar="pkill -RTMIN+8 waybar"
+# action=$(printf '%s\n' "${menuopts[@]}" | $D_MENU -p ' ')
+action="${1:-$(printf '%s\n' "${menuopts[@]}" | $D_MENU -p ' ')}"
+
+if [[ "$action" != "stop" ]]; then
+    filename="/home/idlip/media/stream/$(echo "" | $D_MENU -p "File name: ").mp4"
+fi
+
+command="wl-screenrec"
+# opts="--encode-resolution 1440x900 -b 1MB"
+# opts="--encode-resolution 1440x900"
+opts=""
 
 case "$action" in
-  "${menuopts[0]}") $command $opts --audio -f ~/screen-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
-  "${menuopts[1]}") d-webcam & $command $opts --audio -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
-  "${menuopts[2]}") $command $opts -f ~/visual-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
-  "${menuopts[3]}") $command $opts -g "$(slurp)" -f ~/capture-$(date '+%a-%d-%b@%H:%M:%S').mp4 & $refreshbar ;;
-  "${menuopts[4]}") pkill -INT $command && $refreshbar ;;
+	"${menuopts[0]}")
+		$command $opts --audio -f $filename ;;
+	"${menuopts[1]}")
+		d-webcam & $command $opts --audio -f $filename ;;
+	"${menuopts[2]}")
+		$command $opts -f $filename ;;
+	"${menuopts[3]}")
+		$command $opts -g "$(slurp)" -f $filename ;;
+	"${menuopts[4]}")
+		pkill -INT $command ;;
   *) exit 1 ;;
 esac

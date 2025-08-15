@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 source d-var.conf
 
-sleepfor=$(printf "1\n2\n3\n4\n5" | $D_MENU -p "󰒲 Sleep for")
-typetool="dotoolc"
+sleepfor=$(printf "0\n1\n2\n3\n4\n5" | $D_MENU -p "Sleep for:  ")
 
-password=$(printf "%s" "$(wl-paste -p)" | $D_MENU -x -p " password: ")
+password=$(cliphist list -max-items 10 | $D_MENU -p 'password: ' | cliphist decode)
 
-sleep "${sleepfor}" && echo type "$password" | "$typetool"
+sleep "${sleepfor}" && wtype "${password}"

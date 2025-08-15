@@ -1,29 +1,31 @@
 #!/usr/bin/env bash
 source d-var.conf
 
-wifi_m="  Wifi Menu"
-power_m="  Power Menu"
-sshot_m="󰹑  Screen Shot"
-lock="  Lock/Suspend"
-brightn="󰃡  Brightness"
-volume="  Change Volume"
+wifi_m="Wifi Menu"
+power_m="Power Menu"
+sshot_m="Screen Shot"
+lock="Lock"
+suspend="Suspend/Sleep"
+brightn="Brightness"
+volume="Change Volume"
+stats="System Stats"
 
-poweroff="  Power Off"
-reboot="  Reboot"
-screenoff="  Screen Off"
+poweroff="Power Off"
+reboot="Reboot"
+screenoff="Screen Off"
 
-brightup="󰃝  Increase Brightness"
-brightdown="  Decrease Brightness"
+brightup="Increase Brightness"
+brightdown="Decrease Brightness"
 
-volup="  Increase Volume"
-voldown="  Decrease Volume"
-mute="  Mute"
+volup="Increase Volume"
+voldown="Decrease Volume"
+mute="Mute"
 
-chosen="$(printf "$wifi_m\n$power_m\n$sshot_m\n$lock\n$brightn\n$volume" | sort | $S_MENU -p ' ' )"
+chosen="$(printf "$wifi_m\n$power_m\n$sshot_m\n$lock\n$suspend\n$brightn\n$volume\n$stats" | sort | $S_MENU -p 'Control: ' )"
 
 case "$chosen" in
     "$power_m")
-	power="$(printf "$poweroff\n$reboot\n$screenoff" | sort | $S_MENU -p ' ' )"
+	power="$(printf "$poweroff\n$reboot\n$screenoff" | sort | $S_MENU -p 'Power: ' )"
 	case "$power" in
 	    "$poweroff") poweroff ;;
 	    "$reboot") reboot ;;
@@ -33,6 +35,7 @@ case "$chosen" in
 
     "$wifi_m") d-wifi ;;
     "$lock") hyprlock ;;
+    "$suspend") systemctl suspend;;
     "$brightn")
 
 	bright="$(printf "$brightup\n$brightdown" | sort | $D_MENU )"
@@ -46,12 +49,16 @@ case "$chosen" in
     "$sshot_m") d-sshot ;;
     "$volume")
 
-	vol="$(printf "$volup\n$voldown\n$mute" | sort | $D_MENU -p ' ')"
+	vol="$(printf "$volup\n$voldown\n$mute" | sort | $D_MENU -p 'Volume: ')"
 	case "$vol" in
 	    "$volup") pamixer -ui 5 ;;
 	    "$voldown") pamixer -ud 5 ;;
 	    "$mute") pamixer -t ;;
 	esac
 	;;
+
+    "$stats")
+        d-stats ;;
+
     *) exit 1 ;;
 esac
